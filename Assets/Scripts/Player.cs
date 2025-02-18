@@ -10,6 +10,7 @@ public class Player : NetworkBehaviour
     [SerializeField] private float rightBound = 5;
     private float movement;
     private InputSystem_Actions controls;
+    private NetworkVariable<int> health = new NetworkVariable<int>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -35,14 +36,6 @@ public class Player : NetworkBehaviour
     public void MoveServerRpc()
     {
         Vector3 newPos = transform.position + (new Vector3(movement, 0, 0) * speed * Time.deltaTime);
-        if (newPos.x > rightBound)
-        {
-            newPos.x = rightBound;
-        }
-        else if (newPos.x < leftBound)
-        {
-            newPos.x = leftBound;
-        }
-        transform.position = newPos;
+        transform.position = new Vector3(Mathf.Clamp(newPos.x, leftBound, rightBound), newPos.y, newPos.z);
     }
 }
