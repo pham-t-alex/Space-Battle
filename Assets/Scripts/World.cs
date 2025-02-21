@@ -16,15 +16,25 @@ public class World : NetworkBehaviour
         
     }
 
+    public override void OnNetworkSpawn()
+    {
+        if (!IsServer)
+        {
+            Destroy(gameObject);
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
         
     }
 
+    // Only can be called by server
     public void PlayerSetup(Player player)
     {
         player.transform.parent = transform;
         player.transform.localPosition = playerRelSpawnPos;
+        player.SetBounds(leftBound, rightBound);
     }
 }
