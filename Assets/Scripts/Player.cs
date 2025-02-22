@@ -1,6 +1,9 @@
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.InputSystem;
+using UnityEditor.ShaderGraph.Internal;
+using UnityEngine.Experimental.AI;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(Collider2D))]
 public class Player : NetworkBehaviour
@@ -9,13 +12,19 @@ public class Player : NetworkBehaviour
     [SerializeField] private float leftBound = -5;
     [SerializeField] private float rightBound = 5;
     private float movement = 0;
+    private float newMove = 0;
     private InputSystem_Actions controls;
     private NetworkVariable<int> health = new NetworkVariable<int>();
+
+    // TEMPORARY, REMOVE LATER
+    [SerializeField] private GameObject gun;
+
+    private Rigidbody2D rb;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-    
+
     }
 
     public override void OnNetworkSpawn()
@@ -28,6 +37,27 @@ public class Player : NetworkBehaviour
         if (IsServer)
         {
             GameController.Instance.SpawnPlayer(this);
+            rb = GetComponent<Rigidbody2D>();
+            // TEMPORARY, REMOVE LATER
+            SpawnGun();
+        }
+        if (IsClient)
+        {
+            Destroy(GetComponent<Rigidbody2D>());
+        }
+    }
+
+    // TEMPORARY, REMOVE LATER
+    public void SpawnGun()
+    {
+        if (IsServer)
+        {
+            GameObject g = Instantiate(gun);
+            NetworkObject obj = g.GetComponent<NetworkObject>();
+            obj.Spawn();
+            g.transform.parent = transform;
+            g.transform.localPosition = Vector3.zero;
+            Debug.Log("spawn");
         }
     }
 
@@ -36,28 +66,32 @@ public class Player : NetworkBehaviour
     {
         if (IsOwner)
         {
-            float move = controls.Player.Move.ReadValue<Vector2>().x;
-            if (move != movement)
-            {
-                movement = move;
-                MovementUpdateServerRpc(move);
-            }
+            newMove = controls.Player.Move.ReadValue<Vector2>().x;
         }
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
+    {
+        if (IsOwner)
+        {
+            if (movement != newMove)
+            {
+                movement = newMove;
+                MovementUpdateServerRpc(movement);
+            }
+        }
+        if (IsServer)
+        {
+            Move(Time.fixedDeltaTime);
+        }
+    }
+
+    public void Move(float deltaTime)
     {
         if (IsServer)
         {
-            Move();
+            rb.MovePosition(new Vector2(Mathf.Clamp(rb.position.x + movement * speed * deltaTime, leftBound, rightBound), rb.position.y));
         }
-    }
-
-    // Can only be called by server
-    public void Move()
-    {
-        Vector3 newPos = transform.localPosition + (new Vector3(movement, 0, 0) * speed * Time.deltaTime);
-        transform.localPosition = new Vector3(Mathf.Clamp(newPos.x, leftBound, rightBound), newPos.y, newPos.z);
     }
 
     [ServerRpc]

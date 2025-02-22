@@ -1,7 +1,7 @@
 using UnityEngine;
 using Unity.Netcode;
 
-public class World : NetworkBehaviour
+public class World : MonoBehaviour
 {
     [SerializeField] private float leftBound;
     [SerializeField] private float rightBound;
@@ -25,8 +25,7 @@ public class World : NetworkBehaviour
     // Only can be called by server
     public void PlayerSetup(Player player)
     {
-        player.transform.parent = transform;
-        player.transform.localPosition = playerRelSpawnPos;
-        player.SetBounds(leftBound, rightBound);
+        player.transform.position = (Vector3)playerRelSpawnPos + transform.position;
+        player.SetBounds(leftBound + transform.position.x, rightBound + transform.position.x);
     }
 }
