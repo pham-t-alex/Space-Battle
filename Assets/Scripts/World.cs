@@ -11,17 +11,9 @@ public class World : NetworkBehaviour
     [SerializeField] private Vector2 playerRelSpawnPos;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
         
-    }
-
-    public override void OnNetworkSpawn()
-    {
-        if (!IsServer)
-        {
-            Destroy(gameObject);
-        }
     }
 
     // Update is called once per frame

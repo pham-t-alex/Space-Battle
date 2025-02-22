@@ -289,6 +289,14 @@ PrefabInstance:
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
       value: 1279769530
       objectReference: {fileID: 0}
+    - target: {fileID: 454245267948643968, guid: c4a1c8cf765c74463ab7280accc2174c, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2893990985
+      objectReference: {fileID: 0}
+    - target: {fileID: 454245267948643968, guid: c4a1c8cf765c74463ab7280accc2174c, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 578224503
+      objectReference: {fileID: 0}
     - target: {fileID: 1830963884507006873, guid: c4a1c8cf765c74463ab7280accc2174c, type: 3}
       propertyPath: m_Name
       value: World 1
@@ -306,22 +314,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6617971905798996443, guid: c4a1c8cf765c74463ab7280accc2174c, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6617971905798996443, guid: c4a1c8cf765c74463ab7280accc2174c, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6617971905798996443, guid: c4a1c8cf765c74463ab7280accc2174c, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6617971905798996443, guid: c4a1c8cf765c74463ab7280accc2174c, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6617971905798996443, guid: c4a1c8cf765c74463ab7280accc2174c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
@@ -332,14 +324,6 @@ PrefabInstance:
     - target: {fileID: 6617971905798996443, guid: c4a1c8cf765c74463ab7280accc2174c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7088975937011516705, guid: c4a1c8cf765c74463ab7280accc2174c, type: 3}
-      propertyPath: leftBound
-      value: -3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7088975937011516705, guid: c4a1c8cf765c74463ab7280accc2174c, type: 3}
-      propertyPath: rightBound
-      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -711,8 +695,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ec10d93af9684569af9356a7c2a067c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1
-  playerPrefab: {fileID: 0}
   world1: {fileID: 1381589170}
   world2: {fileID: 2091063301}
 --- !u!1 &619394800
@@ -878,6 +860,14 @@ PrefabInstance:
     - target: {fileID: -8760165273109507158, guid: c4a1c8cf765c74463ab7280accc2174c, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
       value: 1279769530
+      objectReference: {fileID: 0}
+    - target: {fileID: 454245267948643968, guid: c4a1c8cf765c74463ab7280accc2174c, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 508298765
+      objectReference: {fileID: 0}
+    - target: {fileID: 454245267948643968, guid: c4a1c8cf765c74463ab7280accc2174c, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 578224503
       objectReference: {fileID: 0}
     - target: {fileID: 1830963884507006873, guid: c4a1c8cf765c74463ab7280accc2174c, type: 3}
       propertyPath: m_Name

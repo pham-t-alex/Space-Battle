@@ -8,13 +8,13 @@ public class GameController : MonoBehaviour
 
     private void Awake()
     {
-        if (instance != null) // CHANGE TO REMOVE CLIENT
+        if (instance == null)
         {
-            Destroy(gameObject);
+            instance = this;
         }
         else
         {
-            instance = this;
+            Destroy(gameObject);
         }
     }
 
@@ -25,7 +25,26 @@ public class GameController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        if (NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.OnClientConnectedCallback += DestroyOnConnect;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.OnClientConnectedCallback -= DestroyOnConnect;
+        }
+    }
+
+    private void DestroyOnConnect(ulong clientId)
+    {
+        if (clientId == NetworkManager.Singleton.LocalClientId)
+        {
+            Destroy(gameObject);
+        }
     }
 
     // Update is called once per frame
@@ -40,10 +59,12 @@ public class GameController : MonoBehaviour
         if (playerCount == 0)
         {
             world1.PlayerSetup(p);
+            playerCount++;
         }
         else if (playerCount == 1)
         {
             world2.PlayerSetup(p);
+            playerCount++;
         }
         else
         {
