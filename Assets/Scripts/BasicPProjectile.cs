@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Netcode;
 
 public class BasicPProjectile : PlayerProjectile
 {
@@ -6,9 +7,10 @@ public class BasicPProjectile : PlayerProjectile
     [SerializeField] private Vector2 direction = Vector2.up;
     [SerializeField] private float speed = 5;
 
-    public override void HitEnemy(Enemy enemy)
+    public override void HitAlien(Alien alien)
     {
-        throw new System.NotImplementedException();
+        alien.Damage(damage);
+        Destroy(gameObject);
     }
 
     public override void OnNetworkSpawn()

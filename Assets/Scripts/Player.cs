@@ -57,7 +57,6 @@ public class Player : NetworkBehaviour
             obj.Spawn();
             g.transform.parent = transform;
             g.transform.localPosition = Vector3.zero;
-            Debug.Log("spawn");
         }
     }
 

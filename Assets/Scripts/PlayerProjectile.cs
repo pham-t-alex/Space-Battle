@@ -39,13 +39,13 @@ public abstract class PlayerProjectile : NetworkBehaviour
         {
             HitBorder();
         }
-        else if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        else if (collision.gameObject.layer == LayerMask.NameToLayer("Alien"))
         {
-            HitEnemy(collision.GetComponent<Enemy>());
+            HitAlien(collision.GetComponent<Alien>());
         }
     }
 
-    public abstract void HitEnemy(Enemy enemy);
+    public abstract void HitAlien(Alien alien);
     public virtual void HitBorder()
     {
         Destroy(gameObject);
