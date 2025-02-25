@@ -15,6 +15,7 @@ public class Player : NetworkBehaviour
     private float newMove = 0;
     private InputSystem_Actions controls;
     private NetworkVariable<int> health = new NetworkVariable<int>();
+    [SerializeField] private int maxHealth = 5;
 
     // TEMPORARY, REMOVE LATER
     [SerializeField] private GameObject gun;
@@ -40,6 +41,7 @@ public class Player : NetworkBehaviour
             rb = GetComponent<Rigidbody2D>();
             // TEMPORARY, REMOVE LATER
             SpawnGun();
+            health.Value = maxHealth;
         }
         if (IsClient)
         {
@@ -104,5 +106,17 @@ public class Player : NetworkBehaviour
     {
         leftBound = left;
         rightBound = right;
+    }
+
+    public void Damage(int damage)
+    {
+        if (IsServer)
+        {
+            health.Value -= damage;
+            if (health.Value < 0)
+            {
+                Destroy(gameObject);
+            }
+        }
     }
 }

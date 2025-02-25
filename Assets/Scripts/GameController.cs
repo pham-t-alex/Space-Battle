@@ -22,6 +22,9 @@ public class GameController : MonoBehaviour
     [SerializeField] private World world2;
     private int playerCount = 0;
 
+    // maybe change later
+    [SerializeField] private GameObject alienPrefab;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -65,10 +68,21 @@ public class GameController : MonoBehaviour
         {
             world2.PlayerSetup(p);
             playerCount++;
+            StartGame();
         }
         else
         {
             Destroy(p.gameObject);
+        }
+    }
+
+    public void StartGame()
+    {
+        if (NetworkManager.Singleton.IsServer)
+        {
+            GameObject g = Instantiate(alienPrefab);
+            g.GetComponent<NetworkObject>().Spawn();
+            g.transform.position = world1.transform.position + new Vector3(0, 4, 0);
         }
     }
 }
