@@ -18,12 +18,8 @@ public class MoneyController : MonoBehaviour
         }
     }
 
-    private int p1Money = 0;
-    private int p1Income = 0;
-    private int p2Money = 0;
-    private int p2Income = 0;
-    [SerializeField] private int startingMoney = 1000;
-    [SerializeField] private int startingIncome;
+    [SerializeField] private int startingMoney = 500;
+    [SerializeField] private int startingIncome = 100;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -58,7 +54,27 @@ public class MoneyController : MonoBehaviour
 
     public void ChangeMoney(int player, int newMoney)
     {
-
+        switch (player)
+        {
+            case 1:
+                GameState.P1Money = newMoney;
+                break;
+            case 2:
+                GameState.P2Money = newMoney;
+                break;
+        }
     }
 
+    public void ChangeIncome(int player, int newIncome)
+    {
+        switch (player)
+        {
+            case 1:
+                GameState.P1Income = newIncome;
+                break;
+            case 2:
+                GameState.P2Income = newIncome;
+                break;
+        }
+    }
 }
