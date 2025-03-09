@@ -4,6 +4,7 @@ using System;
 
 public class GameState : NetworkBehaviour
 {
+    // Should only be modified by MoneyController
     private static NetworkVariable<int> p1Money = new NetworkVariable<int>(0);
     private static NetworkVariable<int> p2Money = new NetworkVariable<int>(0);
     private static NetworkVariable<int> p1Income = new NetworkVariable<int>(0);
