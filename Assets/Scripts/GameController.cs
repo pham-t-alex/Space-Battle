@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Netcode;
+using UnityEditor.Build.Content;
 
 public class GameController : MonoBehaviour
 {
@@ -21,6 +22,9 @@ public class GameController : MonoBehaviour
     [SerializeField] private World world1;
     [SerializeField] private World world2;
     private int playerCount = 0;
+
+    private ulong p1ID = 0;
+    private ulong p2ID = 0;
 
     // maybe change later
     [SerializeField] private GameObject alienPrefab;
@@ -57,16 +61,18 @@ public class GameController : MonoBehaviour
     }
 
     // Only can be called by server
-    public void SpawnPlayer(Player p)
+    public void SpawnPlayer(Player p, ulong id)
     {
         if (playerCount == 0)
         {
             world1.PlayerSetup(p);
+            p1ID = id;
             playerCount++;
         }
         else if (playerCount == 1)
         {
             world2.PlayerSetup(p);
+            p2ID = id;
             playerCount++;
             StartGame();
         }
@@ -76,13 +82,21 @@ public class GameController : MonoBehaviour
         }
     }
 
+    // Called when both players join
+    // Starts the game
     public void StartGame()
     {
-        if (NetworkManager.Singleton.IsServer)
+        // Modify later
+        if (!NetworkManager.Singleton.IsServer)
         {
-            GameObject g = Instantiate(alienPrefab);
-            g.GetComponent<NetworkObject>().Spawn();
-            g.transform.position = world1.transform.position + new Vector3(0, 4, 0);
+            return;
         }
+        GameObject g = Instantiate(alienPrefab);
+        g.GetComponent<NetworkObject>().Spawn();
+        g.transform.position = world1.transform.position + new Vector3(0, 4, 0);
+
+        // Money setup
+        MoneyController.Instance.Setup();
+        GameMessenger.Instance.GameUISetup(p1ID, p2ID);
     }
 }
