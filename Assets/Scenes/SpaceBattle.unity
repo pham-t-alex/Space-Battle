@@ -706,7 +706,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   world1: {fileID: 1381589170}
   world2: {fileID: 2091063301}
-  alienPrefab: {fileID: 7635512465832564758, guid: d9301f1c364a1654f8e35215e28a2ed0, type: 3}
+  waves:
+  - {fileID: 11400000, guid: 4deab563336bdce4b9a458f3ddc9167b, type: 2}
+  - {fileID: 11400000, guid: 64ef5cc66b6596a4fa1253010417bcd5, type: 2}
+  map: {fileID: 11400000, guid: e0a81d46e94591f40958ee67737850d5, type: 2}
+  maxWaveTimer: 10
 --- !u!114 &535100582
 MonoBehaviour:
   m_ObjectHideFlags: 0
