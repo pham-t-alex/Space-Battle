@@ -1,6 +1,9 @@
 using UnityEngine;
 using Unity.Netcode;
 using UnityEditor.Build.Content;
+using System.Collections.Generic;
+using System.Collections;
+using NUnit.Framework.Constraints;
 
 public class GameController : MonoBehaviour
 {
@@ -26,8 +29,18 @@ public class GameController : MonoBehaviour
     private ulong p1ID = 0;
     private ulong p2ID = 0;
 
-    // maybe change later
-    [SerializeField] private GameObject alienPrefab;
+    [SerializeField] private List<Wave> waves = new List<Wave>();
+    [SerializeField] private Map map;
+    public Map Map => map;
+    Vector2 frontLineSpawn = Vector2.zero;
+    Vector2 backLineSpawn = Vector2.zero;
+
+    private bool oneLineDone;
+    // positive value indicates that a wave has just finished and game is now waiting to spawn the next
+    private float betweenWaveTimer;
+    [SerializeField] private float maxWaveTimer;
+
+    int wave = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -57,7 +70,40 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        UpdateWaveTimer();
+    }
+
+    public void UpdateWaveTimer()
+    {
+        if (!NetworkManager.Singleton.IsServer)
+        {
+            return;
+        }
+        if (betweenWaveTimer == 0)
+        {
+            return;
+        }
+        betweenWaveTimer -= Time.deltaTime;
+        if (betweenWaveTimer <= 0)
+        {
+            betweenWaveTimer = 0;
+            SpawnWave();
+        }
+    }
+
+    public void SpawnWave()
+    {
+        if (!NetworkManager.Singleton.IsServer)
+        {
+            return;
+        }
+        if (wave >= waves.Count)
+        {
+            return;
+        }
+
+        StartCoroutine(SpawnWaveCoroutine(waves[wave].backLineComponents, false));
+        StartCoroutine(SpawnWaveCoroutine(waves[wave].frontLineComponents, true));
     }
 
     // Only can be called by server
@@ -84,19 +130,86 @@ public class GameController : MonoBehaviour
 
     // Called when both players join
     // Starts the game
-    public void StartGame()
+    void StartGame()
     {
         // Modify later
         if (!NetworkManager.Singleton.IsServer)
         {
             return;
         }
-        GameObject g = Instantiate(alienPrefab);
-        g.GetComponent<NetworkObject>().Spawn();
-        g.transform.position = world1.transform.position + new Vector3(0, 4, 0);
 
         // Money setup
         MoneyController.Instance.Setup();
         GameMessenger.Instance.GameUISetup(p1ID, p2ID);
+
+        frontLineSpawn = map.frontLinePath[0];
+        backLineSpawn = map.backLinePath[0];
+        betweenWaveTimer = maxWaveTimer;
+    }
+
+    // Spawns a wave
+    // front is true if frontline, false if backline
+    IEnumerator SpawnWaveCoroutine(List<WaveComponent> components, bool front)
+    {
+        foreach (WaveComponent component in components)
+        {
+            for (int i = 0; i < component.count; i++)
+            {
+                SpawnAlien(component.alien, front);
+                yield return new WaitForSeconds(component.spawnDelay);
+            }
+            yield return new WaitForSeconds(component.afterSpawnDelay);
+        }
+        if (oneLineDone)
+        {
+            oneLineDone = false;
+            wave++;
+            betweenWaveTimer = maxWaveTimer;
+        }
+        else
+        {
+            oneLineDone = true;
+        }
+        yield return null;
+    }
+
+    void SpawnAlien(GameObject alien, bool front)
+    {
+        GameObject g1 = Instantiate(alien);
+        g1.GetComponent<NetworkObject>().Spawn();
+        if (front)
+        {
+            g1.transform.position = world1.transform.position + (Vector3)frontLineSpawn;
+        }
+        else
+        {
+            g1.transform.position = world1.transform.position + (Vector3)backLineSpawn;
+        }
+        g1.GetComponent<Alien>().Initialize(front, 1);
+
+        GameObject g2 = Instantiate(alien);
+        g2.GetComponent<NetworkObject>().Spawn();
+        if (front)
+        {
+            g2.transform.position = world2.transform.position + (Vector3)frontLineSpawn;
+        }
+        else
+        {
+            g2.transform.position = world2.transform.position + (Vector3)backLineSpawn;
+        }
+        g2.GetComponent<Alien>().Initialize(front, 2);
+    }
+
+    public Vector2 GetWorldCenter(int world)
+    {
+        switch (world)
+        {
+            case 1:
+                return world1.transform.position;
+            case 2:
+                return world2.transform.position;
+            default:
+                return Vector2.zero;
+        }
     }
 }
