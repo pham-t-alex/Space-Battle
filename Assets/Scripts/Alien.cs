@@ -13,6 +13,7 @@ public class Alien : NetworkBehaviour
 
     [SerializeField] private float moveSpeed;
     private bool frontLine;
+    private bool sent;
     private int mapIndex;
     private Vector2 targetPosition;
     private bool finishedPath = false;
@@ -34,11 +35,12 @@ public class Alien : NetworkBehaviour
         reloadTimeLeft = reloadTime;
     }
 
-    public void Initialize(bool front, int world)
+    public void Initialize(bool front, bool sent, int world)
     {
 
         this.world = world;
         frontLine = front;
+        this.sent = sent;
         mapIndex = 1;
         finishedPath = false;
         GetNextMapPosition();
@@ -48,7 +50,9 @@ public class Alien : NetworkBehaviour
     {
         if (finishedPath) return;
         List<Vector2> path;
-        if (frontLine) path = GameController.Instance.Map.frontLinePath;
+        if (frontLine && sent) path = GameController.Instance.Map.frontLineSentPath;
+        else if (!frontLine && sent) path = GameController.Instance.Map.backLineSentPath;
+        else if (frontLine && !sent) path = GameController.Instance.Map.frontLinePath;
         else path = GameController.Instance.Map.backLinePath;
 
         if (mapIndex < path.Count)
@@ -59,8 +63,11 @@ public class Alien : NetworkBehaviour
 
         finishedPath = true;
         List<MapEndRegion> ends;
-        if (frontLine) ends = GameController.Instance.Map.frontLineEnds;
+        if (frontLine && sent) ends = GameController.Instance.Map.frontLineSentEnds;
+        else if (!frontLine && sent) ends = GameController.Instance.Map.backLineSentEnds;
+        else if (frontLine && !sent) ends = GameController.Instance.Map.frontLineEnds;
         else ends = GameController.Instance.Map.backLineEnds;
+
         MapEndRegion region = ends[Random.Range(0, ends.Count)];
         Vector2 regionExtents = region.bounds / 2f;
         // the region's relative center + some random x and y + world center

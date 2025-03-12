@@ -34,6 +34,8 @@ public class GameController : MonoBehaviour
     public Map Map => map;
     Vector2 frontLineSpawn = Vector2.zero;
     Vector2 backLineSpawn = Vector2.zero;
+    Vector2 frontLineSentSpawn = Vector2.zero;
+    Vector2 backLineSentSpawn = Vector2.zero;
 
     private bool oneLineDone;
     // positive value indicates that a wave has just finished and game is now waiting to spawn the next
@@ -144,6 +146,8 @@ public class GameController : MonoBehaviour
 
         frontLineSpawn = map.frontLinePath[0];
         backLineSpawn = map.backLinePath[0];
+        frontLineSentSpawn = map.frontLineSentPath[0];
+        backLineSentSpawn = map.backLineSentPath[0];
         betweenWaveTimer = maxWaveTimer;
     }
 
@@ -155,7 +159,8 @@ public class GameController : MonoBehaviour
         {
             for (int i = 0; i < component.count; i++)
             {
-                SpawnAlien(component.alien, front);
+                SpawnAlien(component.alien, 1, front, false);
+                SpawnAlien(component.alien, 2, front, false);
                 yield return new WaitForSeconds(component.spawnDelay);
             }
             yield return new WaitForSeconds(component.afterSpawnDelay);
@@ -173,31 +178,15 @@ public class GameController : MonoBehaviour
         yield return null;
     }
 
-    void SpawnAlien(GameObject alien, bool front)
+    void SpawnAlien(GameObject alien, int player, bool front, bool sent)
     {
-        GameObject g1 = Instantiate(alien);
-        g1.GetComponent<NetworkObject>().Spawn();
-        if (front)
-        {
-            g1.transform.position = world1.transform.position + (Vector3)frontLineSpawn;
-        }
-        else
-        {
-            g1.transform.position = world1.transform.position + (Vector3)backLineSpawn;
-        }
-        g1.GetComponent<Alien>().Initialize(front, 1);
-
-        GameObject g2 = Instantiate(alien);
-        g2.GetComponent<NetworkObject>().Spawn();
-        if (front)
-        {
-            g2.transform.position = world2.transform.position + (Vector3)frontLineSpawn;
-        }
-        else
-        {
-            g2.transform.position = world2.transform.position + (Vector3)backLineSpawn;
-        }
-        g2.GetComponent<Alien>().Initialize(front, 2);
+        GameObject g = Instantiate(alien);
+        g.GetComponent<NetworkObject>().Spawn();
+        if (front && sent) g.transform.position = GetWorldCenter(player) + frontLineSentSpawn;
+        else if (!front && sent) g.transform.position = GetWorldCenter(player) + backLineSentSpawn;
+        else if (front && !sent) g.transform.position = GetWorldCenter(player) + frontLineSpawn;
+        else g.transform.position = GetWorldCenter(player) + backLineSpawn;
+        g.GetComponent<Alien>().Initialize(front, sent, 1);
     }
 
     public Vector2 GetWorldCenter(int world)

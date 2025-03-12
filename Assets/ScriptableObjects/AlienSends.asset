@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6d024d61485d4b21b8d5a962a96e18c, type: 3}
+  m_Name: AlienSends
+  m_EditorClassIdentifier: 
+  sends:
+  - unlockWave: 1
+    cost: 100
+    alien: {fileID: 7635512465832564758, guid: d9301f1c364a1654f8e35215e28a2ed0, type: 3}
+    count: 1
+    incomeChange: 10
+    delayBeforeSend: 1
+    delayBetweenSends: 0
+  - unlockWave: 2
+    cost: 120
+    alien: {fileID: 7635512465832564758, guid: d9301f1c364a1654f8e35215e28a2ed0, type: 3}
+    count: 1
+    incomeChange: 10
+    delayBeforeSend: 0.3
+    delayBetweenSends: 0
+  - unlockWave: 2
+    cost: 500
+    alien: {fileID: 7635512465832564758, guid: d9301f1c364a1654f8e35215e28a2ed0, type: 3}
+    count: 4
+    incomeChange: 40
+    delayBeforeSend: 0.2
+    delayBetweenSends: 0.2

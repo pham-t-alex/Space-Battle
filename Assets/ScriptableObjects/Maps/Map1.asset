@@ -26,9 +26,29 @@ MonoBehaviour:
   - {x: 2, y: 3}
   - {x: -2, y: 4}
   - {x: 0, y: 4.5}
+  frontLineSentPath:
+  - {x: 3, y: 3}
+  - {x: -2, y: 2}
+  - {x: 2, y: 1}
+  - {x: -2, y: 1}
+  - {x: 2, y: 2}
+  - {x: 0, y: 2.5}
+  backLineSentPath:
+  - {x: 3, y: 5}
+  - {x: -2, y: 4}
+  - {x: 2, y: 3}
+  - {x: -2, y: 3}
+  - {x: 2, y: 4}
+  - {x: 0, y: 4.5}
   frontLineEnds:
-  - center: {x: 0, y: 3.5}
+  - center: {x: 0, y: 2.5}
     bounds: {x: 5, y: 0}
   backLineEnds:
+  - center: {x: 0, y: 4.5}
+    bounds: {x: 5, y: 0}
+  frontLineSentEnds:
+  - center: {x: 0, y: 2.5}
+    bounds: {x: 5, y: 0}
+  backLineSentEnds:
   - center: {x: 0, y: 4.5}
     bounds: {x: 5, y: 0}

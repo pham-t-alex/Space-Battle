@@ -92,7 +92,6 @@ public class Player : NetworkBehaviour
 
     public void Move()
     {
-        Debug.Log(rb);
         if (IsServer)
         {
             rb.MovePosition(new Vector2(Mathf.Clamp(rb.position.x + movement * speed * Time.fixedDeltaTime, leftBound, rightBound), rb.position.y));
