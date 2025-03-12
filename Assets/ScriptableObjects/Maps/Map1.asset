@@ -26,3 +26,9 @@ MonoBehaviour:
   - {x: 2, y: 3}
   - {x: -2, y: 4}
   - {x: 0, y: 4.5}
+  frontLineEnds:
+  - center: {x: 0, y: 3.5}
+    bounds: {x: 5, y: 0}
+  backLineEnds:
+  - center: {x: 0, y: 4.5}
+    bounds: {x: 5, y: 0}

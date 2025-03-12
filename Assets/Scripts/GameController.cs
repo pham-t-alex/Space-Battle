@@ -31,6 +31,7 @@ public class GameController : MonoBehaviour
 
     [SerializeField] private List<Wave> waves = new List<Wave>();
     [SerializeField] private Map map;
+    public Map Map => map;
     Vector2 frontLineSpawn = Vector2.zero;
     Vector2 backLineSpawn = Vector2.zero;
 
@@ -69,10 +70,10 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        UpdateWaveTimer(Time.deltaTime);
+        UpdateWaveTimer();
     }
 
-    public void UpdateWaveTimer(float deltaTime)
+    public void UpdateWaveTimer()
     {
         if (!NetworkManager.Singleton.IsServer)
         {
@@ -82,7 +83,7 @@ public class GameController : MonoBehaviour
         {
             return;
         }
-        betweenWaveTimer -= deltaTime;
+        betweenWaveTimer -= Time.deltaTime;
         if (betweenWaveTimer <= 0)
         {
             betweenWaveTimer = 0;
@@ -184,6 +185,7 @@ public class GameController : MonoBehaviour
         {
             g1.transform.position = world1.transform.position + (Vector3)backLineSpawn;
         }
+        g1.GetComponent<Alien>().Initialize(front, 1);
 
         GameObject g2 = Instantiate(alien);
         g2.GetComponent<NetworkObject>().Spawn();
@@ -194,6 +196,20 @@ public class GameController : MonoBehaviour
         else
         {
             g2.transform.position = world2.transform.position + (Vector3)backLineSpawn;
+        }
+        g2.GetComponent<Alien>().Initialize(front, 2);
+    }
+
+    public Vector2 GetWorldCenter(int world)
+    {
+        switch (world)
+        {
+            case 1:
+                return world1.transform.position;
+            case 2:
+                return world2.transform.position;
+            default:
+                return Vector2.zero;
         }
     }
 }
