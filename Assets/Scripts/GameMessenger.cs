@@ -35,16 +35,16 @@ public class GameMessenger : NetworkBehaviour
         GameUI.Setup(player);
     }
 
-    public void SendAliens(int sendIndex)
+    public void SendAliens(int sendIndex, bool front)
     {
         if (!IsOwner) return;
-        SendAliensRpc(sendIndex, default);
+        SendAliensRpc(sendIndex, front, default);
     }
 
     [Rpc(SendTo.Server)]
-    public void SendAliensRpc(int sendIndex, RpcParams rpcParams)
+    public void SendAliensRpc(int sendIndex, bool front, RpcParams rpcParams)
     {
         ulong clientId = rpcParams.Receive.SenderClientId;
-        GameController.Instance.TrySendAliens(clientId, sendIndex);
+        GameController.Instance.TrySendAliens(clientId, sendIndex, front);
     }
 }

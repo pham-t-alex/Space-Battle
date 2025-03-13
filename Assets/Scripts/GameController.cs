@@ -29,6 +29,10 @@ public class GameController : MonoBehaviour
     private ulong p1ID = 0;
     private ulong p2ID = 0;
 
+    [SerializeField] private AlienSends alienSends;
+    private List<(AlienSend, bool)> p1Sends;
+    private List<(AlienSend, bool)> p2Sends;
+
     [SerializeField] private List<Wave> waves = new List<Wave>();
     [SerializeField] private Map map;
     public Map Map => map;
@@ -178,6 +182,22 @@ public class GameController : MonoBehaviour
         yield return null;
     }
 
+    // Handles player send spawning
+    IEnumerator SpawnSendCoroutine(int player, AlienSend send, bool front)
+    {
+        yield return new WaitForSeconds(send.delayBeforeSend);
+        for (int i = 0; i < send.count; i++)
+        {
+            if (player == 1) SpawnAlien(send.alien, 2, front, true);
+            else SpawnAlien(send.alien, 1, front, true);
+            if (i < send.count - 1)
+            {
+                yield return new WaitForSeconds(send.delayBetweenSends);
+            }
+        }
+        yield return null;
+    }
+
     void SpawnAlien(GameObject alien, int player, bool front, bool sent)
     {
         GameObject g = Instantiate(alien);
@@ -202,8 +222,29 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public void TrySendAliens(ulong clientId, int sendIndex)
+    public bool TrySendAliens(ulong clientId, int sendIndex, bool front)
     {
-        if (!NetworkManager.Singleton.IsServer) return;
+        if (!NetworkManager.Singleton.IsServer) return false;
+        int sender = 0;
+        if (clientId == p1ID) sender = 1;
+        else if (clientId == p2ID) sender = 2;
+        else return false;
+
+        if (sendIndex >= alienSends.sends.Count) return false;
+        AlienSend send = alienSends.sends[sendIndex];
+
+        // sender can only be 1 or 2
+        if ((sender == 1 && p1Sends.Count >= 5) ||
+            p2Sends.Count >= 5) return false;
+        // spends money if possible
+        if (!MoneyController.Instance.ChangeMoney(sender, -send.cost)) return false;
+
+        // once this point is reached, it's a valid send
+        MoneyController.Instance.ChangeIncome(sender, send.incomeChange);
+        // add send to queue
+        if (sender == 1) p1Sends.Add((send, front));
+        else p2Sends.Add((send, front));
+
+        return true;
     }
 }

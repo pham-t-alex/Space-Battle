@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Netcode;
+using System;
 
 public class MoneyController : MonoBehaviour
 {
@@ -22,6 +23,16 @@ public class MoneyController : MonoBehaviour
     [SerializeField] private int startingIncome = 100;
     [SerializeField] private float maxIncomeTimeSec = 6;
     private float incomeTimeSec = 0;
+
+    private int p1Money;
+    private int p2Money;
+    private int p1Income;
+    private int p2Income;
+
+    public event Action<int> P1InternalMoneyUpdate;
+    public event Action<int> P2InternalMoneyUpdate;
+    public event Action<int> P1InternalIncomeUpdate;
+    public event Action<int> P2InternalIncomeUpdate;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -64,44 +75,82 @@ public class MoneyController : MonoBehaviour
 
     public void Setup()
     {
-        GameState.P1Money = startingMoney;
-        GameState.P2Money = startingMoney;
-        GameState.P1Income = startingIncome;
-        GameState.P2Income = startingIncome;
+        SetMoney(1, startingMoney);
+        SetMoney(2, startingMoney);
+        SetIncome(1, startingIncome);
+        SetIncome(2, startingIncome);
         incomeTimeSec = maxIncomeTimeSec;
     }
 
     public void TriggerIncome()
     {
         Debug.Log("Triggering Income");
-        // Player 1
-        ChangeMoney(1, GameState.P1Money + GameState.P1Income);
-        // Player 2
-        ChangeMoney(2, GameState.P2Money + GameState.P2Income);
+        ChangeMoney(1, p1Income);
+        ChangeMoney(2, p2Income);
     }
 
-    public void ChangeMoney(int player, int newMoney)
+    // returns true if successful
+    public bool ChangeMoney(int player, int money)
     {
         switch (player)
         {
             case 1:
-                GameState.P1Money = newMoney;
+                if (p1Money + money < 0) return false;
+                SetMoney(1, p1Money + money);
+                return true;
+            case 2:
+                if (p2Money + money < 0) return false;
+                SetMoney(2, p2Money + money);
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    void SetMoney(int player, int newMoney)
+    {
+        switch (player)
+        {
+            case 1:
+                p1Money = newMoney;
+                P1InternalMoneyUpdate?.Invoke(p1Money);
                 break;
             case 2:
-                GameState.P2Money = newMoney;
+                p2Money = newMoney;
+                P2InternalMoneyUpdate?.Invoke(p2Money);
                 break;
         }
     }
 
-    public void ChangeIncome(int player, int newIncome)
+    // returns true if successful
+    public bool ChangeIncome(int player, int income)
     {
         switch (player)
         {
             case 1:
-                GameState.P1Income = newIncome;
+                if (p1Income + income < 0) return false;
+                SetIncome(1, p1Income + income);
+                return true;
+            case 2:
+                if (p2Income + income < 0) return false;
+                SetIncome(2, p2Income + income);
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    void SetIncome(int player, int newIncome)
+    {
+        switch (player)
+        {
+            case 1:
+                p1Income = newIncome;
+                P1InternalIncomeUpdate?.Invoke(p1Income);
                 break;
             case 2:
-                GameState.P2Income = newIncome;
+                p2Income = newIncome;
+                P2InternalIncomeUpdate?.Invoke(p2Income);
                 break;
         }
     }

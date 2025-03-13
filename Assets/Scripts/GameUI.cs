@@ -8,6 +8,8 @@ public class GameUI : MonoBehaviour
     [SerializeField] private GameObject moneyText;
     [SerializeField] private GameObject incomeText;
 
+    private bool sendFrontLineSet = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -60,6 +62,6 @@ public class GameUI : MonoBehaviour
 
     public void SendAliens(int sendIndex)
     {
-        GameMessenger.Instance.SendAliensRpc(sendIndex);
+        GameMessenger.Instance.SendAliens(sendIndex, sendFrontLineSet);
     }
 }
