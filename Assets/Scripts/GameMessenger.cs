@@ -37,7 +37,6 @@ public class GameMessenger : NetworkBehaviour
 
     public void SendAliens(int sendIndex, bool front)
     {
-        if (!IsOwner) return;
         SendAliensRpc(sendIndex, front, default);
     }
 

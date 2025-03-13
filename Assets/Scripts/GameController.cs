@@ -30,8 +30,8 @@ public class GameController : MonoBehaviour
     private ulong p2ID = 0;
 
     [SerializeField] private AlienSends alienSends;
-    private List<(AlienSend, bool)> p1Sends;
-    private List<(AlienSend, bool)> p2Sends;
+    private List<(AlienSend, bool)> p1Sends = new List<(AlienSend, bool)> ();
+    private List<(AlienSend, bool)> p2Sends = new List<(AlienSend, bool)> ();
 
     [SerializeField] private List<Wave> waves = new List<Wave>();
     [SerializeField] private Map map;
@@ -47,6 +47,9 @@ public class GameController : MonoBehaviour
     [SerializeField] private float maxWaveTimer;
 
     int wave = 0;
+
+    private bool busySpawningP1Sends;
+    private bool busySpawningP2Sends;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -183,8 +186,21 @@ public class GameController : MonoBehaviour
     }
 
     // Handles player send spawning
-    IEnumerator SpawnSendCoroutine(int player, AlienSend send, bool front)
+    // SHOULD NOT BE CALLED IF QUEUE IS EMPTY
+    IEnumerator SpawnSendCoroutine(int player)
     {
+        AlienSend send;
+        bool front;
+        if (player == 1)
+        {
+            send = p1Sends[0].Item1;
+            front = p1Sends[0].Item2;
+        }
+        else
+        {
+            send = p2Sends[0].Item1;
+            front = p2Sends[0].Item2;
+        }
         yield return new WaitForSeconds(send.delayBeforeSend);
         for (int i = 0; i < send.count; i++)
         {
@@ -195,6 +211,17 @@ public class GameController : MonoBehaviour
                 yield return new WaitForSeconds(send.delayBetweenSends);
             }
         }
+        if (player == 1)
+        {
+            p1Sends.RemoveAt(0);
+            busySpawningP1Sends = false;
+        }
+        else
+        {
+            p2Sends.RemoveAt(0);
+            busySpawningP2Sends = false;
+        }
+        TrySendQueue(player);
         yield return null;
     }
 
@@ -244,7 +271,27 @@ public class GameController : MonoBehaviour
         // add send to queue
         if (sender == 1) p1Sends.Add((send, front));
         else p2Sends.Add((send, front));
+        TrySendQueue(sender);
 
         return true;
+    }
+
+    // tells the player queue to send (as opposed to checking at every update if the queue is nonempty)
+    public void TrySendQueue(int player)
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+        switch (player)
+        {
+            case 1:
+                if (p1Sends.Count == 0 || busySpawningP1Sends) return;
+                busySpawningP1Sends = true;
+                StartCoroutine(SpawnSendCoroutine(player));
+                break;
+            case 2:
+                if (p2Sends.Count == 0 || busySpawningP2Sends) return;
+                busySpawningP2Sends = true;
+                StartCoroutine(SpawnSendCoroutine(player));
+                break;
+        }
     }
 }
