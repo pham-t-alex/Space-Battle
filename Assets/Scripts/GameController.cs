@@ -186,7 +186,7 @@ public class GameController : MonoBehaviour
         else if (!front && sent) g.transform.position = GetWorldCenter(player) + backLineSentSpawn;
         else if (front && !sent) g.transform.position = GetWorldCenter(player) + frontLineSpawn;
         else g.transform.position = GetWorldCenter(player) + backLineSpawn;
-        g.GetComponent<Alien>().Initialize(front, sent, 1);
+        g.GetComponent<Alien>().Initialize(front, sent, player);
     }
 
     public Vector2 GetWorldCenter(int world)
@@ -200,5 +200,10 @@ public class GameController : MonoBehaviour
             default:
                 return Vector2.zero;
         }
+    }
+
+    public void TrySendAliens(ulong clientId, int sendIndex)
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
     }
 }

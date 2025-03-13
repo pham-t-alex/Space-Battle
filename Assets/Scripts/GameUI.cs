@@ -57,4 +57,9 @@ public class GameUI : MonoBehaviour
             incomeText.GetComponent<TMP_Text>().text = "" + income;
         }
     }
+
+    public void SendAliens(int sendIndex)
+    {
+        GameMessenger.Instance.SendAliensRpc(sendIndex);
+    }
 }
