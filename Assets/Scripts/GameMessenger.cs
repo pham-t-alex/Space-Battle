@@ -24,6 +24,7 @@ public class GameMessenger : NetworkBehaviour
 
     public void GameUISetup(ulong client1, ulong client2)
     {
+        if (!IsServer) return;
         GameUISetupRpc(1, RpcTarget.Single(client1, RpcTargetUse.Temp));
         GameUISetupRpc(2, RpcTarget.Single(client2, RpcTargetUse.Temp));
     }
@@ -32,5 +33,17 @@ public class GameMessenger : NetworkBehaviour
     public void GameUISetupRpc(int player, RpcParams rpcParams)
     {
         GameUI.Setup(player);
+    }
+
+    public void SendAliens(int sendIndex, bool front)
+    {
+        SendAliensRpc(sendIndex, front, default);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void SendAliensRpc(int sendIndex, bool front, RpcParams rpcParams)
+    {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        GameController.Instance.TrySendAliens(clientId, sendIndex, front);
     }
 }

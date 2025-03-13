@@ -29,11 +29,17 @@ public class GameController : MonoBehaviour
     private ulong p1ID = 0;
     private ulong p2ID = 0;
 
+    [SerializeField] private AlienSends alienSends;
+    private List<(AlienSend, bool)> p1Sends = new List<(AlienSend, bool)> ();
+    private List<(AlienSend, bool)> p2Sends = new List<(AlienSend, bool)> ();
+
     [SerializeField] private List<Wave> waves = new List<Wave>();
     [SerializeField] private Map map;
     public Map Map => map;
     Vector2 frontLineSpawn = Vector2.zero;
     Vector2 backLineSpawn = Vector2.zero;
+    Vector2 frontLineSentSpawn = Vector2.zero;
+    Vector2 backLineSentSpawn = Vector2.zero;
 
     private bool oneLineDone;
     // positive value indicates that a wave has just finished and game is now waiting to spawn the next
@@ -41,6 +47,9 @@ public class GameController : MonoBehaviour
     [SerializeField] private float maxWaveTimer;
 
     int wave = 0;
+
+    private bool busySpawningP1Sends;
+    private bool busySpawningP2Sends;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -144,6 +153,8 @@ public class GameController : MonoBehaviour
 
         frontLineSpawn = map.frontLinePath[0];
         backLineSpawn = map.backLinePath[0];
+        frontLineSentSpawn = map.frontLineSentPath[0];
+        backLineSentSpawn = map.backLineSentPath[0];
         betweenWaveTimer = maxWaveTimer;
     }
 
@@ -155,7 +166,8 @@ public class GameController : MonoBehaviour
         {
             for (int i = 0; i < component.count; i++)
             {
-                SpawnAlien(component.alien, front);
+                SpawnAlien(component.alien, 1, front, false);
+                SpawnAlien(component.alien, 2, front, false);
                 yield return new WaitForSeconds(component.spawnDelay);
             }
             yield return new WaitForSeconds(component.afterSpawnDelay);
@@ -173,31 +185,55 @@ public class GameController : MonoBehaviour
         yield return null;
     }
 
-    void SpawnAlien(GameObject alien, bool front)
+    // Handles player send spawning
+    // SHOULD NOT BE CALLED IF QUEUE IS EMPTY
+    IEnumerator SpawnSendCoroutine(int player)
     {
-        GameObject g1 = Instantiate(alien);
-        g1.GetComponent<NetworkObject>().Spawn();
-        if (front)
+        AlienSend send;
+        bool front;
+        if (player == 1)
         {
-            g1.transform.position = world1.transform.position + (Vector3)frontLineSpawn;
+            send = p1Sends[0].Item1;
+            front = p1Sends[0].Item2;
         }
         else
         {
-            g1.transform.position = world1.transform.position + (Vector3)backLineSpawn;
+            send = p2Sends[0].Item1;
+            front = p2Sends[0].Item2;
         }
-        g1.GetComponent<Alien>().Initialize(front, 1);
+        yield return new WaitForSeconds(send.delayBeforeSend);
+        for (int i = 0; i < send.count; i++)
+        {
+            if (player == 1) SpawnAlien(send.alien, 2, front, true);
+            else SpawnAlien(send.alien, 1, front, true);
+            if (i < send.count - 1)
+            {
+                yield return new WaitForSeconds(send.delayBetweenSends);
+            }
+        }
+        if (player == 1)
+        {
+            p1Sends.RemoveAt(0);
+            busySpawningP1Sends = false;
+        }
+        else
+        {
+            p2Sends.RemoveAt(0);
+            busySpawningP2Sends = false;
+        }
+        TrySendQueue(player);
+        yield return null;
+    }
 
-        GameObject g2 = Instantiate(alien);
-        g2.GetComponent<NetworkObject>().Spawn();
-        if (front)
-        {
-            g2.transform.position = world2.transform.position + (Vector3)frontLineSpawn;
-        }
-        else
-        {
-            g2.transform.position = world2.transform.position + (Vector3)backLineSpawn;
-        }
-        g2.GetComponent<Alien>().Initialize(front, 2);
+    void SpawnAlien(GameObject alien, int player, bool front, bool sent)
+    {
+        GameObject g = Instantiate(alien);
+        g.GetComponent<NetworkObject>().Spawn();
+        if (front && sent) g.transform.position = GetWorldCenter(player) + frontLineSentSpawn;
+        else if (!front && sent) g.transform.position = GetWorldCenter(player) + backLineSentSpawn;
+        else if (front && !sent) g.transform.position = GetWorldCenter(player) + frontLineSpawn;
+        else g.transform.position = GetWorldCenter(player) + backLineSpawn;
+        g.GetComponent<Alien>().Initialize(front, sent, player);
     }
 
     public Vector2 GetWorldCenter(int world)
@@ -210,6 +246,52 @@ public class GameController : MonoBehaviour
                 return world2.transform.position;
             default:
                 return Vector2.zero;
+        }
+    }
+
+    public bool TrySendAliens(ulong clientId, int sendIndex, bool front)
+    {
+        if (!NetworkManager.Singleton.IsServer) return false;
+        int sender = 0;
+        if (clientId == p1ID) sender = 1;
+        else if (clientId == p2ID) sender = 2;
+        else return false;
+
+        if (sendIndex >= alienSends.sends.Count) return false;
+        AlienSend send = alienSends.sends[sendIndex];
+
+        // sender can only be 1 or 2
+        if ((sender == 1 && p1Sends.Count >= 5) ||
+            p2Sends.Count >= 5) return false;
+        // spends money if possible
+        if (!MoneyController.Instance.ChangeMoney(sender, -send.cost)) return false;
+
+        // once this point is reached, it's a valid send
+        MoneyController.Instance.ChangeIncome(sender, send.incomeChange);
+        // add send to queue
+        if (sender == 1) p1Sends.Add((send, front));
+        else p2Sends.Add((send, front));
+        TrySendQueue(sender);
+
+        return true;
+    }
+
+    // tells the player queue to send (as opposed to checking at every update if the queue is nonempty)
+    public void TrySendQueue(int player)
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+        switch (player)
+        {
+            case 1:
+                if (p1Sends.Count == 0 || busySpawningP1Sends) return;
+                busySpawningP1Sends = true;
+                StartCoroutine(SpawnSendCoroutine(player));
+                break;
+            case 2:
+                if (p2Sends.Count == 0 || busySpawningP2Sends) return;
+                busySpawningP2Sends = true;
+                StartCoroutine(SpawnSendCoroutine(player));
+                break;
         }
     }
 }
