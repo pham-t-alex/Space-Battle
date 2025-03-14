@@ -53,7 +53,7 @@ public class GameState : NetworkBehaviour
             MoneyController.Instance.P1InternalMoneyUpdate += SetP1Money;
             MoneyController.Instance.P2InternalMoneyUpdate += SetP2Money;
             MoneyController.Instance.P1InternalIncomeUpdate += SetP1Income;
-            MoneyController.Instance.P2InternalMoneyUpdate += SetP2Income;
+            MoneyController.Instance.P2InternalIncomeUpdate += SetP2Income;
         }
         else
         {
