@@ -1,9 +1,7 @@
 using UnityEngine;
 using Unity.Netcode;
-using UnityEditor.Build.Content;
 using System.Collections.Generic;
 using System.Collections;
-using NUnit.Framework.Constraints;
 
 public class GameController : MonoBehaviour
 {
@@ -121,12 +119,14 @@ public class GameController : MonoBehaviour
         if (playerCount == 0)
         {
             world1.PlayerSetup(p);
+            p.PlayerDeathEvent += () => HandlePlayerDeath(1);
             p1ID = id;
             playerCount++;
         }
         else if (playerCount == 1)
         {
             world2.PlayerSetup(p);
+            p.PlayerDeathEvent += () => HandlePlayerDeath(2);
             p2ID = id;
             playerCount++;
             StartGame();
@@ -156,6 +156,12 @@ public class GameController : MonoBehaviour
         frontLineSentSpawn = map.frontLineSentPath[0];
         backLineSentSpawn = map.backLineSentPath[0];
         betweenWaveTimer = maxWaveTimer;
+    }
+
+    // Player is only 1 or 2
+    void HandlePlayerDeath(int player)
+    {
+
     }
 
     // Spawns a wave

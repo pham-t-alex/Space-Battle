@@ -1,9 +1,6 @@
 using UnityEngine;
 using Unity.Netcode;
-using UnityEngine.InputSystem;
-using UnityEditor.ShaderGraph.Internal;
-using UnityEngine.Experimental.AI;
-using Unity.VisualScripting;
+using System;
 
 [RequireComponent(typeof(Collider2D))]
 public class Player : NetworkBehaviour
@@ -21,6 +18,8 @@ public class Player : NetworkBehaviour
     [SerializeField] private GameObject gun;
 
     private Rigidbody2D rb;
+
+    public event Action PlayerDeathEvent;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -113,13 +112,22 @@ public class Player : NetworkBehaviour
 
     public void Damage(int damage)
     {
-        if (IsServer)
+        if (!IsServer) return;
+        health.Value -= damage;
+        if (health.Value < 0)
         {
-            health.Value -= damage;
-            if (health.Value < 0)
-            {
-                Destroy(gameObject);
-            }
+            Die();
         }
+    }
+
+    public void Die()
+    {
+        if (!IsServer) return;
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            Destroy(transform.GetChild(0).gameObject);
+        }
+        PlayerDeathEvent?.Invoke();
+        Destroy(gameObject);
     }
 }
