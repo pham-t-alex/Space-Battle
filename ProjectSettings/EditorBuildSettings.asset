@@ -11,6 +11,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/NGO_Minimal_Setup/NGO_Setup.unity
     guid: d982983199e70aa42a166a4deeeb0356
+  - enabled: 1
+    path: Assets/Widgets/Scenes/WidgetsQuickstart.unity
+    guid: 4a935c6c82a023b4fbb95bd3de997b93
+  - enabled: 1
+    path: Assets/Scenes/Lobby.unity
+    guid: 66e6273c6afe9f14ea64f19c739594c9
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

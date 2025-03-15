@@ -7,6 +7,11 @@ public class GameMessenger : NetworkBehaviour
     private static GameMessenger _instance;
     public static GameMessenger Instance => _instance;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private void Awake()
+    {
+        _instance = this;
+    }
+
     void Start()
     {
         
@@ -14,7 +19,7 @@ public class GameMessenger : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        _instance = this;
+        
     }
 
     // Update is called once per frame

@@ -12,7 +12,7 @@ public class World : MonoBehaviour
 
     private void Awake()
     {
-        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsClient)
+        if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer)
         {
             Destroy(gameObject);
         }
