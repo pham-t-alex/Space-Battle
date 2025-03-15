@@ -23,14 +23,18 @@ public class GameUI : MonoBehaviour
         }
     }
 
+    [SerializeField] private GameObject gameEndScreen;
+
     // Update is called once per frame
     void Update()
     {
 
     }
 
+    // Client side setup
     public static void Setup(int player)
     {
+        GameMessenger.Instance.ClientGameEndUpdate += _instance.TriggerGameEnd;
         switch (player)
         {
             case 1:
@@ -63,5 +67,12 @@ public class GameUI : MonoBehaviour
     public void SendAliens(int sendIndex)
     {
         GameMessenger.Instance.SendAliens(sendIndex, sendFrontLineSet);
+    }
+
+    // True - trigger victory; False - trigger defeat
+    public void TriggerGameEnd(bool victorious)
+    {
+        gameEndScreen.SetActive(true);
+        gameEndScreen.GetComponent<GameEndScreen>().TriggerGameEnd(victorious);
     }
 }

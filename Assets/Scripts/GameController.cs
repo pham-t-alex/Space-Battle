@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Netcode;
 using System.Collections.Generic;
 using System.Collections;
+using System;
 
 public class GameController : MonoBehaviour
 {
@@ -48,6 +49,8 @@ public class GameController : MonoBehaviour
 
     private bool busySpawningP1Sends;
     private bool busySpawningP2Sends;
+
+    private bool gameOver = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -137,6 +140,21 @@ public class GameController : MonoBehaviour
         }
     }
 
+    // player parameter is the player that died
+    public void HandlePlayerDeath(int player)
+    {
+        if (gameOver) return;
+        gameOver = true;
+        if (player == 1)
+        {
+            GameMessenger.Instance.TriggerGameEnd(p1ID, p2ID, 2);
+        }
+        else
+        {
+            GameMessenger.Instance.TriggerGameEnd(p1ID, p2ID, 1);
+        }
+    }
+
     // Called when both players join
     // Starts the game
     void StartGame()
@@ -156,12 +174,6 @@ public class GameController : MonoBehaviour
         frontLineSentSpawn = map.frontLineSentPath[0];
         backLineSentSpawn = map.backLineSentPath[0];
         betweenWaveTimer = maxWaveTimer;
-    }
-
-    // Player is only 1 or 2
-    void HandlePlayerDeath(int player)
-    {
-
     }
 
     // Spawns a wave
