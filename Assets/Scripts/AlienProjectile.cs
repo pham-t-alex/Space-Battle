@@ -10,7 +10,7 @@ public abstract class AlienProjectile : NetworkBehaviour
         {
             rb = GetComponent<Rigidbody2D>();
         }
-        if (IsClient)
+        if (!IsServer)
         {
             Destroy(GetComponent<Rigidbody2D>());
         }

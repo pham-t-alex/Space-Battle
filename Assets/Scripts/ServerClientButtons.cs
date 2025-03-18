@@ -18,12 +18,15 @@ public class ServerClientButtons : MonoBehaviour
     public void StartClient()
     {
         NetworkManager.Singleton.StartClient();
-        Destroy(gameObject);
     }
 
-    public void StartServer()
+    public void StartHost()
     {
-        NetworkManager.Singleton.StartServer();
-        Destroy(gameObject);
+        NetworkManager.Singleton.StartHost();
+    }
+
+    public void StartGame()
+    {
+        NetworkManager.Singleton.SceneManager.LoadScene("SpaceBattle", UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
 }

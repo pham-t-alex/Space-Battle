@@ -37,23 +37,7 @@ public class MoneyController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if (NetworkManager.Singleton != null)
-        {
-            NetworkManager.Singleton.OnClientConnectedCallback += DestroyOnConnect;
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (NetworkManager.Singleton != null)
-        {
-            NetworkManager.Singleton.OnClientConnectedCallback -= DestroyOnConnect;
-        }
-    }
-
-    private void DestroyOnConnect(ulong clientId)
-    {
-        if (clientId == NetworkManager.Singleton.LocalClientId)
+        if (!NetworkManager.Singleton.IsServer)
         {
             Destroy(gameObject);
         }

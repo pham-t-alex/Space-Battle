@@ -10,17 +10,15 @@ public class GameUI : MonoBehaviour
 
     private bool sendFrontLineSet = false;
 
+    private void Awake()
+    {
+        _instance = this;
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if (_instance == null)
-        {
-            _instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+
     }
 
     [SerializeField] private GameObject gameEndScreen;

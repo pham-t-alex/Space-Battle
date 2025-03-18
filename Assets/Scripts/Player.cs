@@ -24,7 +24,7 @@ public class Player : NetworkBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+
     }
 
     public override void OnNetworkSpawn()
@@ -33,18 +33,16 @@ public class Player : NetworkBehaviour
         {
             controls = new InputSystem_Actions();
             controls.Enable();
-            SpawnServerRpc(NetworkObject.OwnerClientId);
         }
-        if (IsClient)
+        if (!IsServer)
         {
             Destroy(GetComponent<Rigidbody2D>());
         }
     }
 
-    [Rpc(SendTo.Server)]
-    public void SpawnServerRpc(ulong clientId)
+    public void Setup()
     {
-        GameController.Instance.SpawnPlayer(this, clientId);
+        if (!IsServer) return;
         rb = GetComponent<Rigidbody2D>();
         // TEMPORARY, REMOVE LATER
         SpawnGun();

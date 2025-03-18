@@ -10,7 +10,6 @@ public class GameState : NetworkBehaviour
     private static NetworkVariable<int> p1Income = new NetworkVariable<int>(0);
     private static NetworkVariable<int> p2Income = new NetworkVariable<int>(0);
 
-    /*
     public static int P1Money
     {
         set { p1Money.Value = value; }
@@ -33,7 +32,7 @@ public class GameState : NetworkBehaviour
     {
         set { p2Income.Value = value; }
         get { return p2Income.Value; }
-    }*/
+    }
 
     public static event Action<int> Player1MoneyUpdate;
     public static event Action<int> Player1IncomeUpdate;
@@ -43,11 +42,6 @@ public class GameState : NetworkBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
-    }
-
-    public override void OnNetworkSpawn()
-    {
         if (IsServer)
         {
             MoneyController.Instance.P1InternalMoneyUpdate += SetP1Money;
@@ -55,13 +49,18 @@ public class GameState : NetworkBehaviour
             MoneyController.Instance.P1InternalIncomeUpdate += SetP1Income;
             MoneyController.Instance.P2InternalIncomeUpdate += SetP2Income;
         }
-        else
+        if (IsClient)
         {
             p1Money.OnValueChanged += (oldVal, newVal) => Player1MoneyUpdate?.Invoke(newVal);
             p2Money.OnValueChanged += (oldVal, newVal) => Player2MoneyUpdate?.Invoke(newVal);
             p1Income.OnValueChanged += (oldVal, newVal) => Player1IncomeUpdate?.Invoke(newVal);
             p2Income.OnValueChanged += (oldVal, newVal) => Player2IncomeUpdate?.Invoke(newVal);
         }
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        
     }
 
     // Update is called once per frame

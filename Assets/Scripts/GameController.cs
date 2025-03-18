@@ -11,6 +11,10 @@ public class GameController : MonoBehaviour
 
     private void Awake()
     {
+        if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer)
+        {
+            Destroy(gameObject);
+        }
         if (instance == null)
         {
             instance = this;
@@ -52,28 +56,17 @@ public class GameController : MonoBehaviour
 
     private bool gameOver = false;
 
+    [SerializeField] private GameObject playerPrefab;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if (NetworkManager.Singleton != null)
+        foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
         {
-            NetworkManager.Singleton.OnClientConnectedCallback += DestroyOnConnect;
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (NetworkManager.Singleton != null)
-        {
-            NetworkManager.Singleton.OnClientConnectedCallback -= DestroyOnConnect;
-        }
-    }
-
-    private void DestroyOnConnect(ulong clientId)
-    {
-        if (clientId == NetworkManager.Singleton.LocalClientId)
-        {
-            Destroy(gameObject);
+            GameObject player = Instantiate(playerPrefab);
+            SpawnPlayer(player.GetComponent<Player>(), clientId);
+            player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
+            player.GetComponent<Player>().Setup();
         }
     }
 

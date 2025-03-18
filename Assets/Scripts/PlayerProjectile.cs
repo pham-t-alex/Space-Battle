@@ -1,6 +1,5 @@
 using UnityEngine;
 using Unity.Netcode;
-using UnityEditor.ShaderGraph;
 
 public abstract class PlayerProjectile : NetworkBehaviour
 {
@@ -11,7 +10,7 @@ public abstract class PlayerProjectile : NetworkBehaviour
         {
             rb = GetComponent<Rigidbody2D>();
         }
-        if (IsClient)
+        if (!IsServer)
         {
             Destroy(GetComponent<Rigidbody2D>());
         }
