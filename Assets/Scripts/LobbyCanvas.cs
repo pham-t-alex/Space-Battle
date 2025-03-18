@@ -43,7 +43,8 @@ public class LobbyCanvas : MonoBehaviour
     public async void StartSessionAsHost()
     {
         await SessionManager.Instance.StartSessionAsHost();
-        SessionManager.Instance.PlayerJoined += UpdatePlayerCount;
+        NetworkManager.Singleton.OnClientConnectedCallback += (val) => UpdatePlayerCount();
+        NetworkManager.Singleton.OnClientDisconnectCallback += (val) => UpdatePlayerCount();
         UpdatePlayerCount();
         codeText.text = $"Code: {SessionManager.Instance.JoinCode}";
         start.gameObject.SetActive(true);
@@ -52,7 +53,8 @@ public class LobbyCanvas : MonoBehaviour
     public async void JoinSession()
     {
         await SessionManager.Instance.JoinSessionByCode(sessionCode);
-        SessionManager.Instance.PlayerJoined += UpdatePlayerCount;
+        NetworkManager.Singleton.OnClientConnectedCallback += (val) => UpdatePlayerCount();
+        NetworkManager.Singleton.OnClientDisconnectCallback += (val) => UpdatePlayerCount();
         UpdatePlayerCount();
     }
 
@@ -63,6 +65,7 @@ public class LobbyCanvas : MonoBehaviour
 
     public void StartGame()
     {
+        if (NetworkManager.Singleton.ConnectedClientsIds.Count < 2) return;
         NetworkManager.Singleton.SceneManager.LoadScene("SpaceBattle", UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
 }

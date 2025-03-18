@@ -64,9 +64,9 @@ public class GameController : MonoBehaviour
         foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
         {
             GameObject player = Instantiate(playerPrefab);
+            SpawnPlayer(player.GetComponent<Player>(), clientId);
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
             player.GetComponent<Player>().Setup();
-            SpawnPlayer(player.GetComponent<Player>(), clientId);
         }
     }
 
