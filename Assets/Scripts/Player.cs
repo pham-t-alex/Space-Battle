@@ -112,7 +112,7 @@ public class Player : NetworkBehaviour
     {
         if (!IsServer) return;
         health.Value -= damage;
-        if (health.Value < 0)
+        if (health.Value <= 0)
         {
             Die();
         }
