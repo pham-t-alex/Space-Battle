@@ -22,6 +22,8 @@ public class GameUI : MonoBehaviour
     }
 
     [SerializeField] private GameObject gameEndScreen;
+    [SerializeField] private PlayerHealthbar p1Health;
+    [SerializeField] private PlayerHealthbar p2Health;
 
     // Update is called once per frame
     void Update()
@@ -42,6 +44,20 @@ public class GameUI : MonoBehaviour
             case 2:
                 GameState.Player2MoneyUpdate += _instance.UpdateMoney;
                 GameState.Player2IncomeUpdate += _instance.UpdateIncome;
+                break;
+        }
+    }
+
+    // Client side healthbar setup
+    public static void SetupHealthbar(Player p, int player, int maxHealth)
+    {
+        switch (player)
+        {
+            case 1:
+                _instance.p1Health.Initialize(p, maxHealth);
+                break;
+            case 2:
+                _instance.p2Health.Initialize(p, maxHealth);
                 break;
         }
     }

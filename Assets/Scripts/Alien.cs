@@ -1,6 +1,8 @@
 using UnityEngine;
 using Unity.Netcode;
 using System.Collections.Generic;
+using System;
+using Unity.Netcode.Components;
 
 public class Alien : NetworkBehaviour
 {
@@ -19,18 +21,36 @@ public class Alien : NetworkBehaviour
     private bool finishedPath = false;
     private int world = 0;
 
+    public event Action<int, int> HealthChange;
+    public event Action AlienClientDeathEvent;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
     }
 
     public override void OnNetworkSpawn()
     {
-        if (!IsServer)
+        health.OnValueChanged += (oldVal, newVal) => HealthChange?.Invoke(oldVal, newVal);
+        if (IsServer)
         {
-            return;
+            ServerSpawn();
         }
+        if (IsClient)
+        {
+            ClientSpawn();
+        }
+    }
+
+    void ClientSpawn()
+    {
+        AlienHealthbar bar = Instantiate(ClientPrefabs.Instance.AlienHealthbarPrefab).GetComponent<AlienHealthbar>();
+        bar.Initialize(this, maxHealth);
+    }
+
+    void ServerSpawn()
+    {
         health.Value = maxHealth;
         reloadTimeLeft = reloadTime;
     }
@@ -68,10 +88,10 @@ public class Alien : NetworkBehaviour
         else if (frontLine && !sent) ends = GameController.Instance.Map.frontLineEnds;
         else ends = GameController.Instance.Map.backLineEnds;
 
-        MapEndRegion region = ends[Random.Range(0, ends.Count)];
+        MapEndRegion region = ends[UnityEngine.Random.Range(0, ends.Count)];
         Vector2 regionExtents = region.bounds / 2f;
         // the region's relative center + some random x and y + world center
-        targetPosition = region.center + new Vector2(Random.Range(-regionExtents.x, regionExtents.x), Random.Range(-regionExtents.y, regionExtents.y)) + GameController.Instance.GetWorldCenter(world);
+        targetPosition = region.center + new Vector2(UnityEngine.Random.Range(-regionExtents.x, regionExtents.x), UnityEngine.Random.Range(-regionExtents.y, regionExtents.y)) + GameController.Instance.GetWorldCenter(world);
     }
 
     // Update is called once per frame
@@ -109,10 +129,10 @@ public class Alien : NetworkBehaviour
     {
         if (IsServer)
         {
-            health.Value -= damage;
-            if (health.Value < 0)
+            health.Value = Mathf.Max(health.Value - damage, 0);
+            if (health.Value == 0)
             {
-                Destroy(gameObject);
+                Die();
             }
         }
     }
@@ -128,5 +148,18 @@ public class Alien : NetworkBehaviour
             GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
             projectile.GetComponent<NetworkObject>().Spawn();
         }
+    }
+
+    public void Die()
+    {
+        if (!IsServer) return;
+        DieRpc();
+        Destroy(gameObject);
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void DieRpc()
+    {
+        AlienClientDeathEvent?.Invoke();
     }
 }
