@@ -88,6 +88,11 @@ public class GameUI : MonoBehaviour
         GameMessenger.Instance.AddModule(right);
     }
 
+    public void LevelUp()
+    {
+        GameMessenger.Instance.LevelUp();
+    }
+
     // True - trigger victory; False - trigger defeat
     public void TriggerGameEnd(bool victorious)
     {

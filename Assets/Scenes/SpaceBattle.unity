@@ -266,7 +266,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 157448095}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1698384733}
+        m_TargetAssemblyTypeName: GameUI, Assembly-CSharp
+        m_MethodName: LevelUp
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &157448095
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1295,6 +1307,7 @@ MonoBehaviour:
   maxWaveTimer: 10
   playerPrefab: {fileID: 1095666974328058887, guid: 44c42a5493c7a40d7a3ee3736a99316a, type: 3}
   modulePrefab: {fileID: 3962105899122090152, guid: f255a3b990db5b441ba7adffaa0369c9, type: 3}
+  hpPerLevel: 0a000000140000001e0000002800000032000000
 --- !u!114 &535100582
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2642,7 +2655,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Level 1
+  m_text: 'Level: ---'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

@@ -1,6 +1,5 @@
 using System;
 using Unity.Netcode;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class GameMessenger : NetworkBehaviour
@@ -15,18 +14,18 @@ public class GameMessenger : NetworkBehaviour
 
     void Start()
     {
-        
+
     }
 
     public override void OnNetworkSpawn()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     // per client event indicating whether they are victorious
@@ -89,5 +88,17 @@ public class GameMessenger : NetworkBehaviour
     {
         ulong clientId = rpcParams.Receive.SenderClientId;
         GameController.Instance.TryAddModule(clientId, right);
+    }
+
+    public void LevelUp()
+    {
+        LevelUpRpc(default);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void LevelUpRpc(RpcParams rpcParams)
+    {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        GameController.Instance.TryLevelUp(clientId);
     }
 }

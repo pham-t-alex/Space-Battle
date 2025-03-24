@@ -13,7 +13,6 @@ public class Player : NetworkBehaviour
     private InputSystem_Actions controls;
     private NetworkVariable<int> health = new NetworkVariable<int>();
     private NetworkVariable<int> maxHealth = new NetworkVariable<int>();
-    [SerializeField] private int startingMaxHealth = 5;
 
     private Rigidbody2D rb;
 
@@ -29,6 +28,8 @@ public class Player : NetworkBehaviour
     [SerializeField] private float moduleGap;
 
     public bool CanAddModule => moduleCount < maxModules;
+    // Should only be accessed by server
+    public bool CanLevelUp => level < GameController.Instance.MaxLevel;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -66,20 +67,20 @@ public class Player : NetworkBehaviour
         g.transform.localPosition = Vector3.zero;
         modules[0] = g.GetComponent<Module>();
         moduleCount = 1;
-        health.Value = startingMaxHealth;
-        maxHealth.Value = startingMaxHealth;
     }
 
     // called by server
-    public void HealthbarSetup(int player)
+    public void HealthSetup(int player, int maxHealth)
     {
-        HealthbarSetupRpc(player);
+        health.Value = maxHealth;
+        this.maxHealth.Value = maxHealth;
+        HealthbarSetupRpc(player, maxHealth);
     }
 
     [Rpc(SendTo.ClientsAndHost)]
-    public void HealthbarSetupRpc(int player)
+    public void HealthbarSetupRpc(int player, int maxHealth)
     {
-        GameUI.SetupHealthbar(this, player, startingMaxHealth);
+        GameUI.SetupHealthbar(this, player, maxHealth);
     }
 
     public void AddModule(bool right)
@@ -123,6 +124,16 @@ public class Player : NetworkBehaviour
             g.transform.localPosition = Vector3.zero;
         }
     }*/
+
+    public void LevelUp()
+    {
+        if (!IsServer) return;
+        level++;
+        int newMax = GameController.Instance.LevelHP(level);
+        int diff = newMax - maxHealth.Value;
+        maxHealth.Value = newMax;
+        health.Value += diff;
+    }
 
     // Update is called once per frame
     private void Update()

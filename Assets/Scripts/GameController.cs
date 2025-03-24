@@ -63,6 +63,10 @@ public class GameController : MonoBehaviour
     private Player player1;
     private Player player2;
 
+    [SerializeField] private List<int> hpPerLevel;
+    public int MaxLevel => hpPerLevel.Count;
+    public int LevelHP(int index) => hpPerLevel[index];
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -168,8 +172,8 @@ public class GameController : MonoBehaviour
         MoneyController.Instance.Setup();
         GameMessenger.Instance.GameUISetup(p1ID, p2ID);
 
-        player1.HealthbarSetup(1);
-        player2.HealthbarSetup(2);
+        player1.HealthSetup(1, hpPerLevel[0]);
+        player2.HealthSetup(2, hpPerLevel[0]);
 
         frontLineSpawn = map.frontLinePath[0];
         backLineSpawn = map.backLinePath[0];
@@ -324,11 +328,26 @@ public class GameController : MonoBehaviour
         if (clientId == p1ID)
         {
             if (player1.CanAddModule) player1.AddModule(right);
-
         }
         else if (clientId == p2ID)
         {
             if (player2.CanAddModule) player2.AddModule(right);
+        }
+
+        return true;
+    }
+
+    public bool TryLevelUp(ulong clientId)
+    {
+        if (!NetworkManager.Singleton.IsServer) return false;
+
+        if (clientId == p1ID)
+        {
+            if (player1.CanLevelUp) player1.LevelUp();
+        }
+        else if (clientId == p2ID)
+        {
+            if (player2.CanLevelUp) player2.LevelUp();
         }
 
         return true;
