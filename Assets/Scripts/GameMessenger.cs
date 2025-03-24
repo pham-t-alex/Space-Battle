@@ -1,5 +1,6 @@
 using System;
 using Unity.Netcode;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class GameMessenger : NetworkBehaviour
@@ -76,5 +77,17 @@ public class GameMessenger : NetworkBehaviour
     public void GameEndRpc(bool victorious, RpcParams rpcParams)
     {
         ClientGameEndUpdate?.Invoke(victorious);
+    }
+
+    public void AddModule(bool right)
+    {
+        AddModuleRpc(right, default);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void AddModuleRpc(bool right, RpcParams rpcParams)
+    {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        GameController.Instance.TryAddModule(clientId, right);
     }
 }

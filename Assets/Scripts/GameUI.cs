@@ -83,6 +83,11 @@ public class GameUI : MonoBehaviour
         GameMessenger.Instance.SendAliens(sendIndex, sendFrontLineSet);
     }
 
+    public void AddModule(bool right)
+    {
+        GameMessenger.Instance.AddModule(right);
+    }
+
     // True - trigger victory; False - trigger defeat
     public void TriggerGameEnd(bool victorious)
     {

@@ -1,8 +1,8 @@
 using UnityEngine;
 using Unity.Netcode;
 using System;
+using System.Collections.Generic;
 
-[RequireComponent(typeof(Collider2D))]
 public class Player : NetworkBehaviour
 {
     [SerializeField] private float speed = 5;
@@ -15,9 +15,6 @@ public class Player : NetworkBehaviour
     private NetworkVariable<int> maxHealth = new NetworkVariable<int>();
     [SerializeField] private int startingMaxHealth = 5;
 
-    // TEMPORARY, REMOVE LATER
-    [SerializeField] private GameObject gun;
-
     private Rigidbody2D rb;
 
     public event Action PlayerDeathEvent;
@@ -25,10 +22,18 @@ public class Player : NetworkBehaviour
     public event Action<int, int> HealthChange;
     public event Action<int, int> MaxHealthChange;
 
+    [SerializeField] private int maxModules;
+    private Module[] modules;
+    private int moduleCount;
+    private int level;
+    [SerializeField] private float moduleGap;
+
+    public bool CanAddModule => moduleCount < maxModules;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        
     }
 
     public override void OnNetworkSpawn()
@@ -40,18 +45,27 @@ public class Player : NetworkBehaviour
             controls = new InputSystem_Actions();
             controls.Enable();
         }
-        if (!IsServer)
+        if (IsServer)
+        {
+            ServerSetup();
+        }
+        else
         {
             Destroy(GetComponent<Rigidbody2D>());
+            Destroy(GetComponent<Collider2D>());
         }
     }
 
-    public void Setup()
+    public void ServerSetup()
     {
-        if (!IsServer) return;
         rb = GetComponent<Rigidbody2D>();
-        // TEMPORARY, REMOVE LATER
-        SpawnGun();
+        modules = new Module[maxModules];
+        GameObject g = Instantiate(GameController.Instance.ModulePrefab);
+        g.GetComponent<NetworkObject>().Spawn();
+        g.transform.SetParent(transform, false);
+        g.transform.localPosition = Vector3.zero;
+        modules[0] = g.GetComponent<Module>();
+        moduleCount = 1;
         health.Value = startingMaxHealth;
         maxHealth.Value = startingMaxHealth;
     }
@@ -68,8 +82,37 @@ public class Player : NetworkBehaviour
         GameUI.SetupHealthbar(this, player, startingMaxHealth);
     }
 
+    public void AddModule(bool right)
+    {
+        if (!IsServer) return;
+        GameObject g = Instantiate(GameController.Instance.ModulePrefab);
+        g.GetComponent<NetworkObject>().Spawn();
+        g.transform.SetParent(transform, false);
+        if (right)
+        {
+            for (int i = 0; i < moduleCount; i++)
+            {
+                modules[i].transform.localPosition += Vector3.left * (moduleGap / 2);
+            }
+            g.transform.localPosition = modules[moduleCount - 1].transform.localPosition + Vector3.right * moduleGap;
+            modules[moduleCount] = g.GetComponent<Module>();
+        }
+        else
+        {
+            for (int i = moduleCount - 1; i >= 0; i--)
+            {
+                modules[i].transform.localPosition += Vector3.right * (moduleGap / 2);
+                modules[i + 1] = modules[i];
+            }
+            g.transform.localPosition = modules[1].transform.localPosition + Vector3.left * moduleGap;
+            modules[0] = g.GetComponent<Module>();
+        }
+        moduleCount++;
+        GetComponent<BoxCollider2D>().size += Vector2.right * moduleGap;
+    }
+
     // TEMPORARY, REMOVE LATER
-    public void SpawnGun()
+    /*public void SpawnGun()
     {
         if (IsServer)
         {
@@ -79,7 +122,7 @@ public class Player : NetworkBehaviour
             g.transform.parent = transform;
             g.transform.localPosition = Vector3.zero;
         }
-    }
+    }*/
 
     // Update is called once per frame
     private void Update()
@@ -110,7 +153,7 @@ public class Player : NetworkBehaviour
     {
         if (IsServer)
         {
-            rb.MovePosition(new Vector2(Mathf.Clamp(rb.position.x + movement * speed * Time.fixedDeltaTime, leftBound, rightBound), rb.position.y));
+            rb.MovePosition(new Vector2(Mathf.Clamp(rb.position.x + movement * speed * Time.fixedDeltaTime, leftBound + (moduleCount * moduleGap / 2), rightBound - (moduleCount * moduleGap / 2)), rb.position.y));
         }
     }
 
@@ -143,7 +186,7 @@ public class Player : NetworkBehaviour
         DieRpc();
         for (int i = transform.childCount - 1; i >= 0; i--)
         {
-            Destroy(transform.GetChild(0).gameObject);
+            Destroy(transform.GetChild(i).gameObject);
         }
         PlayerDeathEvent?.Invoke();
         Destroy(gameObject);

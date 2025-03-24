@@ -57,6 +57,8 @@ public class GameController : MonoBehaviour
     private bool gameOver = false;
 
     [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private GameObject modulePrefab;
+    public GameObject ModulePrefab => modulePrefab;
 
     private Player player1;
     private Player player2;
@@ -69,7 +71,6 @@ public class GameController : MonoBehaviour
             GameObject player = Instantiate(playerPrefab);
             SpawnPlayer(player.GetComponent<Player>(), clientId);
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
-            player.GetComponent<Player>().Setup();
         }
         StartGame();
     }
@@ -312,5 +313,24 @@ public class GameController : MonoBehaviour
                 StartCoroutine(SpawnSendCoroutine(player));
                 break;
         }
+    }
+
+    public bool TryAddModule(ulong clientId, bool right)
+    {
+        if (!NetworkManager.Singleton.IsServer) return false;
+
+        // check monies
+
+        if (clientId == p1ID)
+        {
+            if (player1.CanAddModule) player1.AddModule(right);
+
+        }
+        else if (clientId == p2ID)
+        {
+            if (player2.CanAddModule) player2.AddModule(right);
+        }
+
+        return true;
     }
 }
