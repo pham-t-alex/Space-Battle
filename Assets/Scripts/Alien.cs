@@ -129,8 +129,8 @@ public class Alien : NetworkBehaviour
     {
         if (IsServer)
         {
-            health.Value -= damage;
-            if (health.Value <= 0)
+            health.Value = Mathf.Max(health.Value - damage, 0);
+            if (health.Value == 0)
             {
                 Die();
             }

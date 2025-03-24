@@ -58,6 +58,9 @@ public class GameController : MonoBehaviour
 
     [SerializeField] private GameObject playerPrefab;
 
+    private Player player1;
+    private Player player2;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -68,6 +71,7 @@ public class GameController : MonoBehaviour
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
             player.GetComponent<Player>().Setup();
         }
+        StartGame();
     }
 
     // Update is called once per frame
@@ -117,6 +121,7 @@ public class GameController : MonoBehaviour
             world1.PlayerSetup(p);
             p.PlayerDeathEvent += () => HandlePlayerDeath(1);
             p1ID = id;
+            player1 = p;
             playerCount++;
         }
         else if (playerCount == 1)
@@ -124,8 +129,8 @@ public class GameController : MonoBehaviour
             world2.PlayerSetup(p);
             p.PlayerDeathEvent += () => HandlePlayerDeath(2);
             p2ID = id;
+            player2 = p;
             playerCount++;
-            StartGame();
         }
         else
         {
@@ -161,6 +166,9 @@ public class GameController : MonoBehaviour
         // Money setup
         MoneyController.Instance.Setup();
         GameMessenger.Instance.GameUISetup(p1ID, p2ID);
+
+        player1.HealthbarSetup(1);
+        player2.HealthbarSetup(2);
 
         frontLineSpawn = map.frontLinePath[0];
         backLineSpawn = map.backLinePath[0];

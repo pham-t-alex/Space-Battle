@@ -12,7 +12,8 @@ public class Player : NetworkBehaviour
     private float newMove = 0;
     private InputSystem_Actions controls;
     private NetworkVariable<int> health = new NetworkVariable<int>();
-    [SerializeField] private int maxHealth = 5;
+    private NetworkVariable<int> maxHealth = new NetworkVariable<int>();
+    [SerializeField] private int startingMaxHealth = 5;
 
     // TEMPORARY, REMOVE LATER
     [SerializeField] private GameObject gun;
@@ -20,6 +21,9 @@ public class Player : NetworkBehaviour
     private Rigidbody2D rb;
 
     public event Action PlayerDeathEvent;
+    public event Action PlayerClientDeathEvent;
+    public event Action<int, int> HealthChange;
+    public event Action<int, int> MaxHealthChange;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -29,6 +33,8 @@ public class Player : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        health.OnValueChanged += (oldVal, newVal) => HealthChange?.Invoke(oldVal, newVal);
+        maxHealth.OnValueChanged += (oldVal, newVal) => MaxHealthChange?.Invoke(oldVal, newVal);
         if (IsOwner)
         {
             controls = new InputSystem_Actions();
@@ -46,7 +52,20 @@ public class Player : NetworkBehaviour
         rb = GetComponent<Rigidbody2D>();
         // TEMPORARY, REMOVE LATER
         SpawnGun();
-        health.Value = maxHealth;
+        health.Value = startingMaxHealth;
+        maxHealth.Value = startingMaxHealth;
+    }
+
+    // called by server
+    public void HealthbarSetup(int player)
+    {
+        HealthbarSetupRpc(player);
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void HealthbarSetupRpc(int player)
+    {
+        GameUI.SetupHealthbar(this, player, startingMaxHealth);
     }
 
     // TEMPORARY, REMOVE LATER
@@ -111,8 +130,8 @@ public class Player : NetworkBehaviour
     public void Damage(int damage)
     {
         if (!IsServer) return;
-        health.Value -= damage;
-        if (health.Value <= 0)
+        health.Value = Mathf.Max(health.Value - damage, 0);
+        if (health.Value == 0)
         {
             Die();
         }
@@ -121,11 +140,18 @@ public class Player : NetworkBehaviour
     public void Die()
     {
         if (!IsServer) return;
+        DieRpc();
         for (int i = transform.childCount - 1; i >= 0; i--)
         {
             Destroy(transform.GetChild(0).gameObject);
         }
         PlayerDeathEvent?.Invoke();
         Destroy(gameObject);
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void DieRpc()
+    {
+        PlayerClientDeathEvent?.Invoke();
     }
 }
