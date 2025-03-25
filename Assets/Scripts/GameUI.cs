@@ -25,6 +25,14 @@ public class GameUI : MonoBehaviour
     [SerializeField] private PlayerHealthbar p1Health;
     [SerializeField] private PlayerHealthbar p2Health;
 
+    private InputSystem_Actions controls;
+
+    // 0: none
+    // 1-9: module 1-9 is selected
+    private int selectedModule = 0;
+    // If selectedModule > 0, then this indicates whether there already is a structure there
+    private bool moduleHasStructure = false;
+
     // Update is called once per frame
     void Update()
     {
@@ -34,6 +42,7 @@ public class GameUI : MonoBehaviour
     // Client side setup
     public static void Setup(int player)
     {
+        _instance.SetupControls();
         GameMessenger.Instance.ClientGameEndUpdate += _instance.TriggerGameEnd;
         switch (player)
         {
@@ -46,6 +55,21 @@ public class GameUI : MonoBehaviour
                 GameState.Player2IncomeUpdate += _instance.UpdateIncome;
                 break;
         }
+    }
+
+    void SetupControls()
+    {
+        controls = new InputSystem_Actions();
+        controls.Enable();
+        controls.Player.Module1.performed += (ctx) => SelectModule(1);
+        controls.Player.Module2.performed += (ctx) => SelectModule(2);
+        controls.Player.Module3.performed += (ctx) => SelectModule(3);
+        controls.Player.Module4.performed += (ctx) => SelectModule(4);
+        controls.Player.Module5.performed += (ctx) => SelectModule(5);
+        controls.Player.Module6.performed += (ctx) => SelectModule(6);
+        controls.Player.Module7.performed += (ctx) => SelectModule(7);
+        controls.Player.Module8.performed += (ctx) => SelectModule(8);
+        controls.Player.Module9.performed += (ctx) => SelectModule(9);
     }
 
     // Client side healthbar setup
@@ -91,6 +115,16 @@ public class GameUI : MonoBehaviour
     public void LevelUp()
     {
         GameMessenger.Instance.LevelUp();
+    }
+
+    public void SelectModule(int module)
+    {
+
+    }
+
+    public void BuildStructure(int structure)
+    {
+
     }
 
     // True - trigger victory; False - trigger defeat

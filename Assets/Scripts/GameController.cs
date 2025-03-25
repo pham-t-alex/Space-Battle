@@ -63,9 +63,16 @@ public class GameController : MonoBehaviour
     private Player player1;
     private Player player2;
 
-    [SerializeField] private List<int> hpPerLevel;
-    public int MaxLevel => hpPerLevel.Count;
+    [SerializeField] private int[] hpPerLevel;
+    public int MaxLevel => hpPerLevel.Length;
     public int LevelHP(int index) => hpPerLevel[index];
+
+    [SerializeField] private GameObject[] structures;
+
+    // Contain indices of structures
+    // Length 3, determines which structures each player can build
+    [SerializeField] private int[] p1Structures = new int[3];
+    [SerializeField] private int[] p2Structures = new int[3];
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
