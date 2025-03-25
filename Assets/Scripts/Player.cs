@@ -80,7 +80,7 @@ public class Player : NetworkBehaviour
     [Rpc(SendTo.ClientsAndHost)]
     public void HealthbarSetupRpc(int player, int maxHealth)
     {
-        GameUI.ClientSetup(this, player, maxHealth);
+        GameUI.Instance.ClientSetup(this, player, maxHealth);
     }
 
     public void AddModule(bool right)
@@ -207,5 +207,37 @@ public class Player : NetworkBehaviour
     public void DieRpc()
     {
         PlayerClientDeathEvent?.Invoke();
+    }
+
+    // called by GameUI from client
+    [Rpc(SendTo.Server)]
+    public void SelectModuleRpc(int module, RpcParams rpcParams)
+    {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        if (module > moduleCount)
+        {
+            InvalidModuleRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
+            return;
+        }
+        Module m = modules[module - 1];
+        ModuleUIRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    void InvalidModuleRpc(RpcParams rpcParams)
+    {
+        GameUI.Instance.InvalidModuleSelection();
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    void ModuleUIRpc(RpcParams rpcParams)
+    {
+        GameUI.Instance.OpenModuleUI();
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    void StructureUIRpc(StructureUpgradeInfo info, RpcParams rpcParams)
+    {
+
     }
 }

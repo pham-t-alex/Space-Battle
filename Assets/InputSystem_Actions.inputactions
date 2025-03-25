@@ -166,6 +166,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Deselect",
+                    "type": "Button",
+                    "id": "5e118830-17d7-4f7f-b497-836521aadc2d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -650,6 +659,17 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Module9",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "624a34a0-f526-48a9-b838-b2eb35c6cfa1",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Deselect",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

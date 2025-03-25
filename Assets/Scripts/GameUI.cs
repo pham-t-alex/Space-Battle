@@ -1,9 +1,11 @@
 using UnityEngine;
 using TMPro;
+using Unity.Netcode;
 
 public class GameUI : MonoBehaviour
 {
-    private static GameUI _instance;
+    private static GameUI instance;
+    public static GameUI Instance => instance;
 
     [SerializeField] private GameObject moneyText;
     [SerializeField] private GameObject incomeText;
@@ -12,7 +14,18 @@ public class GameUI : MonoBehaviour
 
     private void Awake()
     {
-        _instance = this;
+        if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsClient)
+        {
+            Destroy(gameObject);
+        }
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -33,6 +46,7 @@ public class GameUI : MonoBehaviour
     // 0: none
     // 1-9: module 1-9 is selected
     private int selectedModule = 0;
+    private int attemptedSelectedModule = 0;
     // If selectedModule > 0, then this indicates whether there already is a structure there
     private bool moduleHasStructure = false;
 
@@ -47,20 +61,20 @@ public class GameUI : MonoBehaviour
     }
 
     // Client side setup
-    public static void Setup(int player)
+    public void Setup(int player)
     {
-        _instance.SetupControls();
-        _instance.associatedPlayer = player;
-        GameMessenger.Instance.ClientGameEndUpdate += _instance.TriggerGameEnd;
+        SetupControls();
+        associatedPlayer = player;
+        GameMessenger.Instance.ClientGameEndUpdate += TriggerGameEnd;
         switch (player)
         {
             case 1:
-                GameState.Player1MoneyUpdate += _instance.UpdateMoney;
-                GameState.Player1IncomeUpdate += _instance.UpdateIncome;
+                GameState.Player1MoneyUpdate += UpdateMoney;
+                GameState.Player1IncomeUpdate += UpdateIncome;
                 break;
             case 2:
-                GameState.Player2MoneyUpdate += _instance.UpdateMoney;
-                GameState.Player2IncomeUpdate += _instance.UpdateIncome;
+                GameState.Player2MoneyUpdate += UpdateMoney;
+                GameState.Player2IncomeUpdate += UpdateIncome;
                 break;
         }
     }
@@ -78,20 +92,21 @@ public class GameUI : MonoBehaviour
         controls.Player.Module7.performed += (ctx) => SelectModule(7);
         controls.Player.Module8.performed += (ctx) => SelectModule(8);
         controls.Player.Module9.performed += (ctx) => SelectModule(9);
+        controls.Player.Deselect.performed += (ctx) => DeselectModule();
     }
 
     // Client side setup
-    public static void ClientSetup(Player p, int player, int maxHealth)
+    public void ClientSetup(Player p, int player, int maxHealth)
     {
         switch (player)
         {
             case 1:
-                _instance.player1 = p;
-                _instance.p1Health.Initialize(p, maxHealth);
+                player1 = p;
+                p1Health.Initialize(p, maxHealth);
                 break;
             case 2:
-                _instance.player2 = p;
-                _instance.p2Health.Initialize(p, maxHealth);
+                player2 = p;
+                p2Health.Initialize(p, maxHealth);
                 break;
         }
     }
@@ -130,14 +145,16 @@ public class GameUI : MonoBehaviour
     public void SelectModule(int module)
     {
         if (selectedModule > 0) return;
-
-    }
-
-    // called externally
-    public void ModuleSelectUpdate(int module)
-    {
-        selectedModule = module;
-        shipOptionsUI.SetActive(false);
+        attemptedSelectedModule = module;
+        switch (associatedPlayer)
+        {
+            case 1:
+                player1.SelectModuleRpc(module, default);
+                break;
+            case 2:
+                player2.SelectModuleRpc(module, default);
+                break;
+        }
     }
 
     public void BuildStructure(int structure)
@@ -148,6 +165,8 @@ public class GameUI : MonoBehaviour
     public void DeselectModule()
     {
         if (selectedModule == 0) return;
+        selectedModule = 0;
+        attemptedSelectedModule = 0;
         moduleUI.SetActive(false);
         structureUI.SetActive(false);
         shipOptionsUI.SetActive(true);
@@ -158,5 +177,19 @@ public class GameUI : MonoBehaviour
     {
         gameEndScreen.SetActive(true);
         gameEndScreen.GetComponent<GameEndScreen>().TriggerGameEnd(victorious);
+    }
+
+    public void InvalidModuleSelection()
+    {
+        attemptedSelectedModule = 0;
+    }
+
+    public void OpenModuleUI()
+    {
+        if (selectedModule > 0) return;
+        selectedModule = attemptedSelectedModule;
+        attemptedSelectedModule = 0;
+        shipOptionsUI.SetActive(false);
+        moduleUI.SetActive(true);
     }
 }

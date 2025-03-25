@@ -1,7 +1,7 @@
 using UnityEngine;
 using Unity.Netcode;
 
-public class BasicGun : Weapon
+public class BasicGun : Structure
 {
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private float reloadTimeLeft;

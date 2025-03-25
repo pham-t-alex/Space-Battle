@@ -41,7 +41,7 @@ public class GameMessenger : NetworkBehaviour
     [Rpc(SendTo.SpecifiedInParams)]
     public void GameUISetupRpc(int player, RpcParams rpcParams)
     {
-        GameUI.Setup(player);
+        GameUI.Instance.Setup(player);
     }
 
     public void SendAliens(int sendIndex, bool front)
