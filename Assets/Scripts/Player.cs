@@ -80,7 +80,7 @@ public class Player : NetworkBehaviour
     [Rpc(SendTo.ClientsAndHost)]
     public void HealthbarSetupRpc(int player, int maxHealth)
     {
-        GameUI.SetupHealthbar(this, player, maxHealth);
+        GameUI.ClientSetup(this, player, maxHealth);
     }
 
     public void AddModule(bool right)

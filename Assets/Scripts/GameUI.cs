@@ -24,6 +24,9 @@ public class GameUI : MonoBehaviour
     [SerializeField] private GameObject gameEndScreen;
     [SerializeField] private PlayerHealthbar p1Health;
     [SerializeField] private PlayerHealthbar p2Health;
+    [SerializeField] private GameObject shipOptionsUI;
+    [SerializeField] private GameObject moduleUI;
+    [SerializeField] private GameObject structureUI;
 
     private InputSystem_Actions controls;
 
@@ -32,6 +35,10 @@ public class GameUI : MonoBehaviour
     private int selectedModule = 0;
     // If selectedModule > 0, then this indicates whether there already is a structure there
     private bool moduleHasStructure = false;
+
+    private Player player1;
+    private Player player2;
+    private int associatedPlayer;
 
     // Update is called once per frame
     void Update()
@@ -43,6 +50,7 @@ public class GameUI : MonoBehaviour
     public static void Setup(int player)
     {
         _instance.SetupControls();
+        _instance.associatedPlayer = player;
         GameMessenger.Instance.ClientGameEndUpdate += _instance.TriggerGameEnd;
         switch (player)
         {
@@ -72,15 +80,17 @@ public class GameUI : MonoBehaviour
         controls.Player.Module9.performed += (ctx) => SelectModule(9);
     }
 
-    // Client side healthbar setup
-    public static void SetupHealthbar(Player p, int player, int maxHealth)
+    // Client side setup
+    public static void ClientSetup(Player p, int player, int maxHealth)
     {
         switch (player)
         {
             case 1:
+                _instance.player1 = p;
                 _instance.p1Health.Initialize(p, maxHealth);
                 break;
             case 2:
+                _instance.player2 = p;
                 _instance.p2Health.Initialize(p, maxHealth);
                 break;
         }
@@ -119,12 +129,28 @@ public class GameUI : MonoBehaviour
 
     public void SelectModule(int module)
     {
+        if (selectedModule > 0) return;
 
+    }
+
+    // called externally
+    public void ModuleSelectUpdate(int module)
+    {
+        selectedModule = module;
+        shipOptionsUI.SetActive(false);
     }
 
     public void BuildStructure(int structure)
     {
 
+    }
+
+    public void DeselectModule()
+    {
+        if (selectedModule == 0) return;
+        moduleUI.SetActive(false);
+        structureUI.SetActive(false);
+        shipOptionsUI.SetActive(true);
     }
 
     // True - trigger victory; False - trigger defeat
