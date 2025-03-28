@@ -101,4 +101,16 @@ public class GameMessenger : NetworkBehaviour
         ulong clientId = rpcParams.Receive.SenderClientId;
         GameController.Instance.TryLevelUp(clientId);
     }
+
+    public void BuildStructure(int module, int structure)
+    {
+        BuildStructureRpc(module, structure, default);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void BuildStructureRpc(int module, int structure, RpcParams rpcParams)
+    {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        GameController.Instance.TryBuildStructure(clientId, module, structure);
+    }
 }

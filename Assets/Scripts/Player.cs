@@ -219,7 +219,7 @@ public class Player : NetworkBehaviour
             InvalidModuleRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
             return;
         }
-        Module m = modules[module - 1];
+        Module m = modules[module];
         ModuleUIRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
     }
 
@@ -239,5 +239,14 @@ public class Player : NetworkBehaviour
     void StructureUIRpc(StructureUpgradeInfo info, RpcParams rpcParams)
     {
 
+    }
+
+    public void BuildStructure(int module, GameObject structure)
+    {
+        if (!IsServer) return;
+        GameObject g = Instantiate(structure);
+        g.GetComponent<NetworkObject>().Spawn();
+        g.transform.SetParent(modules[module].transform);
+        g.transform.localPosition = Vector3.zero;
     }
 }

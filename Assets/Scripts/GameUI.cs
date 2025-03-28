@@ -149,17 +149,18 @@ public class GameUI : MonoBehaviour
         switch (associatedPlayer)
         {
             case 1:
-                player1.SelectModuleRpc(module, default);
+                player1.SelectModuleRpc(module - 1, default);
                 break;
             case 2:
-                player2.SelectModuleRpc(module, default);
+                player2.SelectModuleRpc(module - 1, default);
                 break;
         }
     }
 
     public void BuildStructure(int structure)
     {
-
+        if (selectedModule == 0) return;
+        GameMessenger.Instance.BuildStructure(selectedModule - 1, structure);
     }
 
     public void DeselectModule()

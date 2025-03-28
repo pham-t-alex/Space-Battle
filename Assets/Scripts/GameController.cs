@@ -359,4 +359,19 @@ public class GameController : MonoBehaviour
 
         return true;
     }
+
+    public bool TryBuildStructure(ulong clientId, int module, int structure)
+    {
+        if (!NetworkManager.Singleton.IsServer) return false;
+
+        if (clientId == p1ID)
+        {
+            player1.BuildStructure(module, structures[p1Structures[structure]]);
+        }
+        else if (clientId == p2ID)
+        {
+
+        }
+        return true;
+    }
 }
