@@ -366,11 +366,25 @@ public class GameController : MonoBehaviour
 
         if (clientId == p1ID)
         {
-            player1.BuildStructure(module, structures[p1Structures[structure]]);
+            Module m = player1.GetModule(module);
+            if (m == null) return false;
+            if (m.ModuleStructure != null) return false;
+            GameObject g = Instantiate(structures[p1Structures[structure]]);
+            g.GetComponent<NetworkObject>().Spawn();
+            g.transform.SetParent(m.transform);
+            g.transform.localPosition = Vector3.zero;
+            m.SetStructure(g.GetComponent<Structure>());
         }
         else if (clientId == p2ID)
         {
-
+            Module m = player2.GetModule(module);
+            if (m == null) return false;
+            if (m.ModuleStructure != null) return false;
+            GameObject g = Instantiate(structures[p2Structures[structure]]);
+            g.GetComponent<NetworkObject>().Spawn();
+            g.transform.SetParent(m.transform);
+            g.transform.localPosition = Vector3.zero;
+            m.SetStructure(g.GetComponent<Structure>());
         }
         return true;
     }

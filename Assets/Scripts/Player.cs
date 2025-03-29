@@ -30,6 +30,7 @@ public class Player : NetworkBehaviour
     public bool CanAddModule => moduleCount < maxModules;
     // Should only be accessed by server
     public bool CanLevelUp => level < GameController.Instance.MaxLevel;
+    public Module GetModule(int module) => modules[module];
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -112,19 +113,6 @@ public class Player : NetworkBehaviour
         GetComponent<BoxCollider2D>().size += Vector2.right * moduleGap;
     }
 
-    // TEMPORARY, REMOVE LATER
-    /*public void SpawnGun()
-    {
-        if (IsServer)
-        {
-            GameObject g = Instantiate(gun);
-            NetworkObject obj = g.GetComponent<NetworkObject>();
-            obj.Spawn();
-            g.transform.parent = transform;
-            g.transform.localPosition = Vector3.zero;
-        }
-    }*/
-
     public void LevelUp()
     {
         if (!IsServer) return;
@@ -195,9 +183,9 @@ public class Player : NetworkBehaviour
     {
         if (!IsServer) return;
         DieRpc();
-        for (int i = transform.childCount - 1; i >= 0; i--)
+        for (int i = 0; i < moduleCount; i++)
         {
-            Destroy(transform.GetChild(i).gameObject);
+            modules[i].Destroy();
         }
         PlayerDeathEvent?.Invoke();
         Destroy(gameObject);
@@ -239,14 +227,5 @@ public class Player : NetworkBehaviour
     void StructureUIRpc(StructureUpgradeInfo info, RpcParams rpcParams)
     {
 
-    }
-
-    public void BuildStructure(int module, GameObject structure)
-    {
-        if (!IsServer) return;
-        GameObject g = Instantiate(structure);
-        g.GetComponent<NetworkObject>().Spawn();
-        g.transform.SetParent(modules[module].transform);
-        g.transform.localPosition = Vector3.zero;
     }
 }
