@@ -3,6 +3,12 @@ using UnityEngine;
 
 public abstract class Structure : NetworkBehaviour
 {
+    [SerializeField] private int cost;
+    public int Cost => cost;
+
+    [SerializeField] private GameObject upgradePrefab;
+    public GameObject UpgradePrefab => upgradePrefab;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

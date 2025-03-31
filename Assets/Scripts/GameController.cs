@@ -64,8 +64,14 @@ public class GameController : MonoBehaviour
     private Player player2;
 
     [SerializeField] private int[] hpPerLevel;
-    public int MaxLevel => hpPerLevel.Length;
+    public int MaxLevel => hpPerLevel.Length - 1;
     public int LevelHP(int index) => hpPerLevel[index];
+    // MUST BE THE SAME LENGTH AS HP PER LEVEL - 1
+    [SerializeField] private int[] levelCosts;
+
+    // Costs for extra modules
+    [SerializeField] private int[] moduleCosts;
+    public int MaxModules => moduleCosts.Length + 1;
 
     [SerializeField] private GameObject[] structures;
 
@@ -329,17 +335,29 @@ public class GameController : MonoBehaviour
     public bool TryAddModule(ulong clientId, bool right)
     {
         if (!NetworkManager.Singleton.IsServer) return false;
-
-        // check monies
-
+        // get player
+        int pNum = 0;
+        Player p;
         if (clientId == p1ID)
         {
-            if (player1.CanAddModule) player1.AddModule(right);
+            pNum = 1;
+            p = player1;
         }
         else if (clientId == p2ID)
         {
-            if (player2.CanAddModule) player2.AddModule(right);
+            pNum = 2;
+            p = player2;
         }
+        else return false;
+
+        // if already at max
+        if (!p.CanAddModule) return false;
+
+        // spends money if possible
+        if (!MoneyController.Instance.ChangeMoney(pNum, -moduleCosts[p.ModuleCount - 1])) return false;
+
+        // money is spent
+        p.AddModule(right);
 
         return true;
     }
@@ -347,15 +365,29 @@ public class GameController : MonoBehaviour
     public bool TryLevelUp(ulong clientId)
     {
         if (!NetworkManager.Singleton.IsServer) return false;
-
+        // get player
+        int pNum = 0;
+        Player p;
         if (clientId == p1ID)
         {
-            if (player1.CanLevelUp) player1.LevelUp();
+            pNum = 1;
+            p = player1;
         }
         else if (clientId == p2ID)
         {
-            if (player2.CanLevelUp) player2.LevelUp();
+            pNum = 2;
+            p = player2;
         }
+        else return false;
+
+        // if already at max
+        if (!p.CanLevelUp) return false;
+
+        // spends money if possible
+        if (!MoneyController.Instance.ChangeMoney(pNum, -levelCosts[p.Level])) return false;
+
+        // money is spent
+        p.LevelUp();
 
         return true;
     }

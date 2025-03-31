@@ -21,14 +21,14 @@ public class Player : NetworkBehaviour
     public event Action<int, int> HealthChange;
     public event Action<int, int> MaxHealthChange;
 
-    [SerializeField] private int maxModules;
-    private Module[] modules;
-    private int moduleCount;
+    private List<Module> modules = new List<Module>();
+    public int ModuleCount => modules.Count;
+    // note that level is starting at 0, not 1; add 1 to level when displaying
     private int level;
+    public int Level => level;
     [SerializeField] private float moduleGap;
-
-    public bool CanAddModule => moduleCount < maxModules;
     // Should only be accessed by server
+    public bool CanAddModule => modules.Count < GameController.Instance.MaxModules;
     public bool CanLevelUp => level < GameController.Instance.MaxLevel;
     public Module GetModule(int module) => modules[module];
 
@@ -61,13 +61,11 @@ public class Player : NetworkBehaviour
     public void ServerSetup()
     {
         rb = GetComponent<Rigidbody2D>();
-        modules = new Module[maxModules];
         GameObject g = Instantiate(GameController.Instance.ModulePrefab);
         g.GetComponent<NetworkObject>().Spawn();
         g.transform.SetParent(transform, false);
         g.transform.localPosition = Vector3.zero;
-        modules[0] = g.GetComponent<Module>();
-        moduleCount = 1;
+        modules.Add(g.GetComponent<Module>());
     }
 
     // called by server
@@ -92,24 +90,22 @@ public class Player : NetworkBehaviour
         g.transform.SetParent(transform, false);
         if (right)
         {
-            for (int i = 0; i < moduleCount; i++)
+            for (int i = 0; i < modules.Count; i++)
             {
                 modules[i].transform.localPosition += Vector3.left * (moduleGap / 2);
             }
-            g.transform.localPosition = modules[moduleCount - 1].transform.localPosition + Vector3.right * moduleGap;
-            modules[moduleCount] = g.GetComponent<Module>();
+            g.transform.localPosition = modules[modules.Count - 1].transform.localPosition + Vector3.right * moduleGap;
+            modules.Add(g.GetComponent<Module>());
         }
         else
         {
-            for (int i = moduleCount - 1; i >= 0; i--)
+            for (int i = 0; i < modules.Count; i++)
             {
                 modules[i].transform.localPosition += Vector3.right * (moduleGap / 2);
-                modules[i + 1] = modules[i];
             }
             g.transform.localPosition = modules[1].transform.localPosition + Vector3.left * moduleGap;
-            modules[0] = g.GetComponent<Module>();
+            modules.Insert(0, g.GetComponent<Module>());
         }
-        moduleCount++;
         GetComponent<BoxCollider2D>().size += Vector2.right * moduleGap;
     }
 
@@ -152,7 +148,8 @@ public class Player : NetworkBehaviour
     {
         if (IsServer)
         {
-            rb.MovePosition(new Vector2(Mathf.Clamp(rb.position.x + movement * speed * Time.fixedDeltaTime, leftBound + (moduleCount * moduleGap / 2), rightBound - (moduleCount * moduleGap / 2)), rb.position.y));
+            rb.MovePosition(new Vector2(Mathf.Clamp(rb.position.x + movement * speed * Time.fixedDeltaTime, 
+                leftBound + (modules.Count * moduleGap / 2), rightBound - (modules.Count * moduleGap / 2)), rb.position.y));
         }
     }
 
@@ -183,7 +180,7 @@ public class Player : NetworkBehaviour
     {
         if (!IsServer) return;
         DieRpc();
-        for (int i = 0; i < moduleCount; i++)
+        for (int i = 0; i < modules.Count; i++)
         {
             modules[i].Destroy();
         }
@@ -202,7 +199,7 @@ public class Player : NetworkBehaviour
     public void SelectModuleRpc(int module, RpcParams rpcParams)
     {
         ulong clientId = rpcParams.Receive.SenderClientId;
-        if (module > moduleCount)
+        if (module > modules.Count)
         {
             InvalidModuleRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
             return;
