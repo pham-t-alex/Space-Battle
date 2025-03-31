@@ -395,29 +395,40 @@ public class GameController : MonoBehaviour
     public bool TryBuildStructure(ulong clientId, int module, int structure)
     {
         if (!NetworkManager.Singleton.IsServer) return false;
+        // get player
+        int pNum = 0;
+        Player p;
+        int[] s;
 
         if (clientId == p1ID)
         {
-            Module m = player1.GetModule(module);
-            if (m == null) return false;
-            if (m.ModuleStructure != null) return false;
-            GameObject g = Instantiate(structures[p1Structures[structure]]);
-            g.GetComponent<NetworkObject>().Spawn();
-            g.transform.SetParent(m.transform);
-            g.transform.localPosition = Vector3.zero;
-            m.SetStructure(g.GetComponent<Structure>());
+            pNum = 1;
+            p = player1;
+            s = p1Structures;
         }
         else if (clientId == p2ID)
         {
-            Module m = player2.GetModule(module);
-            if (m == null) return false;
-            if (m.ModuleStructure != null) return false;
-            GameObject g = Instantiate(structures[p2Structures[structure]]);
-            g.GetComponent<NetworkObject>().Spawn();
-            g.transform.SetParent(m.transform);
-            g.transform.localPosition = Vector3.zero;
-            m.SetStructure(g.GetComponent<Structure>());
+            pNum = 2;
+            p = player2;
+            s = p2Structures;
         }
+        else return false;
+
+        // check if legal
+        Module m = p.GetModule(module);
+        if (m == null) return false;
+        if (m.ModuleStructure != null) return false;
+
+        // spend money if possible
+        GameObject structurePrefab = structures[s[structure]];
+        int cost = structurePrefab.GetComponent<Structure>().Cost;
+        if (!MoneyController.Instance.ChangeMoney(pNum, -cost)) return false;
+
+        GameObject g = Instantiate(structurePrefab);
+        g.GetComponent<NetworkObject>().Spawn();
+        g.transform.SetParent(m.transform);
+        g.transform.localPosition = Vector3.zero;
+        m.SetStructure(g.GetComponent<Structure>());
         return true;
     }
 }

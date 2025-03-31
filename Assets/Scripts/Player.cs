@@ -199,7 +199,7 @@ public class Player : NetworkBehaviour
     public void SelectModuleRpc(int module, RpcParams rpcParams)
     {
         ulong clientId = rpcParams.Receive.SenderClientId;
-        if (module > modules.Count)
+        if (module >= modules.Count)
         {
             InvalidModuleRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
             return;
