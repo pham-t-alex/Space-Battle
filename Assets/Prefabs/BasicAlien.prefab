@@ -130,6 +130,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
+  alienName: Gen I
   maxHealth: 2
   projectilePrefab: {fileID: 512490187501336247, guid: 7569fbcbb4d1345f180fe18834ed5faf, type: 3}
   reloadTimeLeft: 1

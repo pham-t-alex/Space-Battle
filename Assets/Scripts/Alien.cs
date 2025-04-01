@@ -6,6 +6,9 @@ using Unity.Netcode.Components;
 
 public class Alien : NetworkBehaviour
 {
+    [SerializeField] private string alienName;
+    public string AlienName => alienName;
+
     private NetworkVariable<int> health = new NetworkVariable<int>();
     [SerializeField] private int maxHealth = 5;
 

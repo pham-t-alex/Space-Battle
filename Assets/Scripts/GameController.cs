@@ -300,14 +300,15 @@ public class GameController : MonoBehaviour
 
         if (sendIndex >= alienSends.sends.Count) return false;
         AlienSend send = alienSends.sends[sendIndex];
+        
         if (send.unlockWave > wave) return false;
-
+        
         // sender can only be 1 or 2
         if ((sender == 1 && p1Sends.Count >= 5) ||
             p2Sends.Count >= 5) return false;
         // spends money if possible
         if (!MoneyController.Instance.ChangeMoney(sender, -send.cost)) return false;
-
+        
         // once this point is reached, it's a valid send
         MoneyController.Instance.ChangeIncome(sender, send.incomeChange);
         // add send to queue

@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using Unity.Netcode;
+using System.Collections.Generic;
 
 public class GameUI : MonoBehaviour
 {
@@ -58,6 +59,11 @@ public class GameUI : MonoBehaviour
     private Player player2;
     private int associatedPlayer;
 
+    [SerializeField] private AlienSends alienSends;
+    [SerializeField] private GameObject alienSendButtonPrefab;
+    [SerializeField] private GameObject alienSendsContainer;
+    private List<AlienSendButton> buttons = new List<AlienSendButton>();
+
     // Update is called once per frame
     void Update()
     {
@@ -68,8 +74,10 @@ public class GameUI : MonoBehaviour
     public void Setup(int player)
     {
         SetupControls();
+        GenerateSendUI();
         associatedPlayer = player;
         GameMessenger.Instance.ClientGameEndUpdate += TriggerGameEnd;
+        GameMessenger.Instance.WaveUpdate += WaveUpdate;
         switch (player)
         {
             case 1:
@@ -242,5 +250,31 @@ public class GameUI : MonoBehaviour
     {
         if (selectedModule == 0) return;
         GameMessenger.Instance.SellStructure(selectedModule - 1);
+    }
+
+    public void GenerateSendUI()
+    {
+        float height = alienSendButtonPrefab.GetComponent<RectTransform>().rect.height;
+        RectTransform container = alienSendsContainer.GetComponent<RectTransform>();
+        container.sizeDelta = new Vector2(container.sizeDelta.x, height * alienSends.sends.Count);
+        for (int i = 0; i < alienSends.sends.Count; i++)
+        {
+            GameObject g = Instantiate(alienSendButtonPrefab, alienSendsContainer.transform);
+            RectTransform r = g.GetComponent<RectTransform>();
+            r.anchoredPosition = new Vector2(r.anchoredPosition.x, -i * height);
+            AlienSendButton sendButton = g.GetComponent<AlienSendButton>();
+            sendButton.InitializeSend(alienSends.sends[i]);
+            int index = i;
+            sendButton.SendButton.onClick.AddListener(() => SendAliens(index));
+            buttons.Add(sendButton);
+        }
+    }
+
+    public void WaveUpdate(int wave)
+    {
+        foreach (AlienSendButton b in buttons)
+        {
+            if (!b.SendButton.interactable && b.UnlockWave <= wave) b.SendButton.interactable = true;
+        }
     }
 }
