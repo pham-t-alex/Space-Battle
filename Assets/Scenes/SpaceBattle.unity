@@ -1757,6 +1757,7 @@ MonoBehaviour:
   - {fileID: 8288123959235700045, guid: 68d7c3d77676bb74e9d2770a1b8afcab, type: 3}
   p1Structures: 000000000000000000000000
   p2Structures: 000000000000000000000000
+  sellMultiplier: 0.7
 --- !u!114 &535100582
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6315,7 +6316,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2099583444}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1698384733}
+        m_TargetAssemblyTypeName: GameUI, Assembly-CSharp
+        m_MethodName: SellStructure
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2099583444
 MonoBehaviour:
   m_ObjectHideFlags: 0

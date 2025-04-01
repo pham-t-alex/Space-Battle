@@ -10,6 +10,9 @@ public abstract class Structure : NetworkBehaviour
     public GameObject UpgradePrefab(int i) => upgradePrefabs[i];
     public int UpgradeCount => upgradePrefabs.Length;
 
+    [SerializeField] private int value;
+    public int Value => value;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -20,6 +23,18 @@ public abstract class Structure : NetworkBehaviour
     void Update()
     {
         
+    }
+
+    // should only be called in build
+    public void InitializeValue()
+    {
+        value = cost;
+    }
+
+    // should only be called in upgrade
+    public void AddValue(int prevCost)
+    {
+        value += prevCost;
     }
 
     public abstract void Upgrade();

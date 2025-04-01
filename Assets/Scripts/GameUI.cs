@@ -51,6 +51,9 @@ public class GameUI : MonoBehaviour
     private int selectedModule = 0;
     private int attemptedSelectedModule = 0;
 
+    // use later for hotkey legality checking
+    private bool hasStructure;
+
     private Player player1;
     private Player player2;
     private int associatedPlayer;
@@ -94,6 +97,7 @@ public class GameUI : MonoBehaviour
         controls.Player.Module8.performed += (ctx) => SelectModule(8);
         controls.Player.Module9.performed += (ctx) => SelectModule(9);
         controls.Player.Deselect.performed += (ctx) => DeselectModule();
+        controls.Player.Sell.performed += (ctx) => SellStructure();
     }
 
     // Client side setup
@@ -232,5 +236,11 @@ public class GameUI : MonoBehaviour
     {
         if (selectedModule == 0) return;
         GameMessenger.Instance.UpgradeStructure(selectedModule - 1, right);
+    }
+
+    public void SellStructure()
+    {
+        if (selectedModule == 0) return;
+        GameMessenger.Instance.SellStructure(selectedModule - 1);
     }
 }

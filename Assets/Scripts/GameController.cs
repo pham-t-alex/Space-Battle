@@ -81,6 +81,8 @@ public class GameController : MonoBehaviour
     [SerializeField] private int[] p1Structures = new int[3];
     [SerializeField] private int[] p2Structures = new int[3];
 
+    [SerializeField] private float sellMultiplier;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -429,6 +431,7 @@ public class GameController : MonoBehaviour
         g.GetComponent<NetworkObject>().Spawn();
         g.transform.SetParent(m.transform);
         g.transform.localPosition = Vector3.zero;
+        g.GetComponent<Structure>().InitializeValue();
         m.SetStructure(g.GetComponent<Structure>());
 
         GameMessenger.Instance.UpdateStructure(clientId, m.ModuleStructure.UpgradeInfo);
@@ -470,9 +473,42 @@ public class GameController : MonoBehaviour
         g.GetComponent<NetworkObject>().Spawn();
         g.transform.SetParent(m.transform);
         g.transform.localPosition = Vector3.zero;
+        g.GetComponent<Structure>().InitializeValue();
         m.Upgrade(g.GetComponent<Structure>());
 
         GameMessenger.Instance.UpdateStructure(clientId, m.ModuleStructure.UpgradeInfo);
+        return true;
+    }
+
+    public bool SellStructure(ulong clientId, int module)
+    {
+        if (!NetworkManager.Singleton.IsServer) return false;
+        // get player
+        int pNum = 0;
+        Player p;
+
+        if (clientId == p1ID)
+        {
+            pNum = 1;
+            p = player1;
+        }
+        else if (clientId == p2ID)
+        {
+            pNum = 2;
+            p = player2;
+        }
+        else return false;
+
+        // check if legal
+        Module m = p.GetModule(module);
+        if (m == null) return false;
+        Structure s = m.ModuleStructure;
+        if (s == null) return false;
+
+        MoneyController.Instance.ChangeMoney(pNum, Mathf.RoundToInt(sellMultiplier * s.Value));
+        m.Sell();
+
+        GameMessenger.Instance.UpdateModule(clientId);
         return true;
     }
 }

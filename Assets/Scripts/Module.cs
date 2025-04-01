@@ -15,8 +15,16 @@ public class Module : NetworkBehaviour
     public void Upgrade(Structure s)
     {
         if (structure == null) return;
+        s.AddValue(structure.Value);
         Destroy(structure.gameObject);
         structure = s;
+    }
+
+    public void Sell()
+    {
+        if (structure == null) return;
+        Destroy(structure.gameObject);
+        structure = null;
     }
 
     public void Destroy()

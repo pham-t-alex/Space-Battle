@@ -137,4 +137,27 @@ public class GameMessenger : NetworkBehaviour
         ulong clientId = rpcParams.Receive.SenderClientId;
         GameController.Instance.TryUpgradeStructure(clientId, module, right);
     }
+
+    public void SellStructure(int module)
+    {
+        SellStructureRpc(module, default);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void SellStructureRpc(int module, RpcParams rpcParams)
+    {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        GameController.Instance.SellStructure(clientId, module);
+    }
+
+    public void UpdateModule(ulong clientId)
+    {
+        UpdateModuleRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void UpdateModuleRpc(RpcParams rpcParams)
+    {
+        GameUI.Instance.OpenModuleUI();
+    }
 }
