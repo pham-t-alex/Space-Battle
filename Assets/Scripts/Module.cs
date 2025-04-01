@@ -12,6 +12,13 @@ public class Module : NetworkBehaviour
         structure = s;
     }
 
+    public void Upgrade(Structure s)
+    {
+        if (structure == null) return;
+        Destroy(structure.gameObject);
+        structure = s;
+    }
+
     public void Destroy()
     {
         if (!IsServer) return;

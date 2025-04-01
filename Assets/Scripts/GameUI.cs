@@ -40,6 +40,9 @@ public class GameUI : MonoBehaviour
     [SerializeField] private GameObject shipOptionsUI;
     [SerializeField] private GameObject moduleUI;
     [SerializeField] private GameObject structureUI;
+    [SerializeField] private GameObject upgrade1UI;
+    [SerializeField] private GameObject upgrade2UI;
+    [SerializeField] private GameObject noUpgradeUI;
 
     private InputSystem_Actions controls;
 
@@ -47,8 +50,6 @@ public class GameUI : MonoBehaviour
     // 1-9: module 1-9 is selected
     private int selectedModule = 0;
     private int attemptedSelectedModule = 0;
-    // If selectedModule > 0, then this indicates whether there already is a structure there
-    private bool moduleHasStructure = false;
 
     private Player player1;
     private Player player2;
@@ -187,10 +188,49 @@ public class GameUI : MonoBehaviour
 
     public void OpenModuleUI()
     {
-        if (selectedModule > 0) return;
-        selectedModule = attemptedSelectedModule;
-        attemptedSelectedModule = 0;
+        if (selectedModule == 0)
+        {
+            selectedModule = attemptedSelectedModule;
+            attemptedSelectedModule = 0;
+        }
         shipOptionsUI.SetActive(false);
+        structureUI.SetActive(false);
         moduleUI.SetActive(true);
+    }
+
+    public void OpenStructureUI(StructureUpgradeInfo info)
+    {
+        if (selectedModule == 0)
+        {
+            selectedModule = attemptedSelectedModule;
+            attemptedSelectedModule = 0;
+        }
+        shipOptionsUI.SetActive(false);
+        moduleUI.SetActive(false);
+        if (info.UpgradeCount == 1)
+        {
+            upgrade2UI.SetActive(false);
+            noUpgradeUI.SetActive(false);
+            upgrade1UI.SetActive(true);
+        }
+        else if (info.UpgradeCount == 2)
+        {
+            upgrade1UI.SetActive(false);
+            noUpgradeUI.SetActive(false);
+            upgrade2UI.SetActive(true);
+        }
+        else
+        {
+            upgrade1UI.SetActive(false);
+            upgrade2UI.SetActive(false);
+            noUpgradeUI.SetActive(true);
+        }
+        structureUI.SetActive(true);
+    }
+    
+    public void UpgradeStructure(bool right)
+    {
+        if (selectedModule == 0) return;
+        GameMessenger.Instance.UpgradeStructure(selectedModule - 1, right);
     }
 }

@@ -3,6 +3,7 @@ using Unity.Netcode;
 using System.Collections.Generic;
 using System.Collections;
 using System;
+using UnityEditor.PackageManager;
 
 public class GameController : MonoBehaviour
 {
@@ -429,6 +430,49 @@ public class GameController : MonoBehaviour
         g.transform.SetParent(m.transform);
         g.transform.localPosition = Vector3.zero;
         m.SetStructure(g.GetComponent<Structure>());
+
+        GameMessenger.Instance.UpdateStructure(clientId, m.ModuleStructure.UpgradeInfo);
+        return true;
+    }
+
+    public bool TryUpgradeStructure(ulong clientId, int module, bool right)
+    {
+        if (!NetworkManager.Singleton.IsServer) return false;
+        // get player
+        int pNum = 0;
+        Player p;
+
+        if (clientId == p1ID)
+        {
+            pNum = 1;
+            p = player1;
+        }
+        else if (clientId == p2ID)
+        {
+            pNum = 2;
+            p = player2;
+        }
+        else return false;
+
+        // check if legal
+        Module m = p.GetModule(module);
+        if (m == null) return false;
+        Structure s = m.ModuleStructure;
+        if (s == null || s.UpgradeCount < 1 || right && s.UpgradeCount < 2) return false;
+
+        GameObject upgrade = s.UpgradePrefab(right ? 1 : 0);
+
+        // spend money if possible
+        int cost = upgrade.GetComponent<Structure>().Cost;
+        if (!MoneyController.Instance.ChangeMoney(pNum, -cost)) return false;
+
+        GameObject g = Instantiate(upgrade);
+        g.GetComponent<NetworkObject>().Spawn();
+        g.transform.SetParent(m.transform);
+        g.transform.localPosition = Vector3.zero;
+        m.Upgrade(g.GetComponent<Structure>());
+
+        GameMessenger.Instance.UpdateStructure(clientId, m.ModuleStructure.UpgradeInfo);
         return true;
     }
 }

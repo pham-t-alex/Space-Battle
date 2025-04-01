@@ -1,5 +1,6 @@
 using System;
 using Unity.Netcode;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class GameMessenger : NetworkBehaviour
@@ -112,5 +113,28 @@ public class GameMessenger : NetworkBehaviour
     {
         ulong clientId = rpcParams.Receive.SenderClientId;
         GameController.Instance.TryBuildStructure(clientId, module, structure);
+    }
+
+    public void UpdateStructure(ulong clientId, StructureUpgradeInfo info)
+    {
+        UpdateStructureRpc(info, RpcTarget.Single(clientId, RpcTargetUse.Temp));
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void UpdateStructureRpc(StructureUpgradeInfo info, RpcParams rpcParams)
+    {
+        GameUI.Instance.OpenStructureUI(info);
+    }
+
+    public void UpgradeStructure(int module, bool right)
+    {
+        UpgradeStructureRpc(module, right, default);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void UpgradeStructureRpc(int module, bool right, RpcParams rpcParams)
+    {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        GameController.Instance.TryUpgradeStructure(clientId, module, right);
     }
 }

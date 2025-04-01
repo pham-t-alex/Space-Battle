@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 655949805568809222}
   - component: {fileID: 5651287646921936341}
   m_Layer: 0
-  m_Name: BasicGun
+  m_Name: BasicGun 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 920233905
+  GlobalObjectIdHash: 586600589
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -73,13 +73,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  cost: 1000
-  upgradePrefabs:
-  - {fileID: 8288123959235700045, guid: a638507da8afb6941bddb983645b8552, type: 3}
-  - {fileID: 8288123959235700045, guid: 8883c24fb4e85ce4aac76768edb1cfd9, type: 3}
+  cost: 2000
+  upgradePrefabs: []
   projectilePrefab: {fileID: 512490187501336247, guid: ea838f5c7e3f6264a9a9c8a552369aeb, type: 3}
   reloadTimeLeft: 0
-  reloadTime: 1
+  reloadTime: 0.2
 --- !u!114 &655949805568809222
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,7 +159,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
-  m_Color: {r: 0, g: 0.84967804, b: 1, a: 1}
+  m_Color: {r: 0.934319, g: 0, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

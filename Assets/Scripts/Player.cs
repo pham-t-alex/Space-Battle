@@ -205,7 +205,8 @@ public class Player : NetworkBehaviour
             return;
         }
         Module m = modules[module];
-        ModuleUIRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
+        if (m.ModuleStructure == null) ModuleUIRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
+        else StructureUIRpc(m.ModuleStructure.UpgradeInfo, RpcTarget.Single(clientId, RpcTargetUse.Temp));
     }
 
     [Rpc(SendTo.SpecifiedInParams)]
@@ -223,6 +224,6 @@ public class Player : NetworkBehaviour
     [Rpc(SendTo.SpecifiedInParams)]
     void StructureUIRpc(StructureUpgradeInfo info, RpcParams rpcParams)
     {
-
+        GameUI.Instance.OpenStructureUI(info);
     }
 }
