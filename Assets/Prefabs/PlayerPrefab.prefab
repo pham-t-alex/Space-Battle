@@ -114,6 +114,7 @@ MonoBehaviour:
   leftBound: -5
   rightBound: 5
   moduleGap: 0.3
+  healRate: 1
 --- !u!50 &-2360095929223826252
 Rigidbody2D:
   serializedVersion: 5

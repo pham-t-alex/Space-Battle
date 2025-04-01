@@ -32,6 +32,9 @@ public class GameMessenger : NetworkBehaviour
     // per client event indicating whether they are victorious
     public event Action<bool> ClientGameEndUpdate;
 
+    // client wave update
+    public event Action<int> WaveUpdate;
+
     public void GameUISetup(ulong client1, ulong client2)
     {
         if (!IsServer) return;
@@ -159,5 +162,16 @@ public class GameMessenger : NetworkBehaviour
     public void UpdateModuleRpc(RpcParams rpcParams)
     {
         GameUI.Instance.OpenModuleUI();
+    }
+
+    public void TriggerWaveUpdate(int newWave)
+    {
+        WaveUpdateRpc(newWave);
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void WaveUpdateRpc(int wave)
+    {
+        WaveUpdate?.Invoke(wave);
     }
 }

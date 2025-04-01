@@ -32,6 +32,11 @@ public class Player : NetworkBehaviour
     public bool CanLevelUp => level < GameController.Instance.MaxLevel;
     public Module GetModule(int module) => modules[module];
 
+    // Units: full healthbars per minute
+    [SerializeField] private float healRate = 1;
+    private float healDelay = 0f;
+    private float maxHealDelay => 60f / (maxHealth.Value * healRate);
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -74,6 +79,7 @@ public class Player : NetworkBehaviour
         health.Value = maxHealth;
         this.maxHealth.Value = maxHealth;
         HealthbarSetupRpc(player, maxHealth);
+        healDelay = maxHealDelay;
     }
 
     [Rpc(SendTo.ClientsAndHost)]
@@ -114,9 +120,9 @@ public class Player : NetworkBehaviour
         if (!IsServer) return;
         level++;
         int newMax = GameController.Instance.LevelHP(level);
-        int diff = newMax - maxHealth.Value;
+        //int diff = newMax - maxHealth.Value;
         maxHealth.Value = newMax;
-        health.Value += diff;
+        //health.Value += diff;
     }
 
     // Update is called once per frame
@@ -125,6 +131,18 @@ public class Player : NetworkBehaviour
         if (IsOwner)
         {
             newMove = controls.Player.Move.ReadValue<Vector2>().x;
+        }
+        if (IsServer)
+        {
+            if (healDelay > 0)
+            {
+                healDelay -= Time.deltaTime;
+                if (healDelay <= 0)
+                {
+                    healDelay = maxHealDelay;
+                    health.Value = Mathf.Min(health.Value + 1, maxHealth.Value);
+                }
+            }
         }
     }
 

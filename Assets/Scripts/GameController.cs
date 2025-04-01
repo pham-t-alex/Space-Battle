@@ -50,7 +50,7 @@ public class GameController : MonoBehaviour
     private float betweenWaveTimer;
     [SerializeField] private float maxWaveTimer;
 
-    int wave = 0;
+    int wave = -1;
 
     private bool busySpawningP1Sends;
     private bool busySpawningP2Sends;
@@ -115,6 +115,8 @@ public class GameController : MonoBehaviour
         if (betweenWaveTimer <= 0)
         {
             betweenWaveTimer = 0;
+            wave++;
+            GameMessenger.Instance.TriggerWaveUpdate(wave);
             SpawnWave();
         }
     }
@@ -215,7 +217,6 @@ public class GameController : MonoBehaviour
         if (oneLineDone)
         {
             oneLineDone = false;
-            wave++;
             betweenWaveTimer = maxWaveTimer;
         }
         else
@@ -299,6 +300,7 @@ public class GameController : MonoBehaviour
 
         if (sendIndex >= alienSends.sends.Count) return false;
         AlienSend send = alienSends.sends[sendIndex];
+        if (send.unlockWave > wave) return false;
 
         // sender can only be 1 or 2
         if ((sender == 1 && p1Sends.Count >= 5) ||
