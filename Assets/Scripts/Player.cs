@@ -1,8 +1,8 @@
 using UnityEngine;
 using Unity.Netcode;
 using System;
+using System.Collections.Generic;
 
-[RequireComponent(typeof(Collider2D))]
 public class Player : NetworkBehaviour
 {
     [SerializeField] private float speed = 5;
@@ -13,10 +13,6 @@ public class Player : NetworkBehaviour
     private InputSystem_Actions controls;
     private NetworkVariable<int> health = new NetworkVariable<int>();
     private NetworkVariable<int> maxHealth = new NetworkVariable<int>();
-    [SerializeField] private int startingMaxHealth = 5;
-
-    // TEMPORARY, REMOVE LATER
-    [SerializeField] private GameObject gun;
 
     private Rigidbody2D rb;
 
@@ -25,10 +21,21 @@ public class Player : NetworkBehaviour
     public event Action<int, int> HealthChange;
     public event Action<int, int> MaxHealthChange;
 
+    private List<Module> modules = new List<Module>();
+    public int ModuleCount => modules.Count;
+    // note that level is starting at 0, not 1; add 1 to level when displaying
+    private int level;
+    public int Level => level;
+    [SerializeField] private float moduleGap;
+    // Should only be accessed by server
+    public bool CanAddModule => modules.Count < GameController.Instance.MaxModules;
+    public bool CanLevelUp => level < GameController.Instance.MaxLevel;
+    public Module GetModule(int module) => modules[module];
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        
     }
 
     public override void OnNetworkSpawn()
@@ -40,45 +47,76 @@ public class Player : NetworkBehaviour
             controls = new InputSystem_Actions();
             controls.Enable();
         }
-        if (!IsServer)
+        if (IsServer)
+        {
+            ServerSetup();
+        }
+        else
         {
             Destroy(GetComponent<Rigidbody2D>());
+            Destroy(GetComponent<Collider2D>());
         }
     }
 
-    public void Setup()
+    public void ServerSetup()
     {
-        if (!IsServer) return;
         rb = GetComponent<Rigidbody2D>();
-        // TEMPORARY, REMOVE LATER
-        SpawnGun();
-        health.Value = startingMaxHealth;
-        maxHealth.Value = startingMaxHealth;
+        GameObject g = Instantiate(GameController.Instance.ModulePrefab);
+        g.GetComponent<NetworkObject>().Spawn();
+        g.transform.SetParent(transform, false);
+        g.transform.localPosition = Vector3.zero;
+        modules.Add(g.GetComponent<Module>());
     }
 
     // called by server
-    public void HealthbarSetup(int player)
+    public void HealthSetup(int player, int maxHealth)
     {
-        HealthbarSetupRpc(player);
+        health.Value = maxHealth;
+        this.maxHealth.Value = maxHealth;
+        HealthbarSetupRpc(player, maxHealth);
     }
 
     [Rpc(SendTo.ClientsAndHost)]
-    public void HealthbarSetupRpc(int player)
+    public void HealthbarSetupRpc(int player, int maxHealth)
     {
-        GameUI.SetupHealthbar(this, player, startingMaxHealth);
+        GameUI.Instance.ClientSetup(this, player, maxHealth);
     }
 
-    // TEMPORARY, REMOVE LATER
-    public void SpawnGun()
+    public void AddModule(bool right)
     {
-        if (IsServer)
+        if (!IsServer) return;
+        GameObject g = Instantiate(GameController.Instance.ModulePrefab);
+        g.GetComponent<NetworkObject>().Spawn();
+        g.transform.SetParent(transform, false);
+        if (right)
         {
-            GameObject g = Instantiate(gun);
-            NetworkObject obj = g.GetComponent<NetworkObject>();
-            obj.Spawn();
-            g.transform.parent = transform;
-            g.transform.localPosition = Vector3.zero;
+            for (int i = 0; i < modules.Count; i++)
+            {
+                modules[i].transform.localPosition += Vector3.left * (moduleGap / 2);
+            }
+            g.transform.localPosition = modules[modules.Count - 1].transform.localPosition + Vector3.right * moduleGap;
+            modules.Add(g.GetComponent<Module>());
         }
+        else
+        {
+            for (int i = 0; i < modules.Count; i++)
+            {
+                modules[i].transform.localPosition += Vector3.right * (moduleGap / 2);
+            }
+            g.transform.localPosition = modules[1].transform.localPosition + Vector3.left * moduleGap;
+            modules.Insert(0, g.GetComponent<Module>());
+        }
+        GetComponent<BoxCollider2D>().size += Vector2.right * moduleGap;
+    }
+
+    public void LevelUp()
+    {
+        if (!IsServer) return;
+        level++;
+        int newMax = GameController.Instance.LevelHP(level);
+        int diff = newMax - maxHealth.Value;
+        maxHealth.Value = newMax;
+        health.Value += diff;
     }
 
     // Update is called once per frame
@@ -110,7 +148,8 @@ public class Player : NetworkBehaviour
     {
         if (IsServer)
         {
-            rb.MovePosition(new Vector2(Mathf.Clamp(rb.position.x + movement * speed * Time.fixedDeltaTime, leftBound, rightBound), rb.position.y));
+            rb.MovePosition(new Vector2(Mathf.Clamp(rb.position.x + movement * speed * Time.fixedDeltaTime, 
+                leftBound + (modules.Count * moduleGap / 2), rightBound - (modules.Count * moduleGap / 2)), rb.position.y));
         }
     }
 
@@ -141,9 +180,9 @@ public class Player : NetworkBehaviour
     {
         if (!IsServer) return;
         DieRpc();
-        for (int i = transform.childCount - 1; i >= 0; i--)
+        for (int i = 0; i < modules.Count; i++)
         {
-            Destroy(transform.GetChild(0).gameObject);
+            modules[i].Destroy();
         }
         PlayerDeathEvent?.Invoke();
         Destroy(gameObject);
@@ -153,5 +192,38 @@ public class Player : NetworkBehaviour
     public void DieRpc()
     {
         PlayerClientDeathEvent?.Invoke();
+    }
+
+    // called by GameUI from client
+    [Rpc(SendTo.Server)]
+    public void SelectModuleRpc(int module, RpcParams rpcParams)
+    {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        if (module >= modules.Count)
+        {
+            InvalidModuleRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
+            return;
+        }
+        Module m = modules[module];
+        if (m.ModuleStructure == null) ModuleUIRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
+        else StructureUIRpc(m.ModuleStructure.UpgradeInfo, RpcTarget.Single(clientId, RpcTargetUse.Temp));
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    void InvalidModuleRpc(RpcParams rpcParams)
+    {
+        GameUI.Instance.InvalidModuleSelection();
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    void ModuleUIRpc(RpcParams rpcParams)
+    {
+        GameUI.Instance.OpenModuleUI();
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    void StructureUIRpc(StructureUpgradeInfo info, RpcParams rpcParams)
+    {
+        GameUI.Instance.OpenStructureUI(info);
     }
 }

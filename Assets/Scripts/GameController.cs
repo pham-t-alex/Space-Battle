@@ -3,6 +3,7 @@ using Unity.Netcode;
 using System.Collections.Generic;
 using System.Collections;
 using System;
+using UnityEditor.PackageManager;
 
 public class GameController : MonoBehaviour
 {
@@ -57,9 +58,30 @@ public class GameController : MonoBehaviour
     private bool gameOver = false;
 
     [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private GameObject modulePrefab;
+    public GameObject ModulePrefab => modulePrefab;
 
     private Player player1;
     private Player player2;
+
+    [SerializeField] private int[] hpPerLevel;
+    public int MaxLevel => hpPerLevel.Length - 1;
+    public int LevelHP(int index) => hpPerLevel[index];
+    // MUST BE THE SAME LENGTH AS HP PER LEVEL - 1
+    [SerializeField] private int[] levelCosts;
+
+    // Costs for extra modules
+    [SerializeField] private int[] moduleCosts;
+    public int MaxModules => moduleCosts.Length + 1;
+
+    [SerializeField] private GameObject[] structures;
+
+    // Contain indices of structures
+    // Length 3, determines which structures each player can build
+    [SerializeField] private int[] p1Structures = new int[3];
+    [SerializeField] private int[] p2Structures = new int[3];
+
+    [SerializeField] private float sellMultiplier;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -69,7 +91,6 @@ public class GameController : MonoBehaviour
             GameObject player = Instantiate(playerPrefab);
             SpawnPlayer(player.GetComponent<Player>(), clientId);
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
-            player.GetComponent<Player>().Setup();
         }
         StartGame();
     }
@@ -167,8 +188,8 @@ public class GameController : MonoBehaviour
         MoneyController.Instance.Setup();
         GameMessenger.Instance.GameUISetup(p1ID, p2ID);
 
-        player1.HealthbarSetup(1);
-        player2.HealthbarSetup(2);
+        player1.HealthSetup(1, hpPerLevel[0]);
+        player2.HealthSetup(2, hpPerLevel[0]);
 
         frontLineSpawn = map.frontLinePath[0];
         backLineSpawn = map.backLinePath[0];
@@ -312,5 +333,182 @@ public class GameController : MonoBehaviour
                 StartCoroutine(SpawnSendCoroutine(player));
                 break;
         }
+    }
+
+    public bool TryAddModule(ulong clientId, bool right)
+    {
+        if (!NetworkManager.Singleton.IsServer) return false;
+        // get player
+        int pNum = 0;
+        Player p;
+        if (clientId == p1ID)
+        {
+            pNum = 1;
+            p = player1;
+        }
+        else if (clientId == p2ID)
+        {
+            pNum = 2;
+            p = player2;
+        }
+        else return false;
+
+        // if already at max
+        if (!p.CanAddModule) return false;
+
+        // spends money if possible
+        if (!MoneyController.Instance.ChangeMoney(pNum, -moduleCosts[p.ModuleCount - 1])) return false;
+
+        // money is spent
+        p.AddModule(right);
+
+        return true;
+    }
+
+    public bool TryLevelUp(ulong clientId)
+    {
+        if (!NetworkManager.Singleton.IsServer) return false;
+        // get player
+        int pNum = 0;
+        Player p;
+        if (clientId == p1ID)
+        {
+            pNum = 1;
+            p = player1;
+        }
+        else if (clientId == p2ID)
+        {
+            pNum = 2;
+            p = player2;
+        }
+        else return false;
+
+        // if already at max
+        if (!p.CanLevelUp) return false;
+
+        // spends money if possible
+        if (!MoneyController.Instance.ChangeMoney(pNum, -levelCosts[p.Level])) return false;
+
+        // money is spent
+        p.LevelUp();
+
+        return true;
+    }
+
+    public bool TryBuildStructure(ulong clientId, int module, int structure)
+    {
+        if (!NetworkManager.Singleton.IsServer) return false;
+        // get player
+        int pNum = 0;
+        Player p;
+        int[] s;
+
+        if (clientId == p1ID)
+        {
+            pNum = 1;
+            p = player1;
+            s = p1Structures;
+        }
+        else if (clientId == p2ID)
+        {
+            pNum = 2;
+            p = player2;
+            s = p2Structures;
+        }
+        else return false;
+
+        // check if legal
+        Module m = p.GetModule(module);
+        if (m == null) return false;
+        if (m.ModuleStructure != null) return false;
+
+        // spend money if possible
+        GameObject structurePrefab = structures[s[structure]];
+        int cost = structurePrefab.GetComponent<Structure>().Cost;
+        if (!MoneyController.Instance.ChangeMoney(pNum, -cost)) return false;
+
+        GameObject g = Instantiate(structurePrefab);
+        g.GetComponent<NetworkObject>().Spawn();
+        g.transform.SetParent(m.transform);
+        g.transform.localPosition = Vector3.zero;
+        g.GetComponent<Structure>().InitializeValue();
+        m.SetStructure(g.GetComponent<Structure>());
+
+        GameMessenger.Instance.UpdateStructure(clientId, m.ModuleStructure.UpgradeInfo);
+        return true;
+    }
+
+    public bool TryUpgradeStructure(ulong clientId, int module, bool right)
+    {
+        if (!NetworkManager.Singleton.IsServer) return false;
+        // get player
+        int pNum = 0;
+        Player p;
+
+        if (clientId == p1ID)
+        {
+            pNum = 1;
+            p = player1;
+        }
+        else if (clientId == p2ID)
+        {
+            pNum = 2;
+            p = player2;
+        }
+        else return false;
+
+        // check if legal
+        Module m = p.GetModule(module);
+        if (m == null) return false;
+        Structure s = m.ModuleStructure;
+        if (s == null || s.UpgradeCount < 1 || right && s.UpgradeCount < 2) return false;
+
+        GameObject upgrade = s.UpgradePrefab(right ? 1 : 0);
+
+        // spend money if possible
+        int cost = upgrade.GetComponent<Structure>().Cost;
+        if (!MoneyController.Instance.ChangeMoney(pNum, -cost)) return false;
+
+        GameObject g = Instantiate(upgrade);
+        g.GetComponent<NetworkObject>().Spawn();
+        g.transform.SetParent(m.transform);
+        g.transform.localPosition = Vector3.zero;
+        g.GetComponent<Structure>().InitializeValue();
+        m.Upgrade(g.GetComponent<Structure>());
+
+        GameMessenger.Instance.UpdateStructure(clientId, m.ModuleStructure.UpgradeInfo);
+        return true;
+    }
+
+    public bool SellStructure(ulong clientId, int module)
+    {
+        if (!NetworkManager.Singleton.IsServer) return false;
+        // get player
+        int pNum = 0;
+        Player p;
+
+        if (clientId == p1ID)
+        {
+            pNum = 1;
+            p = player1;
+        }
+        else if (clientId == p2ID)
+        {
+            pNum = 2;
+            p = player2;
+        }
+        else return false;
+
+        // check if legal
+        Module m = p.GetModule(module);
+        if (m == null) return false;
+        Structure s = m.ModuleStructure;
+        if (s == null) return false;
+
+        MoneyController.Instance.ChangeMoney(pNum, Mathf.RoundToInt(sellMultiplier * s.Value));
+        m.Sell();
+
+        GameMessenger.Instance.UpdateModule(clientId);
+        return true;
     }
 }

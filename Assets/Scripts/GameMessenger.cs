@@ -1,5 +1,6 @@
 using System;
 using Unity.Netcode;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class GameMessenger : NetworkBehaviour
@@ -14,18 +15,18 @@ public class GameMessenger : NetworkBehaviour
 
     void Start()
     {
-        
+
     }
 
     public override void OnNetworkSpawn()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     // per client event indicating whether they are victorious
@@ -41,7 +42,7 @@ public class GameMessenger : NetworkBehaviour
     [Rpc(SendTo.SpecifiedInParams)]
     public void GameUISetupRpc(int player, RpcParams rpcParams)
     {
-        GameUI.Setup(player);
+        GameUI.Instance.Setup(player);
     }
 
     public void SendAliens(int sendIndex, bool front)
@@ -76,5 +77,87 @@ public class GameMessenger : NetworkBehaviour
     public void GameEndRpc(bool victorious, RpcParams rpcParams)
     {
         ClientGameEndUpdate?.Invoke(victorious);
+    }
+
+    public void AddModule(bool right)
+    {
+        AddModuleRpc(right, default);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void AddModuleRpc(bool right, RpcParams rpcParams)
+    {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        GameController.Instance.TryAddModule(clientId, right);
+    }
+
+    public void LevelUp()
+    {
+        LevelUpRpc(default);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void LevelUpRpc(RpcParams rpcParams)
+    {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        GameController.Instance.TryLevelUp(clientId);
+    }
+
+    public void BuildStructure(int module, int structure)
+    {
+        BuildStructureRpc(module, structure, default);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void BuildStructureRpc(int module, int structure, RpcParams rpcParams)
+    {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        GameController.Instance.TryBuildStructure(clientId, module, structure);
+    }
+
+    public void UpdateStructure(ulong clientId, StructureUpgradeInfo info)
+    {
+        UpdateStructureRpc(info, RpcTarget.Single(clientId, RpcTargetUse.Temp));
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void UpdateStructureRpc(StructureUpgradeInfo info, RpcParams rpcParams)
+    {
+        GameUI.Instance.OpenStructureUI(info);
+    }
+
+    public void UpgradeStructure(int module, bool right)
+    {
+        UpgradeStructureRpc(module, right, default);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void UpgradeStructureRpc(int module, bool right, RpcParams rpcParams)
+    {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        GameController.Instance.TryUpgradeStructure(clientId, module, right);
+    }
+
+    public void SellStructure(int module)
+    {
+        SellStructureRpc(module, default);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void SellStructureRpc(int module, RpcParams rpcParams)
+    {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        GameController.Instance.SellStructure(clientId, module);
+    }
+
+    public void UpdateModule(ulong clientId)
+    {
+        UpdateModuleRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void UpdateModuleRpc(RpcParams rpcParams)
+    {
+        GameUI.Instance.OpenModuleUI();
     }
 }
