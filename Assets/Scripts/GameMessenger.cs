@@ -1,3 +1,4 @@
+using NUnit.Framework.Interfaces;
 using System;
 using Unity.Netcode;
 using UnityEditor.PackageManager;
@@ -35,17 +36,20 @@ public class GameMessenger : NetworkBehaviour
     // client wave update
     public event Action<int> WaveUpdate;
 
-    public void GameUISetup(ulong client1, ulong client2)
+    public void GameUISetup(ulong client1, ulong client2, int moduleCost, int levelCost, 
+        StructureInfo p1First, StructureInfo p1Second, StructureInfo p1Third,
+        StructureInfo p2First, StructureInfo p2Second, StructureInfo p2Third)
     {
         if (!IsServer) return;
-        GameUISetupRpc(1, RpcTarget.Single(client1, RpcTargetUse.Temp));
-        GameUISetupRpc(2, RpcTarget.Single(client2, RpcTargetUse.Temp));
+        GameUISetupRpc(1, moduleCost, levelCost, p1First, p1Second, p1Third, RpcTarget.Single(client1, RpcTargetUse.Temp));
+        GameUISetupRpc(2, moduleCost, levelCost, p2First, p2Second, p2Third, RpcTarget.Single(client2, RpcTargetUse.Temp));
     }
 
     [Rpc(SendTo.SpecifiedInParams)]
-    public void GameUISetupRpc(int player, RpcParams rpcParams)
+    public void GameUISetupRpc(int player, int moduleCost, int levelCost, 
+        StructureInfo first, StructureInfo second, StructureInfo third, RpcParams rpcParams)
     {
-        GameUI.Instance.Setup(player);
+        GameUI.Instance.Setup(player, moduleCost, levelCost, first, second, third);
     }
 
     public void SendAliens(int sendIndex, bool front)
@@ -173,5 +177,51 @@ public class GameMessenger : NetworkBehaviour
     public void WaveUpdateRpc(int wave)
     {
         WaveUpdate?.Invoke(wave);
+    }
+
+    public void UpdateModuleCost(ulong clientId, int cost)
+    {
+        UpdateModuleCostRpc(cost, RpcTarget.Single(clientId, RpcTargetUse.Temp));
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void UpdateModuleCostRpc(int cost, RpcParams rpcParams)
+    {
+        GameUI.Instance.UpdateModuleCost(cost);
+    }
+
+    public void MaxModules(ulong clientId)
+    {
+        MaxModuleRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void MaxModuleRpc(RpcParams rpcParams)
+    {
+        GameUI.Instance.MaxModules();
+    }
+
+    public void UpdateLevelCost(ulong clientId, int cost, int level)
+    {
+        UpdateLevelCostRpc(cost, level, RpcTarget.Single(clientId, RpcTargetUse.Temp));
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void UpdateLevelCostRpc(int cost, int level, RpcParams rpcParams)
+    {
+        GameUI.Instance.UpdateLevelCost(cost);
+        GameUI.Instance.UpdateLevel(level);
+    }
+
+    public void MaxLevel(ulong clientId, int level)
+    {
+        MaxLevelRpc(level, RpcTarget.Single(clientId, RpcTargetUse.Temp));
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void MaxLevelRpc(int level, RpcParams rpcParams)
+    {
+        GameUI.Instance.MaxLevel();
+        GameUI.Instance.UpdateLevel(level);
     }
 }

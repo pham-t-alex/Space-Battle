@@ -3,14 +3,11 @@ using TMPro;
 using UnityEngine.UI;
 using System;
 
-public class AlienSendButton : MonoBehaviour
+public class AlienSendButton : BuyButton
 {
     [SerializeField] private TMP_Text alien;
     [SerializeField] private TMP_Text count;
-    [SerializeField] private TMP_Text cost;
     [SerializeField] private TMP_Text income;
-    [SerializeField] private Button button;
-    public Button SendButton => button;
     private int unlockWave;
     public int UnlockWave => unlockWave;
 
@@ -30,8 +27,8 @@ public class AlienSendButton : MonoBehaviour
     {
         alien.text = send.alien.GetComponent<Alien>().AlienName;
         count.text = $"x{send.count.ToString()}";
-        cost.text = $"${send.cost}";
         income.text = $"{send.incomeChange}";
         unlockWave = send.unlockWave;
+        InitializeCost(send.cost);
     }
 }

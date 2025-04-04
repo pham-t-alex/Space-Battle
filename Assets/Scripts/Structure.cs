@@ -3,6 +3,7 @@ using UnityEngine;
 
 public abstract class Structure : NetworkBehaviour
 {
+    [SerializeField] private string structureName;
     [SerializeField] private int cost;
     public int Cost => cost;
 
@@ -16,13 +17,13 @@ public abstract class Structure : NetworkBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     // should only be called in build
@@ -46,34 +47,62 @@ public abstract class Structure : NetworkBehaviour
         {
             if (upgradePrefabs.Length == 1)
             {
-                return new StructureUpgradeInfo(1, upgradePrefabs[0].GetComponent<Structure>().cost, 0);
+                return new StructureUpgradeInfo(1, upgradePrefabs[0].GetComponent<Structure>().Info, StructureInfo.NoStructure);
             }
             else if (upgradePrefabs.Length == 2)
             {
-                return new StructureUpgradeInfo(2, upgradePrefabs[0].GetComponent<Structure>().cost, upgradePrefabs[0].GetComponent<Structure>().cost);
+                return new StructureUpgradeInfo(2, upgradePrefabs[0].GetComponent<Structure>().Info, upgradePrefabs[1].GetComponent<Structure>().Info);
             }
-            else return new StructureUpgradeInfo(0, 0, 0);
+            else return new StructureUpgradeInfo(0, StructureInfo.NoStructure, StructureInfo.NoStructure);
         }
+    }
+
+    public StructureInfo Info => new StructureInfo(structureName, cost);
+}
+
+public struct StructureInfo : INetworkSerializable
+{
+    public string Name;
+    public int Cost;
+    private static StructureInfo noStructure = new StructureInfo("", 0);
+
+    public static StructureInfo NoStructure => noStructure;
+
+    public bool IsNothing(StructureInfo info)
+    {
+        return info.Name == "";
+    }
+
+    public StructureInfo(string name, int cost)
+    {
+        Name = name;
+        Cost = cost;
+    }
+
+    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    {
+        serializer.SerializeValue(ref Name);
+        serializer.SerializeValue(ref Cost);
     }
 }
 
 public struct StructureUpgradeInfo : INetworkSerializable
 {
     public int UpgradeCount;
-    public int Upgrade1Cost;
-    public int Upgrade2Cost;
+    public StructureInfo Upgrade1;
+    public StructureInfo Upgrade2;
 
-    public StructureUpgradeInfo(int count, int one, int two)
+    public StructureUpgradeInfo(int count, StructureInfo upgrade1, StructureInfo upgrade2)
     {
         UpgradeCount = count;
-        Upgrade1Cost = one;
-        Upgrade2Cost = two;
+        Upgrade1 = upgrade1;
+        Upgrade2 = upgrade2;
     }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
     {
         serializer.SerializeValue(ref UpgradeCount);
-        serializer.SerializeValue(ref Upgrade1Cost);
-        serializer.SerializeValue(ref Upgrade2Cost);
+        serializer.SerializeValue(ref Upgrade1);
+        serializer.SerializeValue(ref Upgrade2);
     }
 }

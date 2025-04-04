@@ -324,11 +324,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c204440d706c1a48b8087f98dda3e85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  costText: {fileID: 7159894651261565303}
+  button: {fileID: 3327424123673792116}
   alien: {fileID: 6476854825164563109}
   count: {fileID: 3219042476351298029}
-  cost: {fileID: 7159894651261565303}
   income: {fileID: 6069962026117494858}
-  button: {fileID: 3327424123673792116}
 --- !u!1 &5645853652408898705
 GameObject:
   m_ObjectHideFlags: 0
@@ -661,7 +661,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 1, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

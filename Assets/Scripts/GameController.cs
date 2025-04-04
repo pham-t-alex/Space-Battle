@@ -188,7 +188,13 @@ public class GameController : MonoBehaviour
 
         // Money setup
         MoneyController.Instance.Setup();
-        GameMessenger.Instance.GameUISetup(p1ID, p2ID);
+        GameMessenger.Instance.GameUISetup(p1ID, p2ID, moduleCosts[0], levelCosts[0],
+            structures[p1Structures[0]].GetComponent<Structure>().Info,
+            structures[p1Structures[1]].GetComponent<Structure>().Info,
+            structures[p1Structures[2]].GetComponent<Structure>().Info,
+            structures[p2Structures[0]].GetComponent<Structure>().Info,
+            structures[p2Structures[1]].GetComponent<Structure>().Info,
+            structures[p2Structures[2]].GetComponent<Structure>().Info);
 
         player1.HealthSetup(1, hpPerLevel[0]);
         player2.HealthSetup(2, hpPerLevel[0]);
@@ -360,11 +366,13 @@ public class GameController : MonoBehaviour
         if (!p.CanAddModule) return false;
 
         // spends money if possible
-        if (!MoneyController.Instance.ChangeMoney(pNum, -moduleCosts[p.ModuleCount - 1])) return false;
+        int moduleIndex = p.ModuleCount;
+        if (!MoneyController.Instance.ChangeMoney(pNum, -moduleCosts[moduleIndex - 1])) return false;
 
         // money is spent
         p.AddModule(right);
-
+        if (moduleIndex >= moduleCosts.Length) GameMessenger.Instance.MaxModules(clientId);
+        else GameMessenger.Instance.UpdateModuleCost(clientId, moduleCosts[moduleIndex]);
         return true;
     }
 
@@ -390,11 +398,13 @@ public class GameController : MonoBehaviour
         if (!p.CanLevelUp) return false;
 
         // spends money if possible
-        if (!MoneyController.Instance.ChangeMoney(pNum, -levelCosts[p.Level])) return false;
+        int levelIndex = p.Level;
+        if (!MoneyController.Instance.ChangeMoney(pNum, -levelCosts[levelIndex])) return false;
 
         // money is spent
         p.LevelUp();
-
+        if (levelIndex + 1 >= levelCosts.Length) GameMessenger.Instance.MaxLevel(clientId, levelIndex + 2);
+        else GameMessenger.Instance.UpdateLevelCost(clientId, levelCosts[levelIndex + 1], levelIndex + 2);
         return true;
     }
 
