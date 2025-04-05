@@ -10,11 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 893cd459a1696f5459c0adf58090f7f8, type: 3}
-  m_Name: TestWave
+  m_Name: Wave7
   m_EditorClassIdentifier: 
   backLineComponents:
+  - alien: {fileID: 7635512465832564758, guid: 8ad7c81aa2ca68a48bacca04896c7ea0, type: 3}
+    count: 5
+    spawnDelay: 3
+    afterSpawnDelay: 0
+  frontLineComponents:
   - alien: {fileID: 7635512465832564758, guid: d9301f1c364a1654f8e35215e28a2ed0, type: 3}
-    count: 2
+    count: 10
+    spawnDelay: 0.5
+    afterSpawnDelay: 0
+  - alien: {fileID: 7635512465832564758, guid: 30bae92fe97645f419afc7cb6d46494d, type: 3}
+    count: 5
     spawnDelay: 1
     afterSpawnDelay: 0
-  frontLineComponents: []
+  - alien: {fileID: 7635512465832564758, guid: 550e9313609b101469536c6c0eb53956, type: 3}
+    count: 2
+    spawnDelay: 2.5
+    afterSpawnDelay: 0

@@ -2176,15 +2176,28 @@ MonoBehaviour:
   world2: {fileID: 2091063301}
   alienSends: {fileID: 11400000, guid: 5799ed3b789794520b0f163da18d738d, type: 2}
   waves:
-  - {fileID: 11400000, guid: 4deab563336bdce4b9a458f3ddc9167b, type: 2}
-  - {fileID: 11400000, guid: 64ef5cc66b6596a4fa1253010417bcd5, type: 2}
+  - {fileID: 11400000, guid: b82ff3d4262c71c4c829ac2489143aa3, type: 2}
+  - {fileID: 11400000, guid: 707b7486221debf4aabdb4ee5fb2e98b, type: 2}
+  - {fileID: 11400000, guid: 93f43ed2db473a24abe75ed7585b63ee, type: 2}
+  - {fileID: 11400000, guid: f2d77fc6f0dec45488c30025404fa43d, type: 2}
+  - {fileID: 11400000, guid: d70d66d3c5be25a4fbd44e9195923e7d, type: 2}
+  - {fileID: 11400000, guid: cfcc09f20317811469df06bf50421e32, type: 2}
+  - {fileID: 11400000, guid: 186b989dceb4b25419a00c232d953689, type: 2}
+  - {fileID: 11400000, guid: dd17647b2ab540f43b8daad22e716675, type: 2}
+  - {fileID: 11400000, guid: dd17647b2ab540f43b8daad22e716675, type: 2}
+  - {fileID: 11400000, guid: dd17647b2ab540f43b8daad22e716675, type: 2}
+  - {fileID: 11400000, guid: dd17647b2ab540f43b8daad22e716675, type: 2}
+  - {fileID: 11400000, guid: dd17647b2ab540f43b8daad22e716675, type: 2}
+  - {fileID: 11400000, guid: dd17647b2ab540f43b8daad22e716675, type: 2}
+  - {fileID: 11400000, guid: dd17647b2ab540f43b8daad22e716675, type: 2}
+  - {fileID: 11400000, guid: dd17647b2ab540f43b8daad22e716675, type: 2}
   map: {fileID: 11400000, guid: 471bedfd82e749f4282ea4d413512f38, type: 2}
   maxWaveTimer: 10
   playerPrefab: {fileID: 1095666974328058887, guid: 44c42a5493c7a40d7a3ee3736a99316a, type: 3}
   modulePrefab: {fileID: 3962105899122090152, guid: f255a3b990db5b441ba7adffaa0369c9, type: 3}
-  hpPerLevel: 0a000000140000001e0000002800000032000000
-  levelCosts: 64000000c80000002c01000090010000
-  moduleCosts: 64000000c80000002c01000090010000f401000058020000bc02000020030000
+  hpPerLevel: 0a00000014000000280000004b00000096000000
+  levelCosts: f4010000dc050000b80b00004c1d0000
+  moduleCosts: 64000000c800000090010000bc020000e8030000dc050000c409000088130000
   structures:
   - {fileID: 8288123959235700045, guid: 68d7c3d77676bb74e9d2770a1b8afcab, type: 3}
   - {fileID: 8288123959235700045, guid: 5cfa80aea0ce4e8459ddd84b0abfc3fc, type: 3}
@@ -3620,8 +3633,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 642969570}
   m_HandleRect: {fileID: 642969569}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.26990578
+  m_Value: 0.99999994
+  m_Size: 0.27005363
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

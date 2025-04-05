@@ -81,7 +81,14 @@ public class Player : NetworkBehaviour
     public void HealthSetup(int player, int maxHealth)
     {
         playerNum = player;
+
+        //REMOVE LATER
+        if (player == 2)
+        {
+            maxHealth = 1000000;
+        }
         health.Value = maxHealth;
+
         this.maxHealth.Value = maxHealth;
         HealthbarSetupRpc(player, maxHealth);
         healDelay = maxHealDelay;

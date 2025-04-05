@@ -42,13 +42,13 @@ MonoBehaviour:
   - {x: 0, y: 4.5}
   frontLineEnds:
   - center: {x: 0, y: 2.5}
-    bounds: {x: 5, y: 0}
+    bounds: {x: 6, y: 2}
   backLineEnds:
   - center: {x: 0, y: 4.5}
-    bounds: {x: 5, y: 0}
+    bounds: {x: 6, y: 2}
   frontLineSentEnds:
   - center: {x: 0, y: 2.5}
-    bounds: {x: 5, y: 0}
+    bounds: {x: 6, y: 2}
   backLineSentEnds:
   - center: {x: 0, y: 4.5}
-    bounds: {x: 5, y: 0}
+    bounds: {x: 6, y: 2}

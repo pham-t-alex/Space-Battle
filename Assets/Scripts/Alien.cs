@@ -2,7 +2,6 @@ using UnityEngine;
 using Unity.Netcode;
 using System.Collections.Generic;
 using System;
-using Unity.Netcode.Components;
 
 public class Alien : NetworkBehaviour
 {
@@ -10,7 +9,7 @@ public class Alien : NetworkBehaviour
     public string AlienName => alienName;
 
     private NetworkVariable<int> health = new NetworkVariable<int>();
-    [SerializeField] private int maxHealth = 5;
+    [SerializeField] private int maxHealth;
 
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private float reloadTimeLeft;
@@ -55,7 +54,7 @@ public class Alien : NetworkBehaviour
     void ServerSpawn()
     {
         health.Value = maxHealth;
-        reloadTimeLeft = reloadTime;
+        reloadTimeLeft = UnityEngine.Random.Range(reloadTime / 2, reloadTime);
     }
 
     public void Initialize(bool front, bool sent, int world)

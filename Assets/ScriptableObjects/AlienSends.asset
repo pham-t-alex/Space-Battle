@@ -18,19 +18,61 @@ MonoBehaviour:
     alien: {fileID: 7635512465832564758, guid: d9301f1c364a1654f8e35215e28a2ed0, type: 3}
     count: 1
     incomeChange: 1
-    delayBeforeSend: 1
-    delayBetweenSends: 0
-  - unlockWave: 1
-    cost: 25
-    alien: {fileID: 7635512465832564758, guid: d9301f1c364a1654f8e35215e28a2ed0, type: 3}
-    count: 1
-    incomeChange: 1
-    delayBeforeSend: 0.3
+    delayBeforeSend: 2
     delayBetweenSends: 0
   - unlockWave: 2
-    cost: 100
+    cost: 50
     alien: {fileID: 7635512465832564758, guid: d9301f1c364a1654f8e35215e28a2ed0, type: 3}
-    count: 4
+    count: 2
+    incomeChange: 2
+    delayBeforeSend: 0.5
+    delayBetweenSends: 0.5
+  - unlockWave: 2
+    cost: 60
+    alien: {fileID: 7635512465832564758, guid: 30bae92fe97645f419afc7cb6d46494d, type: 3}
+    count: 1
+    incomeChange: 3
+    delayBeforeSend: 2
+    delayBetweenSends: 0
+  - unlockWave: 4
+    cost: 100
+    alien: {fileID: 7635512465832564758, guid: 30bae92fe97645f419afc7cb6d46494d, type: 3}
+    count: 2
     incomeChange: 4
-    delayBeforeSend: 0.2
-    delayBetweenSends: 0.2
+    delayBeforeSend: 0.5
+    delayBetweenSends: 0.5
+  - unlockWave: 4
+    cost: 100
+    alien: {fileID: 7635512465832564758, guid: 550e9313609b101469536c6c0eb53956, type: 3}
+    count: 1
+    incomeChange: 5
+    delayBeforeSend: 2
+    delayBetweenSends: 0
+  - unlockWave: 6
+    cost: 200
+    alien: {fileID: 7635512465832564758, guid: 550e9313609b101469536c6c0eb53956, type: 3}
+    count: 2
+    incomeChange: 8
+    delayBeforeSend: 0.5
+    delayBetweenSends: 0.5
+  - unlockWave: 6
+    cost: 140
+    alien: {fileID: 7635512465832564758, guid: 8ad7c81aa2ca68a48bacca04896c7ea0, type: 3}
+    count: 1
+    incomeChange: 7
+    delayBeforeSend: 2
+    delayBetweenSends: 0
+  - unlockWave: 8
+    cost: 250
+    alien: {fileID: 7635512465832564758, guid: 8ad7c81aa2ca68a48bacca04896c7ea0, type: 3}
+    count: 2
+    incomeChange: 10
+    delayBeforeSend: 0.5
+    delayBetweenSends: 0.5
+  - unlockWave: 10
+    cost: 500
+    alien: {fileID: 7635512465832564758, guid: 8ad7c81aa2ca68a48bacca04896c7ea0, type: 3}
+    count: 10
+    incomeChange: 20
+    delayBeforeSend: 0.25
+    delayBetweenSends: 0.25
