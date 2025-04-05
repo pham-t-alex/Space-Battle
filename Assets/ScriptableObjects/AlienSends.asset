@@ -14,23 +14,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sends:
   - unlockWave: 0
-    cost: 100
+    cost: 20
     alien: {fileID: 7635512465832564758, guid: d9301f1c364a1654f8e35215e28a2ed0, type: 3}
     count: 1
-    incomeChange: 10
+    incomeChange: 1
     delayBeforeSend: 1
     delayBetweenSends: 0
   - unlockWave: 1
-    cost: 120
+    cost: 25
     alien: {fileID: 7635512465832564758, guid: d9301f1c364a1654f8e35215e28a2ed0, type: 3}
     count: 1
-    incomeChange: 10
+    incomeChange: 1
     delayBeforeSend: 0.3
     delayBetweenSends: 0
   - unlockWave: 2
-    cost: 500
+    cost: 100
     alien: {fileID: 7635512465832564758, guid: d9301f1c364a1654f8e35215e28a2ed0, type: 3}
     count: 4
-    incomeChange: 40
+    incomeChange: 4
     delayBeforeSend: 0.2
     delayBetweenSends: 0.2

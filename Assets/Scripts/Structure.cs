@@ -14,6 +14,8 @@ public abstract class Structure : NetworkBehaviour
     [SerializeField] private int value;
     public int Value => value;
 
+    protected Player player;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -26,10 +28,14 @@ public abstract class Structure : NetworkBehaviour
 
     }
 
-    // should only be called in build
     public void InitializeValue()
     {
         value = cost;
+    }
+
+    public void InitializePlayer(Player p)
+    {
+        player = p;
     }
 
     // should only be called in upgrade
@@ -37,9 +43,6 @@ public abstract class Structure : NetworkBehaviour
     {
         value += prevCost;
     }
-
-    public abstract void Upgrade();
-    public abstract void Sell();
 
     public StructureUpgradeInfo UpgradeInfo
     {

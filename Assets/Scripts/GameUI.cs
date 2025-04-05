@@ -85,6 +85,8 @@ public class GameUI : MonoBehaviour
     [SerializeField] private TMP_Text upgrade1Text;
     [SerializeField] private TMP_Text upgrade2Text;
 
+    [SerializeField] private TMP_Text sellValue;
+
     // Update is called once per frame
     void Update()
     {
@@ -285,7 +287,7 @@ public class GameUI : MonoBehaviour
         moduleUI.SetActive(true);
     }
 
-    public void OpenStructureUI(StructureUpgradeInfo info)
+    public void OpenStructureUI(int sellValue, StructureUpgradeInfo upgradeInfo)
     {
         if (selectedModule == 0)
         {
@@ -294,22 +296,23 @@ public class GameUI : MonoBehaviour
         }
         shipOptionsUI.SetActive(false);
         moduleUI.SetActive(false);
-        if (info.UpgradeCount == 1)
+        this.sellValue.text = $"${sellValue}";
+        if (upgradeInfo.UpgradeCount == 1)
         {
-            upgradeText.text = info.Upgrade1.Name;
-            upgradeButton.InitializeCost(info.Upgrade1.Cost);
+            upgradeText.text = upgradeInfo.Upgrade1.Name;
+            upgradeButton.InitializeCost(upgradeInfo.Upgrade1.Cost);
             upgradeButton.MoneyUpdate(associatedPlayer == 1 ? GameState.P1Money : GameState.P2Money);
             upgrade2UI.SetActive(false);
             noUpgradeUI.SetActive(false);
             upgrade1UI.SetActive(true);
         }
-        else if (info.UpgradeCount == 2)
+        else if (upgradeInfo.UpgradeCount == 2)
         {
-            upgrade1Text.text = info.Upgrade1.Name;
-            upgrade1Button.InitializeCost(info.Upgrade1.Cost);
+            upgrade1Text.text = upgradeInfo.Upgrade1.Name;
+            upgrade1Button.InitializeCost(upgradeInfo.Upgrade1.Cost);
             upgrade1Button.MoneyUpdate(associatedPlayer == 1 ? GameState.P1Money : GameState.P2Money);
-            upgrade2Text.text = info.Upgrade2.Name;
-            upgrade2Button.InitializeCost(info.Upgrade2.Cost);
+            upgrade2Text.text = upgradeInfo.Upgrade2.Name;
+            upgrade2Button.InitializeCost(upgradeInfo.Upgrade2.Cost);
             upgrade2Button.MoneyUpdate(associatedPlayer == 1 ? GameState.P1Money : GameState.P2Money);
             upgrade1UI.SetActive(false);
             noUpgradeUI.SetActive(false);

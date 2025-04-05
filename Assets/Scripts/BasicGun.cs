@@ -3,7 +3,7 @@ using Unity.Netcode;
 
 public class BasicGun : Structure
 {
-    [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] protected GameObject projectilePrefab;
     [SerializeField] private float reloadTimeLeft;
     [SerializeField] private float reloadTime;
 
@@ -38,7 +38,7 @@ public class BasicGun : Structure
         }
     }
 
-    public void Shoot()
+    public virtual void Shoot()
     {
         if (!IsServer)
         {
@@ -49,15 +49,5 @@ public class BasicGun : Structure
             GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
             projectile.GetComponent<NetworkObject>().Spawn();
         }
-    }
-
-    public override void Sell()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public override void Upgrade()
-    {
-        throw new System.NotImplementedException();
     }
 }

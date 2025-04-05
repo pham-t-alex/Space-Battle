@@ -82,6 +82,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private int[] p2Structures = new int[3];
 
     [SerializeField] private float sellMultiplier;
+    public float SellMultiplier => sellMultiplier;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -196,6 +197,7 @@ public class GameController : MonoBehaviour
             structures[p2Structures[1]].GetComponent<Structure>().Info,
             structures[p2Structures[2]].GetComponent<Structure>().Info);
 
+        // sets up health and player number
         player1.HealthSetup(1, hpPerLevel[0]);
         player2.HealthSetup(2, hpPerLevel[0]);
 
@@ -444,10 +446,11 @@ public class GameController : MonoBehaviour
         g.GetComponent<NetworkObject>().Spawn();
         g.transform.SetParent(m.transform);
         g.transform.localPosition = Vector3.zero;
+        g.GetComponent<Structure>().InitializePlayer(p);
         g.GetComponent<Structure>().InitializeValue();
         m.SetStructure(g.GetComponent<Structure>());
 
-        GameMessenger.Instance.UpdateStructure(clientId, m.ModuleStructure.UpgradeInfo);
+        GameMessenger.Instance.UpdateStructure(clientId, Mathf.RoundToInt(sellMultiplier * m.ModuleStructure.Value), m.ModuleStructure.UpgradeInfo);
         return true;
     }
 
@@ -486,10 +489,11 @@ public class GameController : MonoBehaviour
         g.GetComponent<NetworkObject>().Spawn();
         g.transform.SetParent(m.transform);
         g.transform.localPosition = Vector3.zero;
+        g.GetComponent<Structure>().InitializePlayer(p);
         g.GetComponent<Structure>().InitializeValue();
         m.Upgrade(g.GetComponent<Structure>());
 
-        GameMessenger.Instance.UpdateStructure(clientId, m.ModuleStructure.UpgradeInfo);
+        GameMessenger.Instance.UpdateStructure(clientId, Mathf.RoundToInt(sellMultiplier * m.ModuleStructure.Value), m.ModuleStructure.UpgradeInfo);
         return true;
     }
 

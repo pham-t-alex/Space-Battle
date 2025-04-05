@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 public class Player : NetworkBehaviour
 {
+    private int playerNum = 0;
+    public int PlayerNum => playerNum;
+
     [SerializeField] private float speed = 5;
     [SerializeField] private float leftBound = -5;
     [SerializeField] private float rightBound = 5;
@@ -74,8 +77,10 @@ public class Player : NetworkBehaviour
     }
 
     // called by server
+    // also sets up player number
     public void HealthSetup(int player, int maxHealth)
     {
+        playerNum = player;
         health.Value = maxHealth;
         this.maxHealth.Value = maxHealth;
         HealthbarSetupRpc(player, maxHealth);
@@ -224,7 +229,7 @@ public class Player : NetworkBehaviour
         }
         Module m = modules[module];
         if (m.ModuleStructure == null) ModuleUIRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
-        else StructureUIRpc(m.ModuleStructure.UpgradeInfo, RpcTarget.Single(clientId, RpcTargetUse.Temp));
+        else StructureUIRpc(Mathf.RoundToInt(GameController.Instance.SellMultiplier * m.ModuleStructure.Value), m.ModuleStructure.UpgradeInfo, RpcTarget.Single(clientId, RpcTargetUse.Temp));
     }
 
     [Rpc(SendTo.SpecifiedInParams)]
@@ -240,8 +245,8 @@ public class Player : NetworkBehaviour
     }
 
     [Rpc(SendTo.SpecifiedInParams)]
-    void StructureUIRpc(StructureUpgradeInfo info, RpcParams rpcParams)
+    void StructureUIRpc(int value, StructureUpgradeInfo info, RpcParams rpcParams)
     {
-        GameUI.Instance.OpenStructureUI(info);
+        GameUI.Instance.OpenStructureUI(value,info);
     }
 }

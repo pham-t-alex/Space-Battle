@@ -122,15 +122,15 @@ public class GameMessenger : NetworkBehaviour
         GameController.Instance.TryBuildStructure(clientId, module, structure);
     }
 
-    public void UpdateStructure(ulong clientId, StructureUpgradeInfo info)
+    public void UpdateStructure(ulong clientId, int value, StructureUpgradeInfo info)
     {
-        UpdateStructureRpc(info, RpcTarget.Single(clientId, RpcTargetUse.Temp));
+        UpdateStructureRpc(value, info, RpcTarget.Single(clientId, RpcTargetUse.Temp));
     }
 
     [Rpc(SendTo.SpecifiedInParams)]
-    public void UpdateStructureRpc(StructureUpgradeInfo info, RpcParams rpcParams)
+    public void UpdateStructureRpc(int value, StructureUpgradeInfo info, RpcParams rpcParams)
     {
-        GameUI.Instance.OpenStructureUI(info);
+        GameUI.Instance.OpenStructureUI(value, info);
     }
 
     public void UpgradeStructure(int module, bool right)

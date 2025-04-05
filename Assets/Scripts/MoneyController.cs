@@ -19,9 +19,9 @@ public class MoneyController : MonoBehaviour
         }
     }
 
-    [SerializeField] private int startingMoney = 500;
+    [SerializeField] private int startingMoney;
     [SerializeField] private int startingIncome = 100;
-    [SerializeField] private float maxIncomeTimeSec = 6;
+    [SerializeField] private float maxIncomeTimeSec = 5;
     private float incomeTimeSec = 0;
 
     private int p1Money;
@@ -68,7 +68,6 @@ public class MoneyController : MonoBehaviour
 
     public void TriggerIncome()
     {
-        Debug.Log("Triggering Income");
         ChangeMoney(1, p1Income);
         ChangeMoney(2, p2Income);
     }

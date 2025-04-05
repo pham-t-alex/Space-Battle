@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Netcode;
+using System.Collections.Generic;
 
 public abstract class PlayerProjectile : NetworkBehaviour
 {
@@ -15,6 +16,9 @@ public abstract class PlayerProjectile : NetworkBehaviour
             Destroy(GetComponent<Rigidbody2D>());
         }
     }
+    // -1 pierce indicates infinite pierce
+    [SerializeField] private int pierce;
+    private HashSet<Alien> hitAliens = new HashSet<Alien>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -30,17 +34,23 @@ public abstract class PlayerProjectile : NetworkBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!IsServer)
+        if (!IsServer || (pierce != -1 && hitAliens.Count >= pierce))
         {
             return;
         }
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Border"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Alien"))
+        {
+            Alien a = collision.GetComponent<Alien>();
+            if (!hitAliens.Add(a)) return;
+            HitAlien(a);
+            if (pierce != -1 && hitAliens.Count >= pierce)
+            {
+                Destroy(gameObject);
+            }
+        }
+        else if (collision.gameObject.layer == LayerMask.NameToLayer("Border"))
         {
             HitBorder();
-        }
-        else if (collision.gameObject.layer == LayerMask.NameToLayer("Alien"))
-        {
-            HitAlien(collision.GetComponent<Alien>());
         }
     }
 

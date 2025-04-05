@@ -4,8 +4,8 @@ using Unity.Netcode;
 public class BasicPProjectile : PlayerProjectile
 {
     [SerializeField] private int damage = 0;
-    [SerializeField] private Vector2 direction = Vector2.up;
     [SerializeField] private float speed = 5;
+    private float rotation;
 
     public override void HitAlien(Alien alien)
     {
@@ -20,7 +20,13 @@ public class BasicPProjectile : PlayerProjectile
         {
             return;
         }
-        rb.linearVelocity = direction * speed;
+        rb.linearVelocity = Quaternion.Euler(0, 0, rotation) * Vector2.up * speed;
+    }
+
+    public void Rotate(float angle)
+    {
+        transform.rotation = Quaternion.Euler(0, 0, angle);
+        rotation = angle;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
