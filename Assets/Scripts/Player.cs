@@ -70,6 +70,7 @@ public class Player : NetworkBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         GameObject g = Instantiate(GameController.Instance.ModulePrefab);
+        g.transform.position = transform.position;
         g.GetComponent<NetworkObject>().Spawn();
         g.transform.SetParent(transform, false);
         g.transform.localPosition = Vector3.zero;
@@ -83,10 +84,10 @@ public class Player : NetworkBehaviour
         playerNum = player;
 
         //REMOVE LATER
-        if (player == 2)
+        /*if (player == 2)
         {
             maxHealth = 1000000;
-        }
+        }*/
         health.Value = maxHealth;
 
         this.maxHealth.Value = maxHealth;
