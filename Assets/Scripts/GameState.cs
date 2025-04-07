@@ -12,25 +12,21 @@ public class GameState : NetworkBehaviour
 
     public static int P1Money
     {
-        set { p1Money.Value = value; }
         get { return p1Money.Value; }
     }
 
     public static int P2Money
     {
-        set { p2Money.Value = value; }
         get { return p2Money.Value; }
     }
 
     public static int P1Income
     {
-        set { p1Income.Value = value; }
         get { return p1Income.Value; }
     }
 
     public static int P2Income
     {
-        set { p2Income.Value = value; }
         get { return p2Income.Value; }
     }
 

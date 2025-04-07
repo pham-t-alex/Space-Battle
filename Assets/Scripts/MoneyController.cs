@@ -22,7 +22,8 @@ public class MoneyController : MonoBehaviour
     [SerializeField] private int startingMoney;
     [SerializeField] private int startingIncome = 100;
     [SerializeField] private float maxIncomeTimeSec = 5;
-    private float incomeTimeSec = 0;
+    private float p1IncomeTimeSec = 0;
+    private float p2IncomeTimeSec = 0;
 
     private int p1Money;
     private int p2Money;
@@ -33,6 +34,13 @@ public class MoneyController : MonoBehaviour
     public event Action<int> P2InternalMoneyUpdate;
     public event Action<int> P1InternalIncomeUpdate;
     public event Action<int> P2InternalIncomeUpdate;
+
+    private float p1IncomeMultiplier = 1f;
+    public float P1IncomeMultiplier => p1IncomeMultiplier;
+    private float p2IncomeMultiplier = 1f;
+    public float P2IncomeMultiplier => p2IncomeMultiplier;
+    private float p1IncomeRateMultiplier = 1f;
+    private float p2IncomeRateMultiplier = 1f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -46,13 +54,22 @@ public class MoneyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (incomeTimeSec > 0)
+        if (p1IncomeTimeSec > 0)
         {
-            incomeTimeSec -= Time.deltaTime;
-            if (incomeTimeSec <= 0)
+            p1IncomeTimeSec -= Time.deltaTime;
+            if (p1IncomeTimeSec <= 0)
             {
-                incomeTimeSec = maxIncomeTimeSec;
-                TriggerIncome();
+                p1IncomeTimeSec = maxIncomeTimeSec / p1IncomeRateMultiplier;
+                TriggerIncome(1);
+            }
+        }
+        if (p2IncomeTimeSec > 0)
+        {
+            p2IncomeTimeSec -= Time.deltaTime;
+            if (p2IncomeTimeSec <= 0)
+            {
+                p2IncomeTimeSec = maxIncomeTimeSec / p2IncomeRateMultiplier;
+                TriggerIncome(2);
             }
         }
     }
@@ -63,13 +80,21 @@ public class MoneyController : MonoBehaviour
         SetMoney(2, startingMoney);
         SetIncome(1, startingIncome);
         SetIncome(2, startingIncome);
-        incomeTimeSec = maxIncomeTimeSec;
+        p1IncomeTimeSec = maxIncomeTimeSec;
+        p2IncomeTimeSec = maxIncomeTimeSec;
     }
 
-    public void TriggerIncome()
+    public void TriggerIncome(int player)
     {
-        ChangeMoney(1, p1Income);
-        ChangeMoney(2, p2Income);
+        switch (player)
+        {
+            case 1:
+                ChangeMoney(1, p1Income);
+                break;
+            case 2:
+                ChangeMoney(2, p2Income);
+                break;
+        }
     }
 
     // returns true if successful
@@ -134,6 +159,32 @@ public class MoneyController : MonoBehaviour
             case 2:
                 p2Income = newIncome;
                 P2InternalIncomeUpdate?.Invoke(p2Income);
+                break;
+        }
+    }
+
+    public void ChangeIncomeMultiplier(int player, int deltaMultiplier)
+    {
+        switch (player)
+        {
+            case 1:
+                p1IncomeMultiplier += deltaMultiplier;
+                break;
+            case 2:
+                p2IncomeMultiplier += deltaMultiplier;
+                break;
+        }
+    }
+
+    public void ChangeIncomeRateMultiplier(int player, int deltaMultiplier)
+    {
+        switch (player)
+        {
+            case 1:
+                p1IncomeRateMultiplier += deltaMultiplier;
+                break;
+            case 2:
+                p2IncomeRateMultiplier += deltaMultiplier;
                 break;
         }
     }

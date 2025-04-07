@@ -444,9 +444,11 @@ public class GameController : MonoBehaviour
         g.GetComponent<NetworkObject>().Spawn();
         g.transform.SetParent(m.transform);
         g.transform.localPosition = Vector3.zero;
-        g.GetComponent<Structure>().InitializePlayer(p);
-        g.GetComponent<Structure>().InitializeValue();
-        m.SetStructure(g.GetComponent<Structure>());
+        Structure str = g.GetComponent<Structure>();
+        str.InitializePlayer(p);
+        str.InitializeValue();
+        m.SetStructure(str);
+        str.OnBuild();
 
         GameMessenger.Instance.UpdateStructure(clientId, Mathf.RoundToInt(sellMultiplier * m.ModuleStructure.Value), m.ModuleStructure.UpgradeInfo);
         return true;
@@ -487,9 +489,11 @@ public class GameController : MonoBehaviour
         g.GetComponent<NetworkObject>().Spawn();
         g.transform.SetParent(m.transform);
         g.transform.localPosition = Vector3.zero;
-        g.GetComponent<Structure>().InitializePlayer(p);
-        g.GetComponent<Structure>().InitializeValue();
-        m.Upgrade(g.GetComponent<Structure>());
+        Structure str = g.GetComponent<Structure>();
+        str.InitializePlayer(p);
+        str.InitializeValue();
+        m.Upgrade(str);
+        str.OnBuild();
 
         GameMessenger.Instance.UpdateStructure(clientId, Mathf.RoundToInt(sellMultiplier * m.ModuleStructure.Value), m.ModuleStructure.UpgradeInfo);
         return true;
@@ -521,6 +525,8 @@ public class GameController : MonoBehaviour
         if (s == null) return false;
 
         MoneyController.Instance.ChangeMoney(pNum, Mathf.RoundToInt(sellMultiplier * s.Value));
+        Structure str = m.ModuleStructure;
+        str.OnSell();
         m.Sell();
 
         GameMessenger.Instance.UpdateModule(clientId);

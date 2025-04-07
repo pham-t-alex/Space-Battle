@@ -61,6 +61,9 @@ public abstract class Structure : NetworkBehaviour
     }
 
     public StructureInfo Info => new StructureInfo(structureName, cost);
+
+    public virtual void OnBuild() { }
+    public virtual void OnSell() { }
 }
 
 public struct StructureInfo : INetworkSerializable
