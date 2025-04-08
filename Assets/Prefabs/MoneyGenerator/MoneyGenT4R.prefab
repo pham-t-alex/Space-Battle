@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 5447058045553334594}
   - component: {fileID: 655949805568809222}
   - component: {fileID: 5651287646921936341}
-  - component: {fileID: -7113055485388851388}
+  - component: {fileID: -3047525425927080374}
   m_Layer: 0
-  m_Name: MoneyGenT2
+  m_Name: MoneyGenT4R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3762210685
+  GlobalObjectIdHash: 350082976
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -141,7 +141,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
-  m_Color: {r: 1, g: 0.89075637, b: 0, a: 1}
+  m_Color: {r: 0.4833639, g: 0.5377358, b: 0.0076094554, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -151,7 +151,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &-7113055485388851388
+--- !u!114 &-3047525425927080374
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -160,15 +160,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 8288123959235700045}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16ec22865a0f048459b26c0705ec3231, type: 3}
+  m_Script: {fileID: 11500000, guid: 21f1a389526814a418c8a01ece8422d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  structureName: Faster $
-  cost: 1100
-  upgradePrefabs:
-  - {fileID: 8288123959235700045, guid: f5e35a9aa99fb2c44af1f0916c834d95, type: 3}
-  - {fileID: 8288123959235700045, guid: 7245e680d92d84e85b539a2aa6d6531a, type: 3}
+  structureName: Market
+  cost: 1700
+  upgradePrefabs: []
   value: 0
-  moneyGain: 250
-  moneyDelay: 15
+  moneyGain: 350
+  moneyDelay: 7
+  incomeMultiplierChange: 0.1
+  incomeRateMultiplierChange: 0.1

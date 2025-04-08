@@ -314,9 +314,13 @@ public class GameController : MonoBehaviour
             p2Sends.Count >= 5) return false;
         // spends money if possible
         if (!MoneyController.Instance.ChangeMoney(sender, -send.cost)) return false;
-        
+
         // once this point is reached, it's a valid send
-        MoneyController.Instance.ChangeIncome(sender, send.incomeChange);
+        float multiplier = sender == 1 ? MoneyController.Instance.P1IncomeMultiplier :
+            MoneyController.Instance.P2IncomeMultiplier;
+        float incomeChange = (send.incomeChange >= 0) ? send.incomeChange * multiplier :
+            send.incomeChange / multiplier;
+        MoneyController.Instance.ChangeIncome(sender, incomeChange);
         // add send to queue
         if (sender == 1) p1Sends.Add((send, front));
         else p2Sends.Add((send, front));
@@ -492,6 +496,7 @@ public class GameController : MonoBehaviour
         Structure str = g.GetComponent<Structure>();
         str.InitializePlayer(p);
         str.InitializeValue();
+        m.ModuleStructure.OnUpgrade();
         m.Upgrade(str);
         str.OnBuild();
 
@@ -531,5 +536,12 @@ public class GameController : MonoBehaviour
 
         GameMessenger.Instance.UpdateModule(clientId);
         return true;
+    }
+
+    // this is needed to get the clientID
+    // calls: MoneyController -> this -? GameMessenger c
+    public void IncomeMultiplierUpdate(int player, float newMultiplier)
+    {
+        GameMessenger.Instance.TriggerIncomeMultiplierUpdate(player == 1 ? p1ID : p2ID, newMultiplier);
     }
 }

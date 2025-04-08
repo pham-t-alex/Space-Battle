@@ -64,6 +64,7 @@ public abstract class Structure : NetworkBehaviour
 
     public virtual void OnBuild() { }
     public virtual void OnSell() { }
+    public virtual void OnUpgrade() { }
 }
 
 public struct StructureInfo : INetworkSerializable

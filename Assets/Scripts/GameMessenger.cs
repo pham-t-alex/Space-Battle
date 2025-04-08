@@ -34,6 +34,12 @@ public class GameMessenger : NetworkBehaviour
     // client wave update
     public event Action<int> WaveUpdate;
 
+    // client income multiplier update
+    public event Action<float> IncomeMultiplierUpdate;
+
+    // server/client timestamp
+    private int incomeCounter = 0;
+
     public void GameUISetup(ulong client1, ulong client2, int moduleCost, int levelCost, 
         StructureInfo p1First, StructureInfo p1Second, StructureInfo p1Third,
         StructureInfo p2First, StructureInfo p2Second, StructureInfo p2Third)
@@ -221,5 +227,19 @@ public class GameMessenger : NetworkBehaviour
     {
         GameUI.Instance.MaxLevel();
         GameUI.Instance.UpdateLevel(level);
+    }
+
+    public void TriggerIncomeMultiplierUpdate(ulong clientId, float newMultiplier)
+    {
+        int incomeTime = ++incomeCounter;
+        IncomeMultiplierRpc(newMultiplier, incomeTime, RpcTarget.Single(clientId, RpcTargetUse.Temp));
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void IncomeMultiplierRpc(float newMultiplier, int timestamp, RpcParams rpcParams)
+    {
+        if (timestamp <= incomeCounter) return;
+        incomeCounter = timestamp;
+        IncomeMultiplierUpdate?.Invoke(newMultiplier);
     }
 }

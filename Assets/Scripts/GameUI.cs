@@ -101,6 +101,7 @@ public class GameUI : MonoBehaviour
         associatedPlayer = player;
         GameMessenger.Instance.ClientGameEndUpdate += TriggerGameEnd;
         GameMessenger.Instance.WaveUpdate += WaveUpdate;
+        GameMessenger.Instance.IncomeMultiplierUpdate += UpdateIncome;
         structure1Button.InitializeCost(first.Cost);
         structure2Button.InitializeCost(second.Cost);
         structure3Button.InitializeCost(third.Cost);
@@ -410,5 +411,13 @@ public class GameUI : MonoBehaviour
     public void UpdateLevel(int level)
     {
         levelText.text = $"Lvl{level}";
+    }
+
+    public void UpdateIncome(float newMultiplier)
+    {
+        foreach (AlienSendButton button in buttons)
+        {
+            button.IncomeUpdate(newMultiplier);
+        }
     }
 }

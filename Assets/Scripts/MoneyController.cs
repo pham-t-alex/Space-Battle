@@ -27,8 +27,8 @@ public class MoneyController : MonoBehaviour
 
     private int p1Money;
     private int p2Money;
-    private int p1Income;
-    private int p2Income;
+    private float p1Income;
+    private float p2Income;
 
     public event Action<int> P1InternalMoneyUpdate;
     public event Action<int> P2InternalMoneyUpdate;
@@ -89,10 +89,10 @@ public class MoneyController : MonoBehaviour
         switch (player)
         {
             case 1:
-                ChangeMoney(1, p1Income);
+                ChangeMoney(1, Mathf.RoundToInt(p1Income));
                 break;
             case 2:
-                ChangeMoney(2, p2Income);
+                ChangeMoney(2, Mathf.RoundToInt(p2Income));
                 break;
         }
     }
@@ -131,7 +131,7 @@ public class MoneyController : MonoBehaviour
     }
 
     // returns true if successful
-    public bool ChangeIncome(int player, int income)
+    public bool ChangeIncome(int player, float income)
     {
         switch (player)
         {
@@ -148,35 +148,37 @@ public class MoneyController : MonoBehaviour
         }
     }
 
-    void SetIncome(int player, int newIncome)
+    void SetIncome(int player, float newIncome)
     {
         switch (player)
         {
             case 1:
                 p1Income = newIncome;
-                P1InternalIncomeUpdate?.Invoke(p1Income);
+                P1InternalIncomeUpdate?.Invoke(Mathf.RoundToInt(p1Income));
                 break;
             case 2:
                 p2Income = newIncome;
-                P2InternalIncomeUpdate?.Invoke(p2Income);
+                P2InternalIncomeUpdate?.Invoke(Mathf.RoundToInt(p2Income));
                 break;
         }
     }
 
-    public void ChangeIncomeMultiplier(int player, int deltaMultiplier)
+    public void ChangeIncomeMultiplier(int player, float deltaMultiplier)
     {
         switch (player)
         {
             case 1:
                 p1IncomeMultiplier += deltaMultiplier;
+                GameController.Instance.IncomeMultiplierUpdate(1, p1IncomeMultiplier);
                 break;
             case 2:
                 p2IncomeMultiplier += deltaMultiplier;
+                GameController.Instance.IncomeMultiplierUpdate(2, p2IncomeMultiplier);
                 break;
         }
     }
 
-    public void ChangeIncomeRateMultiplier(int player, int deltaMultiplier)
+    public void ChangeIncomeRateMultiplier(int player, float deltaMultiplier)
     {
         switch (player)
         {
