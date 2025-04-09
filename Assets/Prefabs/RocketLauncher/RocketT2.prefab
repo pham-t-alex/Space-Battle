@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 511300540457962944}
   - component: {fileID: -4383351771282392930}
   m_Layer: 8
-  m_Name: RocketT0
+  m_Name: RocketT2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -104,7 +104,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1571833639
+  GlobalObjectIdHash: 405917301
   InScenePlacedSourceGlobalObjectIdHash: 1571833639
   DeferredDespawnTick: 0
   Ownership: 1
@@ -240,6 +240,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   pierce: 1
-  damage: 1
+  damage: 2
   radius: 1
-  speed: 4.5
+  speed: 5

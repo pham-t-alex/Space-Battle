@@ -172,5 +172,5 @@ MonoBehaviour:
   projectilePrefab: {fileID: 512490187501336247, guid: faa1ad6db2523b2409e94d46ca03cba9, type: 3}
   reloadTimeLeft: 0
   reloadTime: 2
-  bulletCount: 7
-  arcRange: 50
+  bulletCount: 5
+  arcRange: 30

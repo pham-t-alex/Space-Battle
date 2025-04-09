@@ -5,37 +5,25 @@ public class ExplosiveProjectile : PlayerProjectile
 {
     [SerializeField] private int damage;
     [SerializeField] private float radius;
-    [SerializeField] private float speed = 5;
-    private float rotation;
 
     public override void HitAlien(Alien alien)
     {
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius, LayerMask.NameToLayer("Alien"));
-        Debug.Log("cast");
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius, LayerMask.GetMask("Alien"));
 
         foreach (Collider2D hit in hits)
         {
-            Debug.Log(LayerMask.LayerToName(hit.gameObject.layer));
-            Debug.Log("hit");
             Alien a = hit.gameObject.GetComponent<Alien>();
             a.Damage(damage);
         }
+        CreateClientExplosionRpc(transform.position, radius, default);
     }
 
-    public override void OnNetworkSpawn()
+    [Rpc(SendTo.ClientsAndHost)]
+    void CreateClientExplosionRpc(Vector2 position, float radius, RpcParams rpcParams)
     {
-        base.OnNetworkSpawn();
-        if (!IsServer)
-        {
-            return;
-        }
-        rb.linearVelocity = Quaternion.Euler(0, 0, rotation) * Vector2.up * speed;
-    }
-
-    public void Rotate(float angle)
-    {
-        transform.rotation = Quaternion.Euler(0, 0, angle);
-        rotation = angle;
+        GameObject g = Instantiate(ClientPrefabs.Instance.ExplosionPrefab, position, Quaternion.identity);
+        g.transform.localScale = new Vector2(radius * 2, radius * 2);
+        Destroy(g, 0.2f);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
