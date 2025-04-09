@@ -2201,8 +2201,9 @@ MonoBehaviour:
   structures:
   - {fileID: 8288123959235700045, guid: 68d7c3d77676bb74e9d2770a1b8afcab, type: 3}
   - {fileID: 8288123959235700045, guid: 5cfa80aea0ce4e8459ddd84b0abfc3fc, type: 3}
-  p1Structures: 000000000100000000000000
-  p2Structures: 000000000100000000000000
+  - {fileID: 8288123959235700045, guid: 32ba28721611aea469be4bc2cff27444, type: 3}
+  p1Structures: 000000000100000002000000
+  p2Structures: 000000000100000002000000
   sellMultiplier: 0.7
 --- !u!114 &535100582
 MonoBehaviour:
@@ -3633,8 +3634,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 642969570}
   m_HandleRect: {fileID: 642969569}
   m_Direction: 2
-  m_Value: 0.99999994
-  m_Size: 0.27005363
+  m_Value: 1
+  m_Size: 0.26987755
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
