@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class ExplosiveProjectile : PlayerProjectile
 {
-    [SerializeField] private int damage;
-    [SerializeField] private float radius;
+    [SerializeField] protected int damage;
+    [SerializeField] protected float radius;
 
     public override void HitAlien(Alien alien)
     {
@@ -19,7 +19,7 @@ public class ExplosiveProjectile : PlayerProjectile
     }
 
     [Rpc(SendTo.ClientsAndHost)]
-    void CreateClientExplosionRpc(Vector2 position, float radius, RpcParams rpcParams)
+    protected void CreateClientExplosionRpc(Vector2 position, float radius, RpcParams rpcParams)
     {
         GameObject g = Instantiate(ClientPrefabs.Instance.ExplosionPrefab, position, Quaternion.identity);
         g.transform.localScale = new Vector2(radius * 2, radius * 2);

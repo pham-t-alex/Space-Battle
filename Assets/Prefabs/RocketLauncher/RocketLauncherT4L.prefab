@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5651287646921936341}
   - component: {fileID: -7097218423212503807}
   m_Layer: 0
-  m_Name: RocketLauncherT3L
+  m_Name: RocketLauncherT4L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3918534734
+  GlobalObjectIdHash: 2504738028
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -141,7 +141,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
-  m_Color: {r: 0.7075472, g: 0.14232272, b: 0, a: 1}
+  m_Color: {r: 0.5, g: 0.10943397, b: 0.011792451, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -164,11 +164,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  structureName: Destroyer
-  cost: 1500
-  upgradePrefabs:
-  - {fileID: 8288123959235700045, guid: fedb28021d852b94e8e2087ad5d950ec, type: 3}
+  structureName: Nuker
+  cost: 5000
+  upgradePrefabs: []
   value: 0
-  projectilePrefab: {fileID: 512490187501336247, guid: 3b97843df7c424469b715e3232b487be, type: 3}
+  projectilePrefab: {fileID: 512490187501336247, guid: 162b40a7b0ec5ff49aac8ac1f05f4939, type: 3}
   reloadTimeLeft: 0
-  reloadTime: 2.5
+  reloadTime: 2

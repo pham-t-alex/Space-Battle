@@ -77,9 +77,13 @@ public class MoneyController : MonoBehaviour
     public void Setup()
     {
         SetMoney(1, startingMoney);
+        P1InternalMoneyUpdate?.Invoke(startingMoney);
         SetMoney(2, startingMoney);
+        P2InternalMoneyUpdate?.Invoke(startingMoney);
         SetIncome(1, startingIncome);
+        P1InternalIncomeUpdate?.Invoke(startingIncome);
         SetIncome(2, startingIncome);
+        P2InternalIncomeUpdate?.Invoke(startingIncome);
         p1IncomeTimeSec = maxIncomeTimeSec;
         p2IncomeTimeSec = maxIncomeTimeSec;
     }
