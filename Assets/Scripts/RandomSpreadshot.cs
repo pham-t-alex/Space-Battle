@@ -1,7 +1,7 @@
-using Unity.Netcode;
 using UnityEngine;
+using Unity.Netcode;
 
-public class SpreadShot : BasicGun
+public class RandomSpreadshot : BasicGun
 {
     [SerializeField] private int bulletCount;
     [SerializeField] private float arcRange;
@@ -16,7 +16,7 @@ public class SpreadShot : BasicGun
             for (int i = 0; i < bulletCount; i++)
             {
                 GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
-                projectile.GetComponent<PlayerProjectile>().Rotate(-(arcRange / 2) + i * (arcRange / (bulletCount - 1)));
+                projectile.GetComponent<PlayerProjectile>().Rotate(Random.Range(-arcRange / 2, arcRange / 2));
                 projectile.GetComponent<NetworkObject>().Spawn();
             }
         }

@@ -10,11 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 8089242590423874458}
   - component: {fileID: 5447058045553334594}
-  - component: {fileID: -2333222626819129431}
   - component: {fileID: 655949805568809222}
   - component: {fileID: 5651287646921936341}
+  - component: {fileID: -4892011021920244713}
   m_Layer: 0
-  m_Name: BlasterT2
+  m_Name: RocketLauncherT3R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 4265379254
+  GlobalObjectIdHash: 2827761529
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -60,29 +60,6 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &-2333222626819129431
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8288123959235700045}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 963ecdf946a8fb74081a592e8ce26765, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1
-  structureName: Double Shot
-  cost: 100
-  upgradePrefabs:
-  - {fileID: 8288123959235700045, guid: b8abc69d4579ae949bdeb3ef49e380e2, type: 3}
-  - {fileID: 8288123959235700045, guid: e94addce6669c4c4ead7d5d3e808947b, type: 3}
-  value: 0
-  projectilePrefab: {fileID: 512490187501336247, guid: ea838f5c7e3f6264a9a9c8a552369aeb, type: 3}
-  reloadTimeLeft: 0
-  reloadTime: 1
-  bulletCenterGap: 0.2
 --- !u!114 &655949805568809222
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,7 +141,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
-  m_Color: {r: 0, g: 0.8543689, b: 1, a: 1}
+  m_Color: {r: 0.7058824, g: 0.2949637, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -174,3 +151,26 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-4892011021920244713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8288123959235700045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfff3f1d297894e4bbc2a61d8c394d76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  structureName: Bombardment
+  cost: 1000
+  upgradePrefabs:
+  - {fileID: 8288123959235700045, guid: 3114aae94b37c43a99494d45659c08ca, type: 3}
+  value: 0
+  projectilePrefab: {fileID: 512490187501336247, guid: 58160387d7ef644129eb0d0895d08adc, type: 3}
+  reloadTimeLeft: 0
+  reloadTime: 1
+  bulletCount: 3
+  arcRange: 50

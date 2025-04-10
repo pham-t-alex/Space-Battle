@@ -11,7 +11,7 @@ public class BuyButton : MonoBehaviour
     [SerializeField] private Button button;
     public Button SendButton => button;
 
-    private bool buttonEnabled = false;
+    private bool buttonEnabled => button.interactable;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -36,14 +36,12 @@ public class BuyButton : MonoBehaviour
         if (money >= cost)
         {
             if (buttonEnabled) return;
-            buttonEnabled = true;
             button.interactable = true;
             costText.color = Color.white;
         }
         else
         {
             if (!buttonEnabled) return;
-            buttonEnabled = false;
             button.interactable = false;
             costText.color = Color.red;
         }

@@ -539,7 +539,7 @@ public class GameController : MonoBehaviour
     }
 
     // this is needed to get the clientID
-    // calls: MoneyController -> this -? GameMessenger c
+    // calls: MoneyController -> this -> GameMessenger c
     public void IncomeMultiplierUpdate(int player, float newMultiplier)
     {
         GameMessenger.Instance.TriggerIncomeMultiplierUpdate(player == 1 ? p1ID : p2ID, newMultiplier);

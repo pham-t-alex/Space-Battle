@@ -10,6 +10,7 @@ public abstract class PlayerProjectile : NetworkBehaviour
         if (IsServer)
         {
             rb = GetComponent<Rigidbody2D>();
+            rb.linearVelocity = Quaternion.Euler(0, 0, rotation) * Vector2.up * speed;
         }
         if (!IsServer)
         {
@@ -19,6 +20,8 @@ public abstract class PlayerProjectile : NetworkBehaviour
     // -1 pierce indicates infinite pierce
     [SerializeField] private int pierce;
     private HashSet<Alien> hitAliens = new HashSet<Alien>();
+    [SerializeField] private float speed = 5;
+    private float rotation;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -58,5 +61,11 @@ public abstract class PlayerProjectile : NetworkBehaviour
     public virtual void HitBorder()
     {
         Destroy(gameObject);
+    }
+
+    public void Rotate(float angle)
+    {
+        transform.rotation = Quaternion.Euler(0, 0, angle);
+        rotation = angle;
     }
 }

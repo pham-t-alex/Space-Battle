@@ -26,4 +26,6 @@ public class ClientPrefabs : MonoBehaviour
     public GameObject AlienHealthbarPrefab => alienHealthbarPrefab;
     [SerializeField] private GameObject moneyDisplayPrefab;
     public GameObject MoneyDisplayPrefab => moneyDisplayPrefab;
+    [SerializeField] private GameObject explosionPrefab;
+    public GameObject ExplosionPrefab => explosionPrefab;
 }
