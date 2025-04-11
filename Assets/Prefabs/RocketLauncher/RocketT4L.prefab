@@ -245,3 +245,4 @@ MonoBehaviour:
   radius: 3
   innerDamageBonus: 12
   innerRadius: 1
+  armoredBonus: 6

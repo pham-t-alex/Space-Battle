@@ -26,6 +26,11 @@ public class Alien : NetworkBehaviour
     public event Action<int, int> HealthChange;
     public event Action AlienClientDeathEvent;
 
+    // Modifiers / Traits
+    [Header("Modifiers")]
+    [SerializeField] private int armor = 0;
+    public bool Armored => armor > 0;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -131,7 +136,7 @@ public class Alien : NetworkBehaviour
     {
         if (IsServer)
         {
-            health.Value = Mathf.Max(health.Value - damage, 0);
+            health.Value = Mathf.Max(health.Value - Mathf.Max(0, damage - armor), 0);
             if (health.Value == 0)
             {
                 Die();

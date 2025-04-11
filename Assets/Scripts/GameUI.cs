@@ -11,8 +11,6 @@ public class GameUI : MonoBehaviour
     [SerializeField] private GameObject moneyText;
     [SerializeField] private GameObject incomeText;
 
-    private bool sendFrontLineSet = false;
-
     private void Awake()
     {
         if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsClient)
@@ -86,6 +84,9 @@ public class GameUI : MonoBehaviour
     [SerializeField] private TMP_Text upgrade2Text;
 
     [SerializeField] private TMP_Text sellValue;
+
+    // Alien modifiers
+    private bool front = false;
 
     // Update is called once per frame
     void Update()
@@ -215,7 +216,7 @@ public class GameUI : MonoBehaviour
 
     public void SendAliens(int sendIndex)
     {
-        GameMessenger.Instance.SendAliens(sendIndex, sendFrontLineSet);
+        GameMessenger.Instance.SendAliens(sendIndex, front);
     }
 
     public void AddModule(bool right)
@@ -419,5 +420,10 @@ public class GameUI : MonoBehaviour
         {
             button.IncomeUpdate(newMultiplier);
         }
+    }
+
+    public void UpdateFront(bool front)
+    {
+        this.front = front;
     }
 }
