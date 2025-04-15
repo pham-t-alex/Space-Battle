@@ -7,7 +7,7 @@ public class AlienHealthbar : MonoBehaviour
     private Slider slider;
     private float offset;
     [SerializeField] private float addedOffset = 0f;
-    public void Initialize(Alien a, int maxHealth)
+    public void Initialize(Alien a, int startingHealth, int maxHealth)
     {
         transform.SetParent(WorldDisplay.Instance.transform, false);
         alien = a;

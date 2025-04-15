@@ -28,4 +28,6 @@ public class ClientPrefabs : MonoBehaviour
     public GameObject MoneyDisplayPrefab => moneyDisplayPrefab;
     [SerializeField] private GameObject explosionPrefab;
     public GameObject ExplosionPrefab => explosionPrefab;
+    [SerializeField] private GameObject shieldHealthbarPrefab;
+    public GameObject ShieldHealthbarPrefab => shieldHealthbarPrefab;
 }

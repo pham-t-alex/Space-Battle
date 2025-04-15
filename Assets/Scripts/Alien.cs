@@ -30,6 +30,12 @@ public class Alien : NetworkBehaviour
     [Header("Modifiers")]
     [SerializeField] private int armor = 0;
     public bool Armored => armor > 0;
+    private Dictionary<Type, List<StatusEffect>> statusEffects = new Dictionary<Type, List<StatusEffect>>();
+
+    event Action<float> StatusTimeUpdate;
+
+    // Client side healthbar
+    private AlienHealthbar healthbar;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -52,8 +58,8 @@ public class Alien : NetworkBehaviour
 
     void ClientSpawn()
     {
-        AlienHealthbar bar = Instantiate(ClientPrefabs.Instance.AlienHealthbarPrefab).GetComponent<AlienHealthbar>();
-        bar.Initialize(this, maxHealth);
+        healthbar = Instantiate(ClientPrefabs.Instance.AlienHealthbarPrefab).GetComponent<AlienHealthbar>();
+        healthbar.Initialize(this, maxHealth, maxHealth);
     }
 
     void ServerSpawn()
@@ -64,7 +70,6 @@ public class Alien : NetworkBehaviour
 
     public void Initialize(bool front, bool sent, int world)
     {
-
         this.world = world;
         frontLine = front;
         this.sent = sent;
@@ -110,6 +115,7 @@ public class Alien : NetworkBehaviour
         }
         UpdateShoot();
         UpdateMove();
+        StatusTimeUpdate?.Invoke(Time.deltaTime);
     }
 
     public void UpdateShoot()
@@ -168,5 +174,46 @@ public class Alien : NetworkBehaviour
     public void DieRpc()
     {
         AlienClientDeathEvent?.Invoke();
+    }
+
+    public void AddStatusEffect(StatusEffect effect)
+    {
+        if (!IsServer) return;
+        Type type = effect.GetType();
+        if (statusEffects[type] == null)
+        {
+            statusEffects.Add(type, new List<StatusEffect>());
+        }
+        statusEffects[type].Add(effect);
+
+        switch (effect)
+        {
+            case ShieldStatus shield:
+                List<StatusEffect> shieldEffects = statusEffects[type];
+                if (shieldEffects.Count == 0)
+                {
+                    shieldEffects.Add(shield);
+                    ShieldClientRpc(shield.Health, default);
+                }
+                else
+                {
+                    ((ShieldStatus)shieldEffects[0]).AddHealth(shield.Health);
+                }
+                break;
+        }
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void ShieldClientRpc(int shieldHealth, RpcParams rpcParams)
+    {
+        if (healthbar.GetType() != typeof(ShieldedAlienHealthbar))
+        {
+            Destroy(healthbar.gameObject);
+            ShieldedAlienHealthbar shieldBar = Instantiate(ClientPrefabs.Instance.ShieldHealthbarPrefab).GetComponent<ShieldedAlienHealthbar>();
+            shieldBar.Initialize(this, health.Value, maxHealth);
+            healthbar = shieldBar;
+            shieldBar.InitializeShield(shieldHealth);
+        }
+        ((ShieldedAlienHealthbar)healthbar).UpdateShield(shieldHealth);
     }
 }

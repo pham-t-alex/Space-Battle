@@ -122,7 +122,7 @@ public class Player : NetworkBehaviour
             {
                 modules[i].transform.localPosition += Vector3.right * (moduleGap / 2);
             }
-            g.transform.localPosition = modules[1].transform.localPosition + Vector3.left * moduleGap;
+            g.transform.localPosition = modules[0].transform.localPosition + Vector3.left * moduleGap;
             modules.Insert(0, g.GetComponent<Module>());
         }
         GetComponent<BoxCollider2D>().size += Vector2.right * moduleGap;
