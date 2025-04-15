@@ -34,8 +34,12 @@ public class Alien : NetworkBehaviour
 
     event Action<float> StatusTimeUpdate;
 
-    // Client side healthbar
-    private AlienHealthbar healthbar;
+    // Client side shield healthbar
+    private ShieldedAlienHealthbar shieldBar;
+    private GameObject shieldDisplay;
+
+    public int ShieldHealth => statusEffects.ContainsKey(typeof(ShieldStatus)) && statusEffects[typeof(ShieldStatus)].Count > 0
+        ? ((ShieldStatus)statusEffects[typeof(ShieldStatus)][0]).Health : 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -58,8 +62,8 @@ public class Alien : NetworkBehaviour
 
     void ClientSpawn()
     {
-        healthbar = Instantiate(ClientPrefabs.Instance.AlienHealthbarPrefab).GetComponent<AlienHealthbar>();
-        healthbar.Initialize(this, maxHealth, maxHealth);
+        AlienHealthbar healthbar = Instantiate(ClientPrefabs.Instance.AlienHealthbarPrefab).GetComponent<AlienHealthbar>();
+        healthbar.Initialize(this, maxHealth);
     }
 
     void ServerSpawn()
@@ -140,13 +144,18 @@ public class Alien : NetworkBehaviour
 
     public void Damage(int damage)
     {
-        if (IsServer)
+        if (!IsServer) return;
+        if (statusEffects.ContainsKey(typeof(ShieldStatus)) && statusEffects[typeof(ShieldStatus)].Count > 0)
         {
-            health.Value = Mathf.Max(health.Value - Mathf.Max(0, damage - armor), 0);
-            if (health.Value == 0)
-            {
-                Die();
-            }
+            List<StatusEffect> shield = statusEffects[typeof(ShieldStatus)];
+            ((ShieldStatus)shield[0]).Damage(damage);
+            ShieldClientRpc(ShieldHealth, default);
+            return;
+        }
+        health.Value = Mathf.Max(health.Value - Mathf.Max(0, damage - armor), 0);
+        if (health.Value == 0)
+        {
+            Die();
         }
     }
 
@@ -160,6 +169,8 @@ public class Alien : NetworkBehaviour
         {
             GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
             projectile.GetComponent<NetworkObject>().Spawn();
+            // FOR TESTING PURPOSES ONLY
+            AddStatusEffect(new ShieldStatus(2));
         }
     }
 
@@ -180,7 +191,7 @@ public class Alien : NetworkBehaviour
     {
         if (!IsServer) return;
         Type type = effect.GetType();
-        if (statusEffects[type] == null)
+        if (!statusEffects.ContainsKey(type))
         {
             statusEffects.Add(type, new List<StatusEffect>());
         }
@@ -193,27 +204,39 @@ public class Alien : NetworkBehaviour
                 if (shieldEffects.Count == 0)
                 {
                     shieldEffects.Add(shield);
+                    shield.ShieldBroken += () => RemoveStatusEffect(shield);
                     ShieldClientRpc(shield.Health, default);
                 }
                 else
                 {
                     ((ShieldStatus)shieldEffects[0]).AddHealth(shield.Health);
+                    ShieldClientRpc(ShieldHealth, default);
                 }
                 break;
         }
     }
 
+    public void RemoveStatusEffect(StatusEffect effect)
+    {
+        statusEffects[effect.GetType()].Remove(effect);
+        Debug.Log("shield is gone");
+        Destroy(shieldBar);
+        Destroy(shieldDisplay);
+        return;
+    }
+
     [Rpc(SendTo.ClientsAndHost)]
     public void ShieldClientRpc(int shieldHealth, RpcParams rpcParams)
     {
-        if (healthbar.GetType() != typeof(ShieldedAlienHealthbar))
+        if (shieldBar == null)
         {
-            Destroy(healthbar.gameObject);
-            ShieldedAlienHealthbar shieldBar = Instantiate(ClientPrefabs.Instance.ShieldHealthbarPrefab).GetComponent<ShieldedAlienHealthbar>();
-            shieldBar.Initialize(this, health.Value, maxHealth);
-            healthbar = shieldBar;
-            shieldBar.InitializeShield(shieldHealth);
+            shieldBar = Instantiate(ClientPrefabs.Instance.ShieldHealthbarPrefab).GetComponent<ShieldedAlienHealthbar>();
+            shieldBar.Initialize(this, shieldHealth);
+            shieldDisplay = Instantiate(ClientPrefabs.Instance.ShieldPrefab);
+            shieldDisplay.GetComponent<FollowObject>().InitializeTarget(gameObject, Vector2.zero);
+            shieldDisplay.transform.localScale = GetComponent<SpriteRenderer>().bounds.size * Mathf.Sqrt(2);
+            return;
         }
-        ((ShieldedAlienHealthbar)healthbar).UpdateShield(shieldHealth);
+        shieldBar.UpdateShield(shieldHealth);
     }
 }

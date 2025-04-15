@@ -3865,7 +3865,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 642969569}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.26994196
+  m_Size: 0.27
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4771,6 +4771,8 @@ MonoBehaviour:
   alienHealthbarPrefab: {fileID: 8310475725317803136, guid: b62d1cc0dd27c734cab43875843b3f2f, type: 3}
   moneyDisplayPrefab: {fileID: 4238669295900391870, guid: 56b43a64b872acc4794d3ce47666844b, type: 3}
   explosionPrefab: {fileID: 1843408213780381525, guid: f8293c617414946729d466d842547584, type: 3}
+  shieldHealthbarPrefab: {fileID: 8310475725317803136, guid: 9615c4e3511f0104daf5c8be9627c303, type: 3}
+  shieldPrefab: {fileID: 4358582421055988787, guid: 8ffb61d98da0a4a769d80c27fc519303, type: 3}
 --- !u!1 &1186469656
 GameObject:
   m_ObjectHideFlags: 0
