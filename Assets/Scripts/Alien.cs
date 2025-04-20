@@ -169,8 +169,6 @@ public class Alien : NetworkBehaviour
         {
             GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
             projectile.GetComponent<NetworkObject>().Spawn();
-            // FOR TESTING PURPOSES ONLY
-            AddStatusEffect(new ShieldStatus(2));
         }
     }
 
@@ -195,7 +193,7 @@ public class Alien : NetworkBehaviour
         {
             statusEffects.Add(type, new List<StatusEffect>());
         }
-        statusEffects[type].Add(effect);
+        effect.Expire += () => RemoveStatusEffect(effect);
 
         switch (effect)
         {
@@ -219,9 +217,13 @@ public class Alien : NetworkBehaviour
     public void RemoveStatusEffect(StatusEffect effect)
     {
         statusEffects[effect.GetType()].Remove(effect);
-        Debug.Log("shield is gone");
-        Destroy(shieldBar);
-        Destroy(shieldDisplay);
+
+        switch (effect)
+        {
+            case ShieldStatus shield:
+                DestroyShieldRpc(default);
+                break;
+        }
         return;
     }
 
@@ -238,5 +240,12 @@ public class Alien : NetworkBehaviour
             return;
         }
         shieldBar.UpdateShield(shieldHealth);
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void DestroyShieldRpc(RpcParams rpcParams)
+    {
+        Destroy(shieldBar.gameObject);
+        Destroy(shieldDisplay);
     }
 }
