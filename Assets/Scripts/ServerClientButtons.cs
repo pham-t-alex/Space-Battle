@@ -27,6 +27,6 @@ public class ServerClientButtons : MonoBehaviour
 
     public void StartGame()
     {
-        NetworkManager.Singleton.SceneManager.LoadScene("SpaceBattle", UnityEngine.SceneManagement.LoadSceneMode.Single);
+        NetworkManager.Singleton.SceneManager.LoadScene("StructureSelection", UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
 }

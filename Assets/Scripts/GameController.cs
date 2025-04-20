@@ -91,6 +91,11 @@ public class GameController : MonoBehaviour
             SpawnPlayer(player.GetComponent<Player>(), clientId);
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
         }
+        for (int i = 0; i < 3; i++)
+        {
+            p1Structures[i] = StructureSelection.p1Structures[i];
+            p2Structures[i] = StructureSelection.p2Structures[i];
+        }
         StartGame();
     }
 
