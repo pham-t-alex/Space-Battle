@@ -10,12 +10,13 @@ public class StructureSelectionButton : MonoBehaviour
 
     public void OnClick()
     {
-        StructureSelectionMessenger.Instance.SelectStructure(!selected, structure);
+        bool prevSelected = selected;
         if (selected)
         {
             selected = false;
             icon.SetActive(false);
         }
+        StructureSelectionMessenger.Instance.SelectStructure(!prevSelected, structure);
     }
 
     public void Select()
