@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StructureSelectionMenu : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class StructureSelectionMenu : MonoBehaviour
     private static StructureSelectionMenu instance;
     public static StructureSelectionMenu Instance => instance;
 
-    [SerializeField] private GameObject start;
+    [SerializeField] private GameObject ready;
 
     private void Awake()
     {
@@ -25,6 +26,20 @@ public class StructureSelectionMenu : MonoBehaviour
         else
         {
             Destroy(gameObject);
+        }
+    }
+
+    public void TryReady()
+    {
+        StructureSelectionMessenger.Instance.TryReady();
+    }
+
+    public void ReadyLock()
+    {
+        ready.GetComponent<Button>().interactable = false;
+        foreach (StructureSelectionButton b in buttons)
+        {
+            b.GetComponent<Button>().interactable = false;
         }
     }
 }

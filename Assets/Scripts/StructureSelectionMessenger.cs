@@ -34,4 +34,27 @@ public class StructureSelectionMessenger : NetworkBehaviour
     {
         StructureSelectionMenu.Instance.StructureButton(structure).Select();
     }
+
+    public void TryReady()
+    {
+        TryReadyRpc(default);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void TryReadyRpc(RpcParams rpcParams)
+    {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        StructureSelectionController.Instance.TryReady(clientId);
+    }
+
+    public void ReadyLock(ulong clientId)
+    {
+        ReadyLockRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void ReadyLockRpc(RpcParams rpcParams)
+    {
+        StructureSelectionMenu.Instance.ReadyLock();
+    }
 }

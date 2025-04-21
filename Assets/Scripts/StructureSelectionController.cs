@@ -9,6 +9,9 @@ public class StructureSelectionController : MonoBehaviour
 
     [SerializeField] private GameObject start;
 
+    private bool p1Ready = false;
+    private bool p2Ready = false;
+
     private void Awake()
     {
         if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer)
@@ -28,7 +31,7 @@ public class StructureSelectionController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        start.SetActive(true);
+        
     }
 
     // Update is called once per frame
@@ -39,8 +42,7 @@ public class StructureSelectionController : MonoBehaviour
 
     public void TryStart()
     {
-        if (StructureSelection.p1Structures.Count == 3 && StructureSelection.p2Structures.Count == 3)
-            NetworkManager.Singleton.SceneManager.LoadScene("SpaceBattle", UnityEngine.SceneManagement.LoadSceneMode.Single);
+        if (p1Ready && p2Ready) NetworkManager.Singleton.SceneManager.LoadScene("SpaceBattle", UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
 
     public void SelectStructure(ulong clientId, bool selected, int structure)
@@ -49,10 +51,12 @@ public class StructureSelectionController : MonoBehaviour
         if (clientId == NetworkManager.Singleton.ConnectedClientsIds[0])
         {
             player1 = true;
+            if (p1Ready) return;
         }
         else if (clientId == NetworkManager.Singleton.ConnectedClientsIds[1])
         {
             player1 = false;
+            if (p2Ready) return;
         }
         else return;
 
@@ -82,5 +86,33 @@ public class StructureSelectionController : MonoBehaviour
                 StructureSelection.p2Structures.Remove(structure);
             }
         }
+    }
+
+    public void TryReady(ulong clientId)
+    {
+        bool player1;
+        if (clientId == NetworkManager.Singleton.ConnectedClientsIds[0])
+        {
+            player1 = true;
+        }
+        else if (clientId == NetworkManager.Singleton.ConnectedClientsIds[1])
+        {
+            player1 = false;
+        }
+        else return;
+
+        if (player1)
+        {
+            if (StructureSelection.p1Structures.Count != 3) return;
+            p1Ready = true;
+            StructureSelectionMessenger.Instance.ReadyLock(clientId);
+        }
+        else
+        {
+            if (StructureSelection.p2Structures.Count != 3) return;
+            p2Ready = true;
+            StructureSelectionMessenger.Instance.ReadyLock(clientId);
+        }
+        if (p1Ready && p2Ready) start.SetActive(true);
     }
 }

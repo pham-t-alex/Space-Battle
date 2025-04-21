@@ -31,6 +31,7 @@ public class Alien : NetworkBehaviour
     [SerializeField] private int armor = 0;
     public bool Armored => armor > 0;
     private Dictionary<Type, List<StatusEffect>> statusEffects = new Dictionary<Type, List<StatusEffect>>();
+    private List<StatusEffect> startingStatusEffects = new List<StatusEffect>();
 
     event Action<float> StatusTimeUpdate;
 
@@ -70,6 +71,10 @@ public class Alien : NetworkBehaviour
     {
         health.Value = maxHealth;
         reloadTimeLeft = UnityEngine.Random.Range(reloadTime / 2, reloadTime);
+        foreach (StatusEffect effect in startingStatusEffects)
+        {
+            AddStatusEffect(effect);
+        }
     }
 
     public void Initialize(bool front, bool sent, int world)
@@ -183,6 +188,12 @@ public class Alien : NetworkBehaviour
     public void DieRpc()
     {
         AlienClientDeathEvent?.Invoke();
+    }
+
+    // Should be run before spawn
+    public void AddStartingStatusEffect(StatusEffect effect)
+    {
+        startingStatusEffects.Add(effect);
     }
 
     public void AddStatusEffect(StatusEffect effect)
