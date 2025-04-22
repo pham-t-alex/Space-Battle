@@ -82,6 +82,8 @@ public class GameController : MonoBehaviour
     [SerializeField] private float sellMultiplier;
     public float SellMultiplier => sellMultiplier;
 
+    [SerializeField] private ModifierCostMultipliers modifierCostMultipliers;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

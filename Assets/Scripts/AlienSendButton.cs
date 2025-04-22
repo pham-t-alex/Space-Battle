@@ -12,6 +12,8 @@ public class AlienSendButton : BuyButton
     public int UnlockWave => unlockWave;
     private float internalIncome;
 
+    private int baseCost;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -33,7 +35,8 @@ public class AlienSendButton : BuyButton
         if (internalIncome > 0) income.color = Color.green;
         else if (internalIncome < 0) income.color = Color.red;
         unlockWave = send.unlockWave;
-        InitializeCost(send.cost);
+        baseCost = send.cost;
+        InitializeCost(baseCost);
     }
 
     public void IncomeUpdate(float multiplier)
@@ -41,5 +44,10 @@ public class AlienSendButton : BuyButton
         float newIncome = (internalIncome >= 0) ? internalIncome * multiplier :
             internalIncome / multiplier;
         income.text = newIncome.ToString("F1");
+    }
+
+    public void ChangeCostMultiplier(float multiplier)
+    {
+        InitializeCost(Mathf.RoundToInt(baseCost * multiplier));
     }
 }

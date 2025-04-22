@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using Unity.Netcode;
 using System.Collections.Generic;
+using NUnit.Framework.Constraints;
 
 public class GameUI : MonoBehaviour
 {
@@ -84,9 +85,23 @@ public class GameUI : MonoBehaviour
     [SerializeField] private TMP_Text upgrade2Text;
 
     [SerializeField] private TMP_Text sellValue;
+    [SerializeField] private ModifierCostMultipliers modifierCostMultipliers;
 
     // Alien modifiers
     private bool front = false;
+    private Modifiers modifiers;
+    public float ModifierCostMultiplier
+    {
+        get
+        {
+            float multiplier = 1;
+            if (modifiers.shielded)
+            {
+                multiplier *= modifierCostMultipliers.shieldMultiplier;
+            }
+            return multiplier;
+        }
+    }
 
     // Update is called once per frame
     void Update()
@@ -425,5 +440,25 @@ public class GameUI : MonoBehaviour
     public void UpdateFront(bool front)
     {
         this.front = front;
+    }
+
+    public void ToggleModifier(bool on, ModifierButton.ModifierType m)
+    {
+        switch (m)
+        {
+            case ModifierButton.ModifierType.Shield:
+                modifiers.shielded = on;
+                break;
+        }
+        UpdateSendPrices();
+    }
+
+    public void UpdateSendPrices()
+    {
+        foreach (AlienSendButton button in buttons)
+        {
+            button.ChangeCostMultiplier(ModifierCostMultiplier);
+            button.MoneyUpdate(associatedPlayer == 1 ? GameState.P1Money : GameState.P2Money);
+        }
     }
 }

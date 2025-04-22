@@ -199,7 +199,7 @@ public class Alien : NetworkBehaviour
     {
         if (modifiers.shielded)
         {
-            AddStartingStatusEffect(new ShieldStatus());
+            AddStartingStatusEffect(new ShieldStatus(Mathf.RoundToInt(0.5f * health.Value)));
         }
     }
 
