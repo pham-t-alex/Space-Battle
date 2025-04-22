@@ -48,6 +48,11 @@ public class Alien : NetworkBehaviour
 
     }
 
+    public void PreSpawnServerInitialize()
+    {
+        health.Value = maxHealth;
+    }
+
     public override void OnNetworkSpawn()
     {
         health.OnValueChanged += (oldVal, newVal) => HealthChange?.Invoke(oldVal, newVal);
@@ -69,7 +74,6 @@ public class Alien : NetworkBehaviour
 
     void ServerSpawn()
     {
-        health.Value = maxHealth;
         reloadTimeLeft = UnityEngine.Random.Range(reloadTime / 2, reloadTime);
         foreach (StatusEffect effect in startingStatusEffects)
         {
@@ -191,7 +195,16 @@ public class Alien : NetworkBehaviour
     }
 
     // Should be run before spawn
-    public void AddStartingStatusEffect(StatusEffect effect)
+    public void ApplyStartingModifiers(Modifiers modifiers)
+    {
+        if (modifiers.shielded)
+        {
+            AddStartingStatusEffect(new ShieldStatus());
+        }
+    }
+
+    // Should be run before spawn
+    void AddStartingStatusEffect(StatusEffect effect)
     {
         startingStatusEffects.Add(effect);
     }

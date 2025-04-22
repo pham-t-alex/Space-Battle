@@ -15,4 +15,5 @@ public class WaveComponent
     public int count;
     public float spawnDelay;
     public float afterSpawnDelay;
+    public Modifiers modifiers;
 }

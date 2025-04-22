@@ -219,8 +219,8 @@ public class GameController : MonoBehaviour
         {
             for (int i = 0; i < component.count; i++)
             {
-                SpawnAlien(component.alien, 1, front, false);
-                SpawnAlien(component.alien, 2, front, false);
+                SpawnAlien(component.alien, 1, front, false, component.modifiers);
+                SpawnAlien(component.alien, 2, front, false, component.modifiers);
                 yield return new WaitForSeconds(component.spawnDelay);
             }
             yield return new WaitForSeconds(component.afterSpawnDelay);
@@ -256,8 +256,9 @@ public class GameController : MonoBehaviour
         yield return new WaitForSeconds(send.delayBeforeSend);
         for (int i = 0; i < send.count; i++)
         {
-            if (player == 1) SpawnAlien(send.alien, 2, front, true);
-            else SpawnAlien(send.alien, 1, front, true);
+            // FIX TO MAKE IT MODIFY ALIENS
+            if (player == 1) SpawnAlien(send.alien, 2, front, true, default);
+            else SpawnAlien(send.alien, 1, front, true, default);
             if (i < send.count - 1)
             {
                 yield return new WaitForSeconds(send.delayBetweenSends);
@@ -277,9 +278,11 @@ public class GameController : MonoBehaviour
         yield return null;
     }
 
-    void SpawnAlien(GameObject alien, int player, bool front, bool sent)
+    void SpawnAlien(GameObject alien, int player, bool front, bool sent, Modifiers modifiers)
     {
         GameObject g = Instantiate(alien);
+        g.GetComponent<Alien>().PreSpawnServerInitialize();
+        g.GetComponent<Alien>().ApplyStartingModifiers(modifiers);
         g.GetComponent<NetworkObject>().Spawn();
         if (front && sent) g.transform.position = GetWorldCenter(player) + frontLineSentSpawn;
         else if (!front && sent) g.transform.position = GetWorldCenter(player) + backLineSentSpawn;
