@@ -12,7 +12,7 @@ public class StatusEffect
         timeLeft = duration;
     }
 
-    public void Countdown(float time)
+    public virtual void Countdown(float time)
     {
         timeLeft -= time;
         if (timeLeft <= 0)

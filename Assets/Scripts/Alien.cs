@@ -183,6 +183,12 @@ public class Alien : NetworkBehaviour
         }
     }
 
+    public void Heal(int heal)
+    {
+        if (!IsServer) return;
+        health.Value = Mathf.Min(health.Value + heal, maxHealth);
+    }
+
     public void Shoot()
     {
         if (!IsServer)
@@ -223,6 +229,10 @@ public class Alien : NetworkBehaviour
         if (modifiers.berserk)
         {
             AddStartingStatusEffect(new BerserkStatus(15, 1));
+        }
+        if (modifiers.regenerating)
+        {
+            AddStartingStatusEffect(new RegenStatus(4, maxHealth));
         }
     }
 
@@ -274,6 +284,10 @@ public class Alien : NetworkBehaviour
                 break;
             case BerserkStatus berserk:
                 effects.Add(berserk);
+                break;
+            case RegenStatus regen:
+                effects.Add(regen);
+                regen.Heal += () => Heal(1);
                 break;
         }
 
