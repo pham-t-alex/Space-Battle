@@ -90,18 +90,6 @@ public class GameUI : MonoBehaviour
     // Alien modifiers
     private bool front = false;
     private Modifiers modifiers;
-    public float ModifierCostMultiplier
-    {
-        get
-        {
-            float multiplier = 1;
-            if (modifiers.shielded)
-            {
-                multiplier *= modifierCostMultipliers.shieldMultiplier;
-            }
-            return multiplier;
-        }
-    }
 
     // Update is called once per frame
     void Update()
@@ -231,7 +219,7 @@ public class GameUI : MonoBehaviour
 
     public void SendAliens(int sendIndex)
     {
-        GameMessenger.Instance.SendAliens(sendIndex, front);
+        GameMessenger.Instance.SendAliens(sendIndex, front, modifiers);
     }
 
     public void AddModule(bool right)
@@ -449,6 +437,15 @@ public class GameUI : MonoBehaviour
             case ModifierButton.ModifierType.Shield:
                 modifiers.shielded = on;
                 break;
+            case ModifierButton.ModifierType.Berserk:
+                modifiers.berserk = on;
+                break;
+            case ModifierButton.ModifierType.Invisible:
+                modifiers.invisible = on;
+                break;
+            case ModifierButton.ModifierType.Regenerating:
+                modifiers.regenerating = on;
+                break;
         }
         UpdateSendPrices();
     }
@@ -457,7 +454,7 @@ public class GameUI : MonoBehaviour
     {
         foreach (AlienSendButton button in buttons)
         {
-            button.ChangeCostMultiplier(ModifierCostMultiplier);
+            button.ChangeCostMultiplier(GameController.ModifierCostMultiplier(modifiers, modifierCostMultipliers));
             button.MoneyUpdate(associatedPlayer == 1 ? GameState.P1Money : GameState.P2Money);
         }
     }

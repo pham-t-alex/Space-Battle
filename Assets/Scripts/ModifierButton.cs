@@ -4,7 +4,10 @@ public class ModifierButton : MonoBehaviour
 {
     public enum ModifierType
     {
-        Shield
+        Shield,
+        Berserk,
+        Invisible,
+        Regenerating
     }
     [SerializeField] private ModifierType modifierType;
 

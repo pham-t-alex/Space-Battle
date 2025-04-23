@@ -56,16 +56,16 @@ public class GameMessenger : NetworkBehaviour
         GameUI.Instance.Setup(player, moduleCost, levelCost, first, second, third);
     }
 
-    public void SendAliens(int sendIndex, bool front)
+    public void SendAliens(int sendIndex, bool front, Modifiers modifiers)
     {
-        SendAliensRpc(sendIndex, front, default);
+        SendAliensRpc(sendIndex, front, modifiers, default);
     }
 
     [Rpc(SendTo.Server)]
-    public void SendAliensRpc(int sendIndex, bool front, RpcParams rpcParams)
+    public void SendAliensRpc(int sendIndex, bool front, Modifiers modifiers, RpcParams rpcParams)
     {
         ulong clientId = rpcParams.Receive.SenderClientId;
-        GameController.Instance.TrySendAliens(clientId, sendIndex, front);
+        GameController.Instance.TrySendAliens(clientId, sendIndex, front, modifiers);
     }
 
     // Winner is 1 or 2

@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Netcode;
 using System.Collections.Generic;
 using System.Collections;
+using System;
 
 public class GameController : MonoBehaviour
 {
@@ -32,8 +33,8 @@ public class GameController : MonoBehaviour
     private ulong p2ID = 0;
 
     [SerializeField] private AlienSends alienSends;
-    private List<(AlienSend, bool)> p1Sends = new List<(AlienSend, bool)> ();
-    private List<(AlienSend, bool)> p2Sends = new List<(AlienSend, bool)> ();
+    private List<(AlienSend, bool, Modifiers)> p1Sends = new List<(AlienSend, bool, Modifiers)> ();
+    private List<(AlienSend, bool, Modifiers)> p2Sends = new List<(AlienSend, bool, Modifiers)> ();
 
     [SerializeField] private List<Wave> waves = new List<Wave>();
     [SerializeField] private Map map;
@@ -82,7 +83,29 @@ public class GameController : MonoBehaviour
     [SerializeField] private float sellMultiplier;
     public float SellMultiplier => sellMultiplier;
 
+    // Modifiers
     [SerializeField] private ModifierCostMultipliers modifierCostMultipliers;
+    public static float ModifierCostMultiplier(Modifiers modifiers, ModifierCostMultipliers multipliers)
+    {
+        float multiplier = 1;
+        if (modifiers.shielded)
+        {
+            multiplier *= multipliers.shieldMultiplier;
+        }
+        if (modifiers.berserk)
+        {
+            multiplier *= multipliers.berserkMultiplier;
+        }
+        if (modifiers.invisible)
+        {
+            multiplier *= multipliers.invisMultiplier;
+        }
+        if (modifiers.regenerating)
+        {
+            multiplier *= multipliers.regenMultiplier;
+        }
+        return multiplier;
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -245,22 +268,25 @@ public class GameController : MonoBehaviour
     {
         AlienSend send;
         bool front;
+        Modifiers modifiers;
         if (player == 1)
         {
             send = p1Sends[0].Item1;
             front = p1Sends[0].Item2;
+            modifiers = p1Sends[0].Item3;
         }
         else
         {
             send = p2Sends[0].Item1;
             front = p2Sends[0].Item2;
+            modifiers = p2Sends[0].Item3;
         }
         yield return new WaitForSeconds(send.delayBeforeSend);
         for (int i = 0; i < send.count; i++)
         {
             // FIX TO MAKE IT MODIFY ALIENS
-            if (player == 1) SpawnAlien(send.alien, 2, front, true, default);
-            else SpawnAlien(send.alien, 1, front, true, default);
+            if (player == 1) SpawnAlien(send.alien, 2, front, true, modifiers);
+            else SpawnAlien(send.alien, 1, front, true, modifiers);
             if (i < send.count - 1)
             {
                 yield return new WaitForSeconds(send.delayBetweenSends);
@@ -306,7 +332,7 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public bool TrySendAliens(ulong clientId, int sendIndex, bool front)
+    public bool TrySendAliens(ulong clientId, int sendIndex, bool front, Modifiers modifiers)
     {
         if (!NetworkManager.Singleton.IsServer) return false;
         int sender = 0;
@@ -323,7 +349,7 @@ public class GameController : MonoBehaviour
         if ((sender == 1 && p1Sends.Count >= 5) ||
             p2Sends.Count >= 5) return false;
         // spends money if possible
-        if (!MoneyController.Instance.ChangeMoney(sender, -send.cost)) return false;
+        if (!MoneyController.Instance.ChangeMoney(sender, -(Mathf.RoundToInt(send.cost * ModifierCostMultiplier(modifiers, modifierCostMultipliers))))) return false;
 
         // once this point is reached, it's a valid send
         float multiplier = sender == 1 ? MoneyController.Instance.P1IncomeMultiplier :
@@ -332,8 +358,8 @@ public class GameController : MonoBehaviour
             send.incomeChange / multiplier;
         MoneyController.Instance.ChangeIncome(sender, incomeChange);
         // add send to queue
-        if (sender == 1) p1Sends.Add((send, front));
-        else p2Sends.Add((send, front));
+        if (sender == 1) p1Sends.Add((send, front, modifiers));
+        else p2Sends.Add((send, front, modifiers));
         TrySendQueue(sender);
 
         return true;

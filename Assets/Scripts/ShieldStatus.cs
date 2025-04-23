@@ -7,7 +7,7 @@ public class ShieldStatus : StatusEffect
     public int Health => health;
     public event Action<int> HealthChanged;
     public event Action ShieldBroken;
-    public ShieldStatus(int health) : base(false, Mathf.Infinity)
+    public ShieldStatus(int health) : base(Mathf.Infinity)
     {
         this.health = health;
     }

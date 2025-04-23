@@ -13,3 +13,6 @@ MonoBehaviour:
   m_Name: ModifierCostMultipliers
   m_EditorClassIdentifier: 
   shieldMultiplier: 1.4
+  berserkMultiplier: 1.5
+  invisMultiplier: 1.2
+  regenMultiplier: 1.5
