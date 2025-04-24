@@ -458,4 +458,14 @@ public class GameUI : MonoBehaviour
             button.MoneyUpdate(associatedPlayer == 1 ? GameState.P1Money : GameState.P2Money);
         }
     }
+
+    public void TriggerOverdrive()
+    {
+        GameMessenger.Instance.TriggerOverdrive();
+    }
+
+    public void TriggerShield()
+    {
+
+    }
 }

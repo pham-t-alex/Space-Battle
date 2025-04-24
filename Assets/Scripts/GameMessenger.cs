@@ -242,4 +242,16 @@ public class GameMessenger : NetworkBehaviour
         incomeCounter = timestamp;
         IncomeMultiplierUpdate?.Invoke(newMultiplier);
     }
+
+    public void TriggerOverdrive()
+    {
+        TriggerOverdriveRpc(default);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void TriggerOverdriveRpc(RpcParams rpcParams)
+    {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        GameController.Instance.TriggerOverdrive(clientId);
+    }
 }

@@ -107,6 +107,14 @@ public class GameController : MonoBehaviour
         return multiplier;
     }
 
+    // Boosts (overdrive and shield)
+    [SerializeField] private float overdriveDelay;
+    private float p1OverdriveDelayTimeLeft;
+    private float p2OverdriveDelayTimeLeft;
+    [SerializeField] private int overdriveCount;
+    private int p1OverdriveCount;
+    private int p2OverdriveCount;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -579,5 +587,28 @@ public class GameController : MonoBehaviour
     public void IncomeMultiplierUpdate(int player, float newMultiplier)
     {
         GameMessenger.Instance.TriggerIncomeMultiplierUpdate(player == 1 ? p1ID : p2ID, newMultiplier);
+    }
+
+    public void TriggerOverdrive(ulong clientId)
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+        // get player
+        int pNum = 0;
+        Player p;
+
+        if (clientId == p1ID)
+        {
+            pNum = 1;
+            p = player1;
+        }
+        else if (clientId == p2ID)
+        {
+            pNum = 2;
+            p = player2;
+        }
+        else return;
+
+        // check if legal
+
     }
 }
