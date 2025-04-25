@@ -114,6 +114,11 @@ public class GameController : MonoBehaviour
     [SerializeField] private int overdriveCount;
     private int p1OverdriveCount;
     private int p2OverdriveCount;
+    [SerializeField] private float overdriveMultiplier = 1;
+    [SerializeField] private float overdriveDuration;
+    private float p1OverdriveTimeLeft;
+    private float p2OverdriveTimeLeft;
+    [SerializeField] private float startingOverdriveDelay;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -136,9 +141,10 @@ public class GameController : MonoBehaviour
     void Update()
     {
         UpdateWaveTimer();
+        UpdateOverdriveCooldown();
     }
 
-    public void UpdateWaveTimer()
+    void UpdateWaveTimer()
     {
         if (!NetworkManager.Singleton.IsServer)
         {
@@ -155,6 +161,51 @@ public class GameController : MonoBehaviour
             wave++;
             GameMessenger.Instance.TriggerWaveUpdate(wave);
             SpawnWave();
+        }
+    }
+
+    void UpdateOverdriveCooldown()
+    {
+        if (!NetworkManager.Singleton.IsServer)
+        {
+            return;
+        }
+        float time = Time.deltaTime;
+        if (p1OverdriveDelayTimeLeft > 0)
+        {
+            p1OverdriveDelayTimeLeft -= time;
+            if (p1OverdriveDelayTimeLeft <= 0)
+            {
+                p1OverdriveDelayTimeLeft = 0;
+                if (p1OverdriveCount > 0) GameMessenger.Instance.TriggerOverdriveReady(p1ID);
+            }
+        }
+        if (p2OverdriveDelayTimeLeft > 0)
+        {
+            p2OverdriveDelayTimeLeft -= time;
+            if (p2OverdriveDelayTimeLeft <= 0)
+            {
+                p2OverdriveDelayTimeLeft = 0;
+                if (p2OverdriveCount > 0) GameMessenger.Instance.TriggerOverdriveReady(p2ID);
+            }
+        }
+        if (p1OverdriveTimeLeft > 0)
+        {
+            p1OverdriveTimeLeft -= time;
+            if (p1OverdriveTimeLeft <= 0)
+            {
+                p1OverdriveTimeLeft = 0;
+                player1.ToggleOverdrive(1);
+            }
+        }
+        if (p2OverdriveTimeLeft > 0)
+        {
+            p2OverdriveTimeLeft -= time;
+            if (p2OverdriveTimeLeft <= 0)
+            {
+                p2OverdriveTimeLeft = 0;
+                player2.ToggleOverdrive(1);
+            }
         }
     }
 
@@ -242,6 +293,11 @@ public class GameController : MonoBehaviour
         frontLineSentSpawn = map.frontLineSentPath[0];
         backLineSentSpawn = map.backLineSentPath[0];
         betweenWaveTimer = maxWaveTimer;
+
+        p1OverdriveCount = overdriveCount;
+        p2OverdriveCount = overdriveCount;
+        p1OverdriveDelayTimeLeft = startingOverdriveDelay;
+        p2OverdriveDelayTimeLeft = startingOverdriveDelay;
     }
 
     // Spawns a wave
@@ -609,6 +665,33 @@ public class GameController : MonoBehaviour
         else return;
 
         // check if legal
+        switch (pNum)
+        {
+            case 1:
+                if (p1OverdriveCount <= 0) return;
+                if (p1OverdriveDelayTimeLeft > 0) return;
+                break;
+            case 2:
+                if (p2OverdriveCount <= 0) return;
+                if (p2OverdriveDelayTimeLeft > 0) return;
+                break;
+        }
 
+        switch (pNum)
+        {
+            case 1:
+                p1OverdriveDelayTimeLeft = overdriveDelay;
+                p1OverdriveCount--;
+                p1OverdriveTimeLeft = overdriveDuration;
+                player1.ToggleOverdrive(overdriveMultiplier);
+                break;
+            case 2:
+                p2OverdriveDelayTimeLeft = overdriveDelay;
+                p2OverdriveCount--;
+                p2OverdriveTimeLeft = overdriveDuration;
+                player2.ToggleOverdrive(overdriveMultiplier);
+                break;
+        }
+        GameMessenger.Instance.TriggerOverdriveComplete(clientId);
     }
 }

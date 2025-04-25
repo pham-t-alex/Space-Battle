@@ -254,4 +254,26 @@ public class GameMessenger : NetworkBehaviour
         ulong clientId = rpcParams.Receive.SenderClientId;
         GameController.Instance.TriggerOverdrive(clientId);
     }
+
+    public void TriggerOverdriveComplete(ulong clientId)
+    {
+        TriggerOverdriveCompleteRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void TriggerOverdriveCompleteRpc(RpcParams rpcParams)
+    {
+        GameUI.Instance.ToggleOverdriveButton(false);
+    }
+
+    public void TriggerOverdriveReady(ulong clientId)
+    {
+        TriggerOverdriveReadyRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void TriggerOverdriveReadyRpc(RpcParams rpcParams)
+    {
+        GameUI.Instance.ToggleOverdriveButton(true);
+    }
 }

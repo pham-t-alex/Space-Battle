@@ -2,7 +2,7 @@ using UnityEngine;
 using TMPro;
 using Unity.Netcode;
 using System.Collections.Generic;
-using NUnit.Framework.Constraints;
+using UnityEngine.UI;
 
 public class GameUI : MonoBehaviour
 {
@@ -90,6 +90,8 @@ public class GameUI : MonoBehaviour
     // Alien modifiers
     private bool front = false;
     private Modifiers modifiers;
+
+    [SerializeField] private Button overdriveButton;
 
     // Update is called once per frame
     void Update()
@@ -462,6 +464,11 @@ public class GameUI : MonoBehaviour
     public void TriggerOverdrive()
     {
         GameMessenger.Instance.TriggerOverdrive();
+    }
+
+    public void ToggleOverdriveButton(bool toggle)
+    {
+        overdriveButton.interactable = toggle;
     }
 
     public void TriggerShield()
