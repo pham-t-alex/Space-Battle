@@ -66,6 +66,6 @@ public class LobbyCanvas : MonoBehaviour
     public void StartGame()
     {
         if (NetworkManager.Singleton.ConnectedClientsIds.Count < 2) return;
-        NetworkManager.Singleton.SceneManager.LoadScene("SpaceBattle", UnityEngine.SceneManagement.LoadSceneMode.Single);
+        NetworkManager.Singleton.SceneManager.LoadScene("StructureSelection", UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
 }

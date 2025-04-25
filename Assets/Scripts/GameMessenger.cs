@@ -56,16 +56,16 @@ public class GameMessenger : NetworkBehaviour
         GameUI.Instance.Setup(player, moduleCost, levelCost, first, second, third);
     }
 
-    public void SendAliens(int sendIndex, bool front)
+    public void SendAliens(int sendIndex, bool front, Modifiers modifiers)
     {
-        SendAliensRpc(sendIndex, front, default);
+        SendAliensRpc(sendIndex, front, modifiers, default);
     }
 
     [Rpc(SendTo.Server)]
-    public void SendAliensRpc(int sendIndex, bool front, RpcParams rpcParams)
+    public void SendAliensRpc(int sendIndex, bool front, Modifiers modifiers, RpcParams rpcParams)
     {
         ulong clientId = rpcParams.Receive.SenderClientId;
-        GameController.Instance.TrySendAliens(clientId, sendIndex, front);
+        GameController.Instance.TrySendAliens(clientId, sendIndex, front, modifiers);
     }
 
     // Winner is 1 or 2
@@ -241,5 +241,39 @@ public class GameMessenger : NetworkBehaviour
         if (timestamp <= incomeCounter) return;
         incomeCounter = timestamp;
         IncomeMultiplierUpdate?.Invoke(newMultiplier);
+    }
+
+    public void TriggerOverdrive()
+    {
+        TriggerOverdriveRpc(default);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void TriggerOverdriveRpc(RpcParams rpcParams)
+    {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        GameController.Instance.TriggerOverdrive(clientId);
+    }
+
+    public void TriggerOverdriveComplete(ulong clientId)
+    {
+        TriggerOverdriveCompleteRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void TriggerOverdriveCompleteRpc(RpcParams rpcParams)
+    {
+        GameUI.Instance.ToggleOverdriveButton(false);
+    }
+
+    public void TriggerOverdriveReady(ulong clientId)
+    {
+        TriggerOverdriveReadyRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void TriggerOverdriveReadyRpc(RpcParams rpcParams)
+    {
+        GameUI.Instance.ToggleOverdriveButton(true);
     }
 }

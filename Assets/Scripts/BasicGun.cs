@@ -6,6 +6,7 @@ public class BasicGun : Structure
     [SerializeField] protected GameObject projectilePrefab;
     [SerializeField] private float reloadTimeLeft;
     [SerializeField] private float reloadTime;
+    private float overdriveMultiplier = 1;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -32,7 +33,7 @@ public class BasicGun : Structure
                 if (reloadTimeLeft <= 0)
                 {
                     Shoot();
-                    reloadTimeLeft = reloadTime;
+                    reloadTimeLeft = reloadTime / overdriveMultiplier;
                 }
             }
         }
@@ -49,5 +50,10 @@ public class BasicGun : Structure
             GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
             projectile.GetComponent<NetworkObject>().Spawn();
         }
+    }
+
+    public override void ToggleOverdrive(float multiplier)
+    {
+        overdriveMultiplier = multiplier;
     }
 }

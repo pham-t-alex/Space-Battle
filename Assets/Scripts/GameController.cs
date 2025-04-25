@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Netcode;
 using System.Collections.Generic;
 using System.Collections;
+using System;
 
 public class GameController : MonoBehaviour
 {
@@ -32,8 +33,8 @@ public class GameController : MonoBehaviour
     private ulong p2ID = 0;
 
     [SerializeField] private AlienSends alienSends;
-    private List<(AlienSend, bool)> p1Sends = new List<(AlienSend, bool)> ();
-    private List<(AlienSend, bool)> p2Sends = new List<(AlienSend, bool)> ();
+    private List<(AlienSend, bool, Modifiers)> p1Sends = new List<(AlienSend, bool, Modifiers)> ();
+    private List<(AlienSend, bool, Modifiers)> p2Sends = new List<(AlienSend, bool, Modifiers)> ();
 
     [SerializeField] private List<Wave> waves = new List<Wave>();
     [SerializeField] private Map map;
@@ -82,6 +83,43 @@ public class GameController : MonoBehaviour
     [SerializeField] private float sellMultiplier;
     public float SellMultiplier => sellMultiplier;
 
+    // Modifiers
+    [SerializeField] private ModifierCostMultipliers modifierCostMultipliers;
+    public static float ModifierCostMultiplier(Modifiers modifiers, ModifierCostMultipliers multipliers)
+    {
+        float multiplier = 1;
+        if (modifiers.shielded)
+        {
+            multiplier *= multipliers.shieldMultiplier;
+        }
+        if (modifiers.berserk)
+        {
+            multiplier *= multipliers.berserkMultiplier;
+        }
+        if (modifiers.invisible)
+        {
+            multiplier *= multipliers.invisMultiplier;
+        }
+        if (modifiers.regenerating)
+        {
+            multiplier *= multipliers.regenMultiplier;
+        }
+        return multiplier;
+    }
+
+    // Boosts (overdrive and shield)
+    [SerializeField] private float overdriveDelay;
+    private float p1OverdriveDelayTimeLeft;
+    private float p2OverdriveDelayTimeLeft;
+    [SerializeField] private int overdriveCount;
+    private int p1OverdriveCount;
+    private int p2OverdriveCount;
+    [SerializeField] private float overdriveMultiplier = 1;
+    [SerializeField] private float overdriveDuration;
+    private float p1OverdriveTimeLeft;
+    private float p2OverdriveTimeLeft;
+    [SerializeField] private float startingOverdriveDelay;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -91,6 +129,11 @@ public class GameController : MonoBehaviour
             SpawnPlayer(player.GetComponent<Player>(), clientId);
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
         }
+        for (int i = 0; i < 3; i++)
+        {
+            p1Structures[i] = StructureSelection.p1Structures[i];
+            p2Structures[i] = StructureSelection.p2Structures[i];
+        }
         StartGame();
     }
 
@@ -98,9 +141,10 @@ public class GameController : MonoBehaviour
     void Update()
     {
         UpdateWaveTimer();
+        UpdateOverdriveCooldown();
     }
 
-    public void UpdateWaveTimer()
+    void UpdateWaveTimer()
     {
         if (!NetworkManager.Singleton.IsServer)
         {
@@ -117,6 +161,51 @@ public class GameController : MonoBehaviour
             wave++;
             GameMessenger.Instance.TriggerWaveUpdate(wave);
             SpawnWave();
+        }
+    }
+
+    void UpdateOverdriveCooldown()
+    {
+        if (!NetworkManager.Singleton.IsServer)
+        {
+            return;
+        }
+        float time = Time.deltaTime;
+        if (p1OverdriveDelayTimeLeft > 0)
+        {
+            p1OverdriveDelayTimeLeft -= time;
+            if (p1OverdriveDelayTimeLeft <= 0)
+            {
+                p1OverdriveDelayTimeLeft = 0;
+                if (p1OverdriveCount > 0) GameMessenger.Instance.TriggerOverdriveReady(p1ID);
+            }
+        }
+        if (p2OverdriveDelayTimeLeft > 0)
+        {
+            p2OverdriveDelayTimeLeft -= time;
+            if (p2OverdriveDelayTimeLeft <= 0)
+            {
+                p2OverdriveDelayTimeLeft = 0;
+                if (p2OverdriveCount > 0) GameMessenger.Instance.TriggerOverdriveReady(p2ID);
+            }
+        }
+        if (p1OverdriveTimeLeft > 0)
+        {
+            p1OverdriveTimeLeft -= time;
+            if (p1OverdriveTimeLeft <= 0)
+            {
+                p1OverdriveTimeLeft = 0;
+                player1.ToggleOverdrive(1);
+            }
+        }
+        if (p2OverdriveTimeLeft > 0)
+        {
+            p2OverdriveTimeLeft -= time;
+            if (p2OverdriveTimeLeft <= 0)
+            {
+                p2OverdriveTimeLeft = 0;
+                player2.ToggleOverdrive(1);
+            }
         }
     }
 
@@ -204,6 +293,11 @@ public class GameController : MonoBehaviour
         frontLineSentSpawn = map.frontLineSentPath[0];
         backLineSentSpawn = map.backLineSentPath[0];
         betweenWaveTimer = maxWaveTimer;
+
+        p1OverdriveCount = overdriveCount;
+        p2OverdriveCount = overdriveCount;
+        p1OverdriveDelayTimeLeft = startingOverdriveDelay;
+        p2OverdriveDelayTimeLeft = startingOverdriveDelay;
     }
 
     // Spawns a wave
@@ -214,8 +308,8 @@ public class GameController : MonoBehaviour
         {
             for (int i = 0; i < component.count; i++)
             {
-                SpawnAlien(component.alien, 1, front, false);
-                SpawnAlien(component.alien, 2, front, false);
+                SpawnAlien(component.alien, 1, front, false, component.modifiers);
+                SpawnAlien(component.alien, 2, front, false, component.modifiers);
                 yield return new WaitForSeconds(component.spawnDelay);
             }
             yield return new WaitForSeconds(component.afterSpawnDelay);
@@ -238,21 +332,25 @@ public class GameController : MonoBehaviour
     {
         AlienSend send;
         bool front;
+        Modifiers modifiers;
         if (player == 1)
         {
             send = p1Sends[0].Item1;
             front = p1Sends[0].Item2;
+            modifiers = p1Sends[0].Item3;
         }
         else
         {
             send = p2Sends[0].Item1;
             front = p2Sends[0].Item2;
+            modifiers = p2Sends[0].Item3;
         }
         yield return new WaitForSeconds(send.delayBeforeSend);
         for (int i = 0; i < send.count; i++)
         {
-            if (player == 1) SpawnAlien(send.alien, 2, front, true);
-            else SpawnAlien(send.alien, 1, front, true);
+            // FIX TO MAKE IT MODIFY ALIENS
+            if (player == 1) SpawnAlien(send.alien, 2, front, true, modifiers);
+            else SpawnAlien(send.alien, 1, front, true, modifiers);
             if (i < send.count - 1)
             {
                 yield return new WaitForSeconds(send.delayBetweenSends);
@@ -272,9 +370,11 @@ public class GameController : MonoBehaviour
         yield return null;
     }
 
-    void SpawnAlien(GameObject alien, int player, bool front, bool sent)
+    void SpawnAlien(GameObject alien, int player, bool front, bool sent, Modifiers modifiers)
     {
         GameObject g = Instantiate(alien);
+        g.GetComponent<Alien>().PreSpawnServerInitialize();
+        g.GetComponent<Alien>().ApplyStartingModifiers(modifiers);
         g.GetComponent<NetworkObject>().Spawn();
         if (front && sent) g.transform.position = GetWorldCenter(player) + frontLineSentSpawn;
         else if (!front && sent) g.transform.position = GetWorldCenter(player) + backLineSentSpawn;
@@ -296,7 +396,7 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public bool TrySendAliens(ulong clientId, int sendIndex, bool front)
+    public bool TrySendAliens(ulong clientId, int sendIndex, bool front, Modifiers modifiers)
     {
         if (!NetworkManager.Singleton.IsServer) return false;
         int sender = 0;
@@ -313,7 +413,7 @@ public class GameController : MonoBehaviour
         if ((sender == 1 && p1Sends.Count >= 5) ||
             p2Sends.Count >= 5) return false;
         // spends money if possible
-        if (!MoneyController.Instance.ChangeMoney(sender, -send.cost)) return false;
+        if (!MoneyController.Instance.ChangeMoney(sender, -(Mathf.RoundToInt(send.cost * ModifierCostMultiplier(modifiers, modifierCostMultipliers))))) return false;
 
         // once this point is reached, it's a valid send
         float multiplier = sender == 1 ? MoneyController.Instance.P1IncomeMultiplier :
@@ -322,8 +422,8 @@ public class GameController : MonoBehaviour
             send.incomeChange / multiplier;
         MoneyController.Instance.ChangeIncome(sender, incomeChange);
         // add send to queue
-        if (sender == 1) p1Sends.Add((send, front));
-        else p2Sends.Add((send, front));
+        if (sender == 1) p1Sends.Add((send, front, modifiers));
+        else p2Sends.Add((send, front, modifiers));
         TrySendQueue(sender);
 
         return true;
@@ -543,5 +643,55 @@ public class GameController : MonoBehaviour
     public void IncomeMultiplierUpdate(int player, float newMultiplier)
     {
         GameMessenger.Instance.TriggerIncomeMultiplierUpdate(player == 1 ? p1ID : p2ID, newMultiplier);
+    }
+
+    public void TriggerOverdrive(ulong clientId)
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+        // get player
+        int pNum = 0;
+        Player p;
+
+        if (clientId == p1ID)
+        {
+            pNum = 1;
+            p = player1;
+        }
+        else if (clientId == p2ID)
+        {
+            pNum = 2;
+            p = player2;
+        }
+        else return;
+
+        // check if legal
+        switch (pNum)
+        {
+            case 1:
+                if (p1OverdriveCount <= 0) return;
+                if (p1OverdriveDelayTimeLeft > 0) return;
+                break;
+            case 2:
+                if (p2OverdriveCount <= 0) return;
+                if (p2OverdriveDelayTimeLeft > 0) return;
+                break;
+        }
+
+        switch (pNum)
+        {
+            case 1:
+                p1OverdriveDelayTimeLeft = overdriveDelay;
+                p1OverdriveCount--;
+                p1OverdriveTimeLeft = overdriveDuration;
+                player1.ToggleOverdrive(overdriveMultiplier);
+                break;
+            case 2:
+                p2OverdriveDelayTimeLeft = overdriveDelay;
+                p2OverdriveCount--;
+                p2OverdriveTimeLeft = overdriveDuration;
+                player2.ToggleOverdrive(overdriveMultiplier);
+                break;
+        }
+        GameMessenger.Instance.TriggerOverdriveComplete(clientId);
     }
 }

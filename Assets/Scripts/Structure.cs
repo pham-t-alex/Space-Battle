@@ -65,6 +65,8 @@ public abstract class Structure : NetworkBehaviour
     public virtual void OnBuild() { }
     public virtual void OnSell() { }
     public virtual void OnUpgrade() { }
+    // Multiplier = 1 represents toggle off
+    public virtual void ToggleOverdrive(float multiplier) { }
 }
 
 public struct StructureInfo : INetworkSerializable

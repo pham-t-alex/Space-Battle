@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using Unity.Netcode;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class GameUI : MonoBehaviour
 {
@@ -84,9 +85,13 @@ public class GameUI : MonoBehaviour
     [SerializeField] private TMP_Text upgrade2Text;
 
     [SerializeField] private TMP_Text sellValue;
+    [SerializeField] private ModifierCostMultipliers modifierCostMultipliers;
 
     // Alien modifiers
     private bool front = false;
+    private Modifiers modifiers;
+
+    [SerializeField] private Button overdriveButton;
 
     // Update is called once per frame
     void Update()
@@ -216,7 +221,7 @@ public class GameUI : MonoBehaviour
 
     public void SendAliens(int sendIndex)
     {
-        GameMessenger.Instance.SendAliens(sendIndex, front);
+        GameMessenger.Instance.SendAliens(sendIndex, front, modifiers);
     }
 
     public void AddModule(bool right)
@@ -425,5 +430,49 @@ public class GameUI : MonoBehaviour
     public void UpdateFront(bool front)
     {
         this.front = front;
+    }
+
+    public void ToggleModifier(bool on, ModifierButton.ModifierType m)
+    {
+        switch (m)
+        {
+            case ModifierButton.ModifierType.Shield:
+                modifiers.shielded = on;
+                break;
+            case ModifierButton.ModifierType.Berserk:
+                modifiers.berserk = on;
+                break;
+            case ModifierButton.ModifierType.Invisible:
+                modifiers.invisible = on;
+                break;
+            case ModifierButton.ModifierType.Regenerating:
+                modifiers.regenerating = on;
+                break;
+        }
+        UpdateSendPrices();
+    }
+
+    public void UpdateSendPrices()
+    {
+        foreach (AlienSendButton button in buttons)
+        {
+            button.ChangeCostMultiplier(GameController.ModifierCostMultiplier(modifiers, modifierCostMultipliers));
+            button.MoneyUpdate(associatedPlayer == 1 ? GameState.P1Money : GameState.P2Money);
+        }
+    }
+
+    public void TriggerOverdrive()
+    {
+        GameMessenger.Instance.TriggerOverdrive();
+    }
+
+    public void ToggleOverdriveButton(bool toggle)
+    {
+        overdriveButton.interactable = toggle;
+    }
+
+    public void TriggerShield()
+    {
+
     }
 }

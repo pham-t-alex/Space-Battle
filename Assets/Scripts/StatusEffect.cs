@@ -3,26 +3,26 @@ using System;
 
 public class StatusEffect
 {
-    private bool stackable;
-    public bool Stackable => stackable;
-
-    private float duration;
     private float timeLeft;
+    public float TimeLeft => timeLeft;
     public event Action Expire;
 
-    public StatusEffect(bool stackable, float duration)
+    public StatusEffect(float duration)
     {
-        this.stackable = stackable;
-        this.duration = duration;
         timeLeft = duration;
     }
 
-    public void Countdown(float time)
+    public virtual void Countdown(float time)
     {
         timeLeft -= time;
         if (timeLeft <= 0)
         {
             Expire?.Invoke();
         }
+    }
+
+    public void SetTimeLeft(float time)
+    {
+        timeLeft = time;
     }
 }

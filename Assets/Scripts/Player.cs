@@ -82,12 +82,6 @@ public class Player : NetworkBehaviour
     public void HealthSetup(int player, int maxHealth)
     {
         playerNum = player;
-
-        //REMOVE LATER
-        /*if (player == 2)
-        {
-            maxHealth = 1000000;
-        }*/
         health.Value = maxHealth;
 
         this.maxHealth.Value = maxHealth;
@@ -122,7 +116,7 @@ public class Player : NetworkBehaviour
             {
                 modules[i].transform.localPosition += Vector3.right * (moduleGap / 2);
             }
-            g.transform.localPosition = modules[1].transform.localPosition + Vector3.left * moduleGap;
+            g.transform.localPosition = modules[0].transform.localPosition + Vector3.left * moduleGap;
             modules.Insert(0, g.GetComponent<Module>());
         }
         GetComponent<BoxCollider2D>().size += Vector2.right * moduleGap;
@@ -256,5 +250,17 @@ public class Player : NetworkBehaviour
     void StructureUIRpc(int value, StructureUpgradeInfo info, RpcParams rpcParams)
     {
         GameUI.Instance.OpenStructureUI(value,info);
+    }
+
+    // multiplier of 1 turns off overdrive
+    public void ToggleOverdrive(float multiplier)
+    {
+        if (!IsServer) return;
+        foreach (Module m in modules)
+        {
+            Structure s = m.ModuleStructure;
+            if (s == null) continue;
+            s.ToggleOverdrive(multiplier);
+        }
     }
 }
