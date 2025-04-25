@@ -16,6 +16,7 @@ public class Player : NetworkBehaviour
     private InputSystem_Actions controls;
     private NetworkVariable<int> health = new NetworkVariable<int>();
     private NetworkVariable<int> maxHealth = new NetworkVariable<int>();
+    private NetworkVariable<int> shield = new NetworkVariable<int>(0);
 
     private Rigidbody2D rb;
 
@@ -40,6 +41,9 @@ public class Player : NetworkBehaviour
     private float healDelay = 0f;
     private float maxHealDelay => 60f / (maxHealth.Value * healRate);
 
+    // Shield
+    public event Action<int, int> ShieldChange;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -50,6 +54,7 @@ public class Player : NetworkBehaviour
     {
         health.OnValueChanged += (oldVal, newVal) => HealthChange?.Invoke(oldVal, newVal);
         maxHealth.OnValueChanged += (oldVal, newVal) => MaxHealthChange?.Invoke(oldVal, newVal);
+        shield.OnValueChanged += (oldVal, newVal) => ShieldChange?.Invoke(oldVal, newVal);
         if (IsOwner)
         {
             controls = new InputSystem_Actions();
@@ -194,6 +199,11 @@ public class Player : NetworkBehaviour
     public void Damage(int damage)
     {
         if (!IsServer) return;
+        if (shield.Value > 0)
+        {
+            shield.Value = Mathf.Max(shield.Value - damage, 0);
+            return;
+        }
         health.Value = Mathf.Max(health.Value - damage, 0);
         if (health.Value == 0)
         {
@@ -262,5 +272,11 @@ public class Player : NetworkBehaviour
             if (s == null) continue;
             s.ToggleOverdrive(multiplier);
         }
+    }
+
+    public void AddShield(float healthFraction)
+    {
+        if (!IsServer) return;
+        shield.Value += Mathf.RoundToInt(healthFraction * maxHealth.Value);
     }
 }

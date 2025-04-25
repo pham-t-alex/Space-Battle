@@ -456,7 +456,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 449.91135}
+  m_AnchoredPosition: {x: 0, y: 449.88443}
   m_SizeDelta: {x: 0, y: 1000}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &114505726
@@ -1731,11 +1731,23 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 325621815}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1698384733}
+        m_TargetAssemblyTypeName: GameUI, Assembly-CSharp
+        m_MethodName: TriggerShield
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &325621815
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3182,6 +3194,8 @@ MonoBehaviour:
   overdriveMultiplier: 2
   overdriveDuration: 10
   startingOverdriveDelay: 15
+  shieldCount: 3
+  shieldFraction: 0.2
 --- !u!114 &535100582
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4953,8 +4967,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 642969570}
   m_HandleRect: {fileID: 642969569}
   m_Direction: 2
-  m_Value: 0.38364613
-  m_Size: 0.27004382
+  m_Value: 0.38371995
+  m_Size: 0.27
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -8223,6 +8237,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 876556238}
+  shieldSlider: {fileID: 1989722584}
 --- !u!1 &1655959187
 GameObject:
   m_ObjectHideFlags: 0
@@ -8740,6 +8755,7 @@ MonoBehaviour:
   sellValue: {fileID: 1286833899}
   modifierCostMultipliers: {fileID: 11400000, guid: 6e9fa66ff26a7104f9bd1521c1910f0f, type: 2}
   overdriveButton: {fileID: 1970284783}
+  shieldButton: {fileID: 325621814}
 --- !u!1 &1722881435
 GameObject:
   m_ObjectHideFlags: 0
@@ -11280,6 +11296,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 2114288477}
+  shieldSlider: {fileID: 319707857}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

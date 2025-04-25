@@ -120,6 +120,11 @@ public class GameController : MonoBehaviour
     private float p2OverdriveTimeLeft;
     [SerializeField] private float startingOverdriveDelay;
 
+    [SerializeField] private int shieldCount;
+    private int p1ShieldCount;
+    private int p2ShieldCount;
+    [SerializeField] private float shieldFraction;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -298,6 +303,9 @@ public class GameController : MonoBehaviour
         p2OverdriveCount = overdriveCount;
         p1OverdriveDelayTimeLeft = startingOverdriveDelay;
         p2OverdriveDelayTimeLeft = startingOverdriveDelay;
+
+        p1ShieldCount = shieldCount;
+        p2ShieldCount = shieldCount;
     }
 
     // Spawns a wave
@@ -649,18 +657,15 @@ public class GameController : MonoBehaviour
     {
         if (!NetworkManager.Singleton.IsServer) return;
         // get player
-        int pNum = 0;
-        Player p;
+        int pNum;
 
         if (clientId == p1ID)
         {
             pNum = 1;
-            p = player1;
         }
         else if (clientId == p2ID)
         {
             pNum = 2;
-            p = player2;
         }
         else return;
 
@@ -693,5 +698,47 @@ public class GameController : MonoBehaviour
                 break;
         }
         GameMessenger.Instance.TriggerOverdriveComplete(clientId);
+    }
+
+    public void TriggerShield(ulong clientId)
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+        // get player
+        int pNum;
+
+        if (clientId == p1ID)
+        {
+            pNum = 1;
+        }
+        else if (clientId == p2ID)
+        {
+            pNum = 2;
+        }
+        else return;
+
+        // check if legal
+        switch (pNum)
+        {
+            case 1:
+                if (p1ShieldCount <= 0) return;
+                break;
+            case 2:
+                if (p2ShieldCount <= 0) return;
+                break;
+        }
+
+        switch (pNum)
+        {
+            case 1:
+                p1ShieldCount--;
+                player1.AddShield(shieldFraction);
+                if (p1ShieldCount == 0) GameMessenger.Instance.ShieldExhausted(clientId);
+                break;
+            case 2:
+                p2ShieldCount--;
+                player2.AddShield(shieldFraction);
+                if (p2ShieldCount == 0) GameMessenger.Instance.ShieldExhausted(clientId);
+                break;
+        }
     }
 }

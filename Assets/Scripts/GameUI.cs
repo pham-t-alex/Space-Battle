@@ -92,6 +92,7 @@ public class GameUI : MonoBehaviour
     private Modifiers modifiers;
 
     [SerializeField] private Button overdriveButton;
+    [SerializeField] private Button shieldButton;
 
     // Update is called once per frame
     void Update()
@@ -473,6 +474,11 @@ public class GameUI : MonoBehaviour
 
     public void TriggerShield()
     {
+        GameMessenger.Instance.TriggerShield();
+    }
 
+    public void DisableShieldButton()
+    {
+        shieldButton.interactable = false;
     }
 }

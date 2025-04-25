@@ -276,4 +276,27 @@ public class GameMessenger : NetworkBehaviour
     {
         GameUI.Instance.ToggleOverdriveButton(true);
     }
+
+    public void TriggerShield()
+    {
+        TriggerShieldRpc(default);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void TriggerShieldRpc(RpcParams rpcParams)
+    {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        GameController.Instance.TriggerShield(clientId);
+    }
+
+    public void ShieldExhausted(ulong clientId)
+    {
+        ShieldExhaustedRpc(RpcTarget.Single(clientId, RpcTargetUse.Temp));
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void ShieldExhaustedRpc(RpcParams rpcParams)
+    {
+        GameUI.Instance.DisableShieldButton();
+    }
 }
