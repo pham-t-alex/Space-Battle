@@ -25,7 +25,7 @@ public class BasicAProjectile : AlienProjectile
         {
             return;
         }
-        rb.linearVelocity = direction * speed;
+        rb.linearVelocity = Quaternion.Euler(0, 0, rotation) * direction * speed;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

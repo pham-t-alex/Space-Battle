@@ -13,7 +13,7 @@ public class AimingAlien : Alien
 
     public override void Shoot()
     {
-        if (!IsServer)
+        if (!IsServer || target == null)
         {
             return;
         }

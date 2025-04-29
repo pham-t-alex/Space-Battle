@@ -87,6 +87,8 @@ public class Player : NetworkBehaviour
     public void HealthSetup(int player, int maxHealth)
     {
         playerNum = player;
+        // REMOVE LATER
+        if (playerNum == 2) maxHealth = 100000;
         health.Value = maxHealth;
 
         this.maxHealth.Value = maxHealth;
