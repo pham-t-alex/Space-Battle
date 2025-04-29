@@ -2,7 +2,6 @@ using UnityEngine;
 using Unity.Netcode;
 using System.Collections.Generic;
 using System;
-using static UnityEngine.Rendering.DebugUI;
 
 public class Alien : NetworkBehaviour
 {
@@ -12,7 +11,7 @@ public class Alien : NetworkBehaviour
     private NetworkVariable<int> health = new NetworkVariable<int>();
     [SerializeField] private int maxHealth;
 
-    [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] protected GameObject projectilePrefab;
     [SerializeField] private float reloadTimeLeft;
     [SerializeField] private float reloadTime;
     private float ReloadTime
@@ -96,7 +95,7 @@ public class Alien : NetworkBehaviour
         reloadTimeLeft = UnityEngine.Random.Range(maxReload / 2, maxReload);
     }
 
-    public void Initialize(bool front, bool sent, int world)
+    public virtual void Initialize(bool front, bool sent, int world, Player target)
     {
         this.world = world;
         frontLine = front;
@@ -117,7 +116,7 @@ public class Alien : NetworkBehaviour
 
         if (mapIndex < path.Count)
         {
-            targetPosition = path[mapIndex] + GameController.Instance.GetWorldCenter(world);
+            targetPosition = path[mapIndex] + GameController.Instance.GetWorldCenter(world) + new Vector2(UnityEngine.Random.Range(-0.2f, 0.2f), UnityEngine.Random.Range(-0.2f, 0.2f));
             return;
         }
 
@@ -189,7 +188,7 @@ public class Alien : NetworkBehaviour
         health.Value = Mathf.Min(health.Value + heal, maxHealth);
     }
 
-    public void Shoot()
+    public virtual void Shoot()
     {
         if (!IsServer)
         {
@@ -202,7 +201,7 @@ public class Alien : NetworkBehaviour
         }
     }
 
-    public void Die()
+    public virtual void Die()
     {
         if (!IsServer) return;
         DieRpc();

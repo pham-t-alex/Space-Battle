@@ -5,10 +5,11 @@ public class BasicAProjectile : AlienProjectile
     [SerializeField] private int damage = 0;
     [SerializeField] private Vector2 direction = Vector2.down;
     [SerializeField] private float speed = 5;
+    private float rotation;
 
     public override void HitAlien(Alien alien)
     {
-        throw new System.NotImplementedException();
+        
     }
 
     public override void HitPlayer(Player player)
@@ -38,4 +39,11 @@ public class BasicAProjectile : AlienProjectile
     {
 
     }
+
+    public void Rotate(float angle)
+    {
+        transform.rotation = Quaternion.Euler(0, 0, angle);
+        rotation = angle;
+    }
+
 }

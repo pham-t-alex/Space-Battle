@@ -384,11 +384,12 @@ public class GameController : MonoBehaviour
         g.GetComponent<Alien>().PreSpawnServerInitialize();
         g.GetComponent<Alien>().ApplyStartingModifiers(modifiers);
         g.GetComponent<NetworkObject>().Spawn();
-        if (front && sent) g.transform.position = GetWorldCenter(player) + frontLineSentSpawn;
-        else if (!front && sent) g.transform.position = GetWorldCenter(player) + backLineSentSpawn;
-        else if (front && !sent) g.transform.position = GetWorldCenter(player) + frontLineSpawn;
-        else g.transform.position = GetWorldCenter(player) + backLineSpawn;
-        g.GetComponent<Alien>().Initialize(front, sent, player);
+        Vector2 randomOffset = new Vector2(UnityEngine.Random.Range(-0.2f, 0.2f), UnityEngine.Random.Range(-0.2f, 0.2f));
+        if (front && sent) g.transform.position = GetWorldCenter(player) + frontLineSentSpawn + randomOffset;
+        else if (!front && sent) g.transform.position = GetWorldCenter(player) + backLineSentSpawn + randomOffset;
+        else if (front && !sent) g.transform.position = GetWorldCenter(player) + frontLineSpawn + randomOffset;
+        else g.transform.position = GetWorldCenter(player) + backLineSpawn + randomOffset;
+        g.GetComponent<Alien>().Initialize(front, sent, player, player == 1 ? player1 : player2);
     }
 
     public Vector2 GetWorldCenter(int world)
