@@ -4,7 +4,7 @@ using UnityEngine;
 public class HomingAProjectile : AlienProjectile
 {
     [SerializeField] private int damage = 0;
-    [SerializeField] private Vector2 direction = Vector2.down;
+    [SerializeField] private float directionAngle = -90;
     [SerializeField] private float speed = 5;
     [SerializeField] private float lifetime;
     private float timeLeft;
@@ -30,8 +30,13 @@ public class HomingAProjectile : AlienProjectile
         {
             return;
         }
-        rb.linearVelocity = direction * speed;
+        rb.linearVelocity = Quaternion.Euler(0, 0, directionAngle) * Vector2.right * speed;
         timeLeft = lifetime;
+    }
+
+    public void Initialize(Player target)
+    {
+        this.target = target;
     }
 
     // Update is called once per frame
@@ -47,6 +52,16 @@ public class HomingAProjectile : AlienProjectile
             }
         }
         Vector2 optimalDirection = target.transform.position - transform.position;
+        float angle = Vector2.SignedAngle(Quaternion.Euler(0, 0, directionAngle) * Vector2.right, optimalDirection);
+        if (angle > 0)
+        {
+            directionAngle = Mathf.Clamp(directionAngle + (curveRate * Time.deltaTime), directionAngle, directionAngle + angle);
+        }
+        else if (angle < 0)
+        {
+            directionAngle = Mathf.Clamp(directionAngle - (curveRate * Time.deltaTime), directionAngle - angle, directionAngle);
+        }
+        rb.linearVelocity = Quaternion.Euler(0, 0, directionAngle) * Vector2.right * speed;
     }
 
     public override void HitBorder()
