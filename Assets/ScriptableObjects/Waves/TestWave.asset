@@ -32,19 +32,10 @@ MonoBehaviour:
       invisible: 0
       regenerating: 0
   frontLineComponents:
-  - alien: {fileID: 7635512465832564758, guid: e603991dc270f6c4a8fb93e0794e9836, type: 3}
-    count: 3
-    spawnDelay: 10
-    afterSpawnDelay: 0
-    modifiers:
-      shielded: 0
-      berserk: 0
-      invisible: 0
-      regenerating: 0
-  - alien: {fileID: 7635512465832564758, guid: 1344f268f7af73b43b50b14b58d8f19e, type: 3}
-    count: 50
-    spawnDelay: 0.2
-    afterSpawnDelay: 0
+  - alien: {fileID: 7635512465832564758, guid: 9da13702c16974e6f9b370fdd66e3734, type: 3}
+    count: 1
+    spawnDelay: 0
+    afterSpawnDelay: 1000
     modifiers:
       shielded: 0
       berserk: 0

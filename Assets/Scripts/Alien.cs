@@ -85,7 +85,7 @@ public class Alien : NetworkBehaviour
         healthbar.Initialize(this, maxHealth);
     }
 
-    void ServerSpawn()
+    protected virtual void ServerSpawn()
     {
         foreach (StatusEffect effect in startingStatusEffects)
         {

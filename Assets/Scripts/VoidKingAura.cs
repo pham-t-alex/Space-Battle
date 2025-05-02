@@ -18,6 +18,7 @@ public class VoidKingAura : MonoBehaviour
     private void Update()
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius, LayerMask.GetMask("PlayerAttack"));
+        Debug.Log(hits.Length);
 
         foreach (Collider2D hit in hits)
         {
@@ -37,6 +38,7 @@ public class VoidKingAura : MonoBehaviour
                 warpAngle = Mathf.Clamp(-curveRate * Time.deltaTime, angle, 0);
             }
             p.GetComponent<Rigidbody2D>().linearVelocity = Quaternion.Euler(0, 0, warpAngle) * p.GetComponent<Rigidbody2D>().linearVelocity;
+            p.transform.rotation *= Quaternion.Euler(0, 0, warpAngle);
         }
     }
 }
