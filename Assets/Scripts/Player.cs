@@ -89,6 +89,7 @@ public class Player : NetworkBehaviour
         playerNum = player;
         // REMOVE LATER
         if (playerNum == 2) maxHealth = 100000;
+        if (PlayerNum == 1) maxHealth = 50;
         health.Value = maxHealth;
 
         this.maxHealth.Value = maxHealth;

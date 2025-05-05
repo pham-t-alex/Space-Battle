@@ -51,17 +51,24 @@ public class HomingAProjectile : AlienProjectile
                 Destroy(gameObject);
             }
         }
-        Vector2 optimalDirection = target.transform.position - transform.position;
-        float angle = Vector2.SignedAngle(Quaternion.Euler(0, 0, directionAngle) * Vector2.right, optimalDirection);
-        if (angle > 0)
+        if (target != null)
         {
-            directionAngle = Mathf.Clamp(directionAngle + (curveRate * Time.deltaTime), directionAngle, directionAngle + angle);
+            Vector2 optimalDirection = target.transform.position - transform.position;
+            Rigidbody2D rb = GetComponent<Rigidbody2D>();
+            float directionAngle = Vector2.SignedAngle(Vector2.right, rb.linearVelocity);
+            float angle = Vector2.SignedAngle(Quaternion.Euler(0, 0, directionAngle) * Vector2.right, optimalDirection);
+            float warpAngle = 0;
+            if (angle > 0)
+            {
+                warpAngle = Mathf.Clamp(curveRate * Time.deltaTime, 0, angle);
+            }
+            else if (angle < 0)
+            {
+                warpAngle = Mathf.Clamp(-curveRate * Time.deltaTime, angle, 0);
+            }
+            rb.linearVelocity = Quaternion.Euler(0, 0, warpAngle) * rb.linearVelocity;
+            transform.rotation *= Quaternion.Euler(0, 0, warpAngle);
         }
-        else if (angle < 0)
-        {
-            directionAngle = Mathf.Clamp(directionAngle - (curveRate * Time.deltaTime), directionAngle - angle, directionAngle);
-        }
-        rb.linearVelocity = Quaternion.Euler(0, 0, directionAngle) * Vector2.right * speed;
     }
 
     public override void HitBorder()

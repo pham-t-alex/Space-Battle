@@ -14,8 +14,8 @@ public class OnDeathHealthSupportAlien : OnDeathSupportAlien
         foreach (Collider2D hit in hits)
         {
             Alien a = hit.gameObject.GetComponent<Alien>();
-            a.Heal(heal);
-            a.AddStatusEffect(new ShieldStatus(shield));
+            if (heal > 0) a.Heal(heal);
+            if (shield > 0) a.AddStatusEffect(new ShieldStatus(shield));
         }
     }
 }

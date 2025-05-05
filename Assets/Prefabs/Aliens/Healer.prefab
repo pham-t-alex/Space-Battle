@@ -248,4 +248,4 @@ MonoBehaviour:
   armor: 0
   radius: 2
   heal: 5
-  shield: 2
+  shield: 0
