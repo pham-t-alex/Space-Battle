@@ -456,7 +456,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 450.03287}
+  m_AnchoredPosition: {x: 0, y: 450.28928}
   m_SizeDelta: {x: 0, y: 1000}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &114505726
@@ -4967,8 +4967,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 642969570}
   m_HandleRect: {fileID: 642969569}
   m_Direction: 2
-  m_Value: 0.38329944
-  m_Size: 0.27025703
+  m_Value: 0.38344297
+  m_Size: 0.26967135
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -9821,7 +9821,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1604941166}
         m_TargetAssemblyTypeName: GameEndScreen, Assembly-CSharp
-        m_MethodName: PlayAgain
+        m_MethodName: ToLobby
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

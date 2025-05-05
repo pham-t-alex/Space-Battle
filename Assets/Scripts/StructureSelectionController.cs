@@ -1,6 +1,6 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class StructureSelectionController : MonoBehaviour
 {
@@ -31,7 +31,8 @@ public class StructureSelectionController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        StructureSelection.p1Structures = new List<int>();
+        StructureSelection.p2Structures = new List<int>();
     }
 
     // Update is called once per frame
