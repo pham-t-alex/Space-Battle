@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using Unity.Netcode;
+using System.Collections.Generic;
 
 public class GameEndScreen : MonoBehaviour
 {
@@ -9,6 +11,8 @@ public class GameEndScreen : MonoBehaviour
     [SerializeField] private Image background;
     [SerializeField] private GameObject victoryText;
     [SerializeField] private GameObject defeatText;
+    [SerializeField] private GameObject playAgainButton;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -43,6 +47,17 @@ public class GameEndScreen : MonoBehaviour
         {
             defeatText.SetActive(true);
         }
+        if (NetworkManager.Singleton.IsServer) playAgainButton.SetActive(true);
         yield return null;
+    }
+
+    public void PlayAgain()
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+        if (NetworkManager.Singleton.ConnectedClientsIds.Count < 2) return;
+
+        StructureSelection.p1Structures = new List<int>();
+        StructureSelection.p2Structures = new List<int>();
+        NetworkManager.Singleton.SceneManager.LoadScene("StructureSelection", UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
 }
