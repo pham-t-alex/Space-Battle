@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using Unity.Netcode;
-using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class GameEndScreen : MonoBehaviour
 {
@@ -47,17 +47,21 @@ public class GameEndScreen : MonoBehaviour
         {
             defeatText.SetActive(true);
         }
-        if (NetworkManager.Singleton.IsServer) playAgainButton.SetActive(true);
+        playAgainButton.SetActive(true);
         yield return null;
     }
 
-    public void PlayAgain()
+    public void ToLobby()
     {
-        if (!NetworkManager.Singleton.IsServer) return;
-        if (NetworkManager.Singleton.ConnectedClientsIds.Count < 2) return;
+        StartCoroutine(LobbyCoroutine());
+    }
 
-        StructureSelection.p1Structures = new List<int>();
-        StructureSelection.p2Structures = new List<int>();
-        NetworkManager.Singleton.SceneManager.LoadScene("StructureSelection", UnityEngine.SceneManagement.LoadSceneMode.Single);
+    IEnumerator LobbyCoroutine()
+    {
+        NetworkManager.Singleton.Shutdown();
+        Destroy(NetworkManager.Singleton.gameObject);
+        yield return null;
+        // CHANGE LATER TO RETURN TO NORMAL LOBBY
+        SceneManager.LoadScene("DevLobby", LoadSceneMode.Single);
     }
 }

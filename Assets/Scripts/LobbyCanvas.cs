@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using Unity.Netcode;
+using System.Collections.Generic;
 
 public class LobbyCanvas : MonoBehaviour
 {
