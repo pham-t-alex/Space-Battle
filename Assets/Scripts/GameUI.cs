@@ -118,28 +118,28 @@ public class GameUI : MonoBehaviour
         switch (player)
         {
             case 1:
-                GameState.Player1MoneyUpdate += UpdateMoney;
-                GameState.Player1IncomeUpdate += UpdateIncome;
+                GameState.Instance.Player1MoneyUpdate += UpdateMoney;
+                GameState.Instance.Player1IncomeUpdate += UpdateIncome;
 
-                GameState.Player1MoneyUpdate += structure1Button.MoneyUpdate;
-                GameState.Player1MoneyUpdate += structure2Button.MoneyUpdate;
-                GameState.Player1MoneyUpdate += structure3Button.MoneyUpdate;
+                GameState.Instance.Player1MoneyUpdate += structure1Button.MoneyUpdate;
+                GameState.Instance.Player1MoneyUpdate += structure2Button.MoneyUpdate;
+                GameState.Instance.Player1MoneyUpdate += structure3Button.MoneyUpdate;
 
-                GameState.Player1MoneyUpdate += upgradeButton.MoneyUpdate;
-                GameState.Player1MoneyUpdate += upgrade1Button.MoneyUpdate;
-                GameState.Player1MoneyUpdate += upgrade2Button.MoneyUpdate;
+                GameState.Instance.Player1MoneyUpdate += upgradeButton.MoneyUpdate;
+                GameState.Instance.Player1MoneyUpdate += upgrade1Button.MoneyUpdate;
+                GameState.Instance.Player1MoneyUpdate += upgrade2Button.MoneyUpdate;
                 break;
             case 2:
-                GameState.Player2MoneyUpdate += UpdateMoney;
-                GameState.Player2IncomeUpdate += UpdateIncome;
+                GameState.Instance.Player2MoneyUpdate += UpdateMoney;
+                GameState.Instance.Player2IncomeUpdate += UpdateIncome;
 
-                GameState.Player2MoneyUpdate += structure1Button.MoneyUpdate;
-                GameState.Player2MoneyUpdate += structure2Button.MoneyUpdate;
-                GameState.Player2MoneyUpdate += structure3Button.MoneyUpdate;
+                GameState.Instance.Player2MoneyUpdate += structure1Button.MoneyUpdate;
+                GameState.Instance.Player2MoneyUpdate += structure2Button.MoneyUpdate;
+                GameState.Instance.Player2MoneyUpdate += structure3Button.MoneyUpdate;
 
-                GameState.Player2MoneyUpdate += upgradeButton.MoneyUpdate;
-                GameState.Player2MoneyUpdate += upgrade1Button.MoneyUpdate;
-                GameState.Player2MoneyUpdate += upgrade2Button.MoneyUpdate;
+                GameState.Instance.Player2MoneyUpdate += upgradeButton.MoneyUpdate;
+                GameState.Instance.Player2MoneyUpdate += upgrade1Button.MoneyUpdate;
+                GameState.Instance.Player2MoneyUpdate += upgrade2Button.MoneyUpdate;
                 break;
         }
         ButtonSetupUI(player, moduleCost, levelCost);
@@ -186,20 +186,20 @@ public class GameUI : MonoBehaviour
         switch (player)
         {
             case 1:
-                GameState.Player1MoneyUpdate += moduleLButton.MoneyUpdate;
-                GameState.Player1MoneyUpdate += moduleRButton.MoneyUpdate;
-                GameState.Player1MoneyUpdate += levelUpButton.MoneyUpdate;
-                moduleLButton.MoneyUpdate(GameState.P1Money);
-                moduleRButton.MoneyUpdate(GameState.P1Money);
-                levelUpButton.MoneyUpdate(GameState.P1Money);
+                GameState.Instance.Player1MoneyUpdate += moduleLButton.MoneyUpdate;
+                GameState.Instance.Player1MoneyUpdate += moduleRButton.MoneyUpdate;
+                GameState.Instance.Player1MoneyUpdate += levelUpButton.MoneyUpdate;
+                moduleLButton.MoneyUpdate(GameState.Instance.P1Money);
+                moduleRButton.MoneyUpdate(GameState.Instance.P1Money);
+                levelUpButton.MoneyUpdate(GameState.Instance.P1Money);
                 break;
             case 2:
-                GameState.Player2MoneyUpdate += moduleLButton.MoneyUpdate;
-                GameState.Player2MoneyUpdate += moduleRButton.MoneyUpdate;
-                GameState.Player2MoneyUpdate += levelUpButton.MoneyUpdate;
-                moduleLButton.MoneyUpdate(GameState.P2Money);
-                moduleRButton.MoneyUpdate(GameState.P2Money);
-                levelUpButton.MoneyUpdate(GameState.P2Money);
+                GameState.Instance.Player2MoneyUpdate += moduleLButton.MoneyUpdate;
+                GameState.Instance.Player2MoneyUpdate += moduleRButton.MoneyUpdate;
+                GameState.Instance.Player2MoneyUpdate += levelUpButton.MoneyUpdate;
+                moduleLButton.MoneyUpdate(GameState.Instance.P2Money);
+                moduleRButton.MoneyUpdate(GameState.Instance.P2Money);
+                levelUpButton.MoneyUpdate(GameState.Instance.P2Money);
                 break;
         }
     }
@@ -285,7 +285,7 @@ public class GameUI : MonoBehaviour
             selectedModule = attemptedSelectedModule;
             attemptedSelectedModule = 0;
         }
-        int money = associatedPlayer == 1 ? GameState.P1Money : GameState.P2Money;
+        int money = associatedPlayer == 1 ? GameState.Instance.P1Money : GameState.Instance.P2Money;
         structure1Button.MoneyUpdate(money);
         structure2Button.MoneyUpdate(money);
         structure3Button.MoneyUpdate(money);
@@ -309,7 +309,7 @@ public class GameUI : MonoBehaviour
         {
             upgradeText.text = upgradeInfo.Upgrade1.Name;
             upgradeButton.InitializeCost(upgradeInfo.Upgrade1.Cost);
-            upgradeButton.MoneyUpdate(associatedPlayer == 1 ? GameState.P1Money : GameState.P2Money);
+            upgradeButton.MoneyUpdate(associatedPlayer == 1 ? GameState.Instance.P1Money : GameState.Instance.P2Money);
             upgrade2UI.SetActive(false);
             noUpgradeUI.SetActive(false);
             upgrade1UI.SetActive(true);
@@ -318,10 +318,10 @@ public class GameUI : MonoBehaviour
         {
             upgrade1Text.text = upgradeInfo.Upgrade1.Name;
             upgrade1Button.InitializeCost(upgradeInfo.Upgrade1.Cost);
-            upgrade1Button.MoneyUpdate(associatedPlayer == 1 ? GameState.P1Money : GameState.P2Money);
+            upgrade1Button.MoneyUpdate(associatedPlayer == 1 ? GameState.Instance.P1Money : GameState.Instance.P2Money);
             upgrade2Text.text = upgradeInfo.Upgrade2.Name;
             upgrade2Button.InitializeCost(upgradeInfo.Upgrade2.Cost);
-            upgrade2Button.MoneyUpdate(associatedPlayer == 1 ? GameState.P1Money : GameState.P2Money);
+            upgrade2Button.MoneyUpdate(associatedPlayer == 1 ? GameState.Instance.P1Money : GameState.Instance.P2Money);
             upgrade1UI.SetActive(false);
             noUpgradeUI.SetActive(false);
             upgrade2UI.SetActive(true);
@@ -364,11 +364,11 @@ public class GameUI : MonoBehaviour
             buttons.Add(sendButton);
             if (player == 1)
             {
-                GameState.Player1MoneyUpdate += sendButton.MoneyUpdate;
+                GameState.Instance.Player1MoneyUpdate += sendButton.MoneyUpdate;
             }
             else
             {
-                GameState.Player2MoneyUpdate += sendButton.MoneyUpdate;
+                GameState.Instance.Player2MoneyUpdate += sendButton.MoneyUpdate;
             }
             g.SetActive(false);
         }
@@ -376,7 +376,7 @@ public class GameUI : MonoBehaviour
 
     public void WaveUpdate(int wave)
     {
-        int money = associatedPlayer == 1 ? GameState.P1Money : GameState.P2Money;
+        int money = associatedPlayer == 1 ? GameState.Instance.P1Money : GameState.Instance.P2Money;
         foreach (AlienSendButton b in buttons)
         {
             if (!b.gameObject.activeSelf && b.UnlockWave <= wave)
@@ -391,7 +391,7 @@ public class GameUI : MonoBehaviour
     {
         moduleLButton.InitializeCost(cost);
         moduleRButton.InitializeCost(cost);
-        int money = associatedPlayer == 1 ? GameState.P1Money : GameState.P2Money;
+        int money = associatedPlayer == 1 ? GameState.Instance.P1Money : GameState.Instance.P2Money;
         moduleLButton.MoneyUpdate(money);
         moduleRButton.MoneyUpdate(money);
     }
@@ -399,7 +399,7 @@ public class GameUI : MonoBehaviour
     public void UpdateLevelCost(int cost)
     {
         levelUpButton.InitializeCost(cost);
-        int money = associatedPlayer == 1 ? GameState.P1Money : GameState.P2Money;
+        int money = associatedPlayer == 1 ? GameState.Instance.P1Money : GameState.Instance.P2Money;
         levelUpButton.MoneyUpdate(money);
     }
 
@@ -458,7 +458,7 @@ public class GameUI : MonoBehaviour
         foreach (AlienSendButton button in buttons)
         {
             button.ChangeCostMultiplier(GameController.ModifierCostMultiplier(modifiers, modifierCostMultipliers));
-            button.MoneyUpdate(associatedPlayer == 1 ? GameState.P1Money : GameState.P2Money);
+            button.MoneyUpdate(associatedPlayer == 1 ? GameState.Instance.P1Money : GameState.Instance.P2Money);
         }
     }
 

@@ -5,35 +5,51 @@ using System;
 public class GameState : NetworkBehaviour
 {
     // Should only be modified by MoneyController
-    private static NetworkVariable<int> p1Money = new NetworkVariable<int>(0);
-    private static NetworkVariable<int> p2Money = new NetworkVariable<int>(0);
-    private static NetworkVariable<int> p1Income = new NetworkVariable<int>(0);
-    private static NetworkVariable<int> p2Income = new NetworkVariable<int>(0);
+    private NetworkVariable<int> p1Money = new NetworkVariable<int>(0);
+    private NetworkVariable<int> p2Money = new NetworkVariable<int>(0);
+    private NetworkVariable<int> p1Income = new NetworkVariable<int>(0);
+    private NetworkVariable<int> p2Income = new NetworkVariable<int>(0);
 
-    public static int P1Money
+    private static GameState instance;
+    public static GameState Instance => instance;
+
+    public int P1Money
     {
         get { return p1Money.Value; }
     }
 
-    public static int P2Money
+    public int P2Money
     {
         get { return p2Money.Value; }
     }
 
-    public static int P1Income
+    public int P1Income
     {
         get { return p1Income.Value; }
     }
 
-    public static int P2Income
+    public int P2Income
     {
         get { return p2Income.Value; }
     }
 
-    public static event Action<int> Player1MoneyUpdate;
-    public static event Action<int> Player1IncomeUpdate;
-    public static event Action<int> Player2MoneyUpdate;
-    public static event Action<int> Player2IncomeUpdate;
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+
+    public event Action<int> Player1MoneyUpdate;
+    public event Action<int> Player1IncomeUpdate;
+    public event Action<int> Player2MoneyUpdate;
+    public event Action<int> Player2IncomeUpdate;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
