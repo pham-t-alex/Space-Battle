@@ -8,7 +8,6 @@ public class BasicPProjectile : PlayerProjectile
     public override void HitAlien(Alien alien)
     {
         alien.Damage(damage);
-        Destroy(gameObject);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

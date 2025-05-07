@@ -76,3 +76,52 @@ MonoBehaviour:
     incomeChange: 20
     delayBeforeSend: 0.25
     delayBetweenSends: 0.25
+  - unlockWave: 10
+    cost: 200
+    alien: {fileID: 7635512465832564758, guid: 1344f268f7af73b43b50b14b58d8f19e, type: 3}
+    count: 20
+    incomeChange: 5
+    delayBeforeSend: 0.15
+    delayBetweenSends: 0.15
+  - unlockWave: 11
+    cost: 200
+    alien: {fileID: 7635512465832564758, guid: a0ff7f3da6dbe4043b8fdf99469bfb61, type: 3}
+    count: 4
+    incomeChange: 5
+    delayBeforeSend: 0.25
+    delayBetweenSends: 0.25
+  - unlockWave: 12
+    cost: 300
+    alien: {fileID: 7635512465832564758, guid: 1344f268f7af73b43b50b14b58d8f19e, type: 3}
+    count: 50
+    incomeChange: 7
+    delayBeforeSend: 0.05
+    delayBetweenSends: 0.05
+  - unlockWave: 12
+    cost: 100
+    alien: {fileID: 7635512465832564758, guid: e603991dc270f6c4a8fb93e0794e9836, type: 3}
+    count: 1
+    incomeChange: 2
+    delayBeforeSend: 0.5
+    delayBetweenSends: 0.5
+  - unlockWave: 12
+    cost: 300
+    alien: {fileID: 7635512465832564758, guid: 88a21f6f8665970438a69a1825a21f14, type: 3}
+    count: 3
+    incomeChange: 2
+    delayBeforeSend: 0.2
+    delayBetweenSends: 0.2
+  - unlockWave: 12
+    cost: 400
+    alien: {fileID: 7635512465832564758, guid: d118ce0798f194731a560249958075c9, type: 3}
+    count: 5
+    incomeChange: 2
+    delayBeforeSend: 0.2
+    delayBetweenSends: 0.2
+  - unlockWave: 20
+    cost: 1000
+    alien: {fileID: 7635512465832564758, guid: 9da13702c16974e6f9b370fdd66e3734, type: 3}
+    count: 1
+    incomeChange: -50
+    delayBeforeSend: 1
+    delayBetweenSends: 1

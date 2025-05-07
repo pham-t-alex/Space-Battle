@@ -240,6 +240,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   pierce: 1
-  damage: 2
-  radius: 1
   speed: 5
+  damage: 2
+  radius: 1.2
