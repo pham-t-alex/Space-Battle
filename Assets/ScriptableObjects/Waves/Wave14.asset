@@ -12,5 +12,59 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 893cd459a1696f5459c0adf58090f7f8, type: 3}
   m_Name: Wave14
   m_EditorClassIdentifier: 
-  backLineComponents: []
-  frontLineComponents: []
+  backLineComponents:
+  - alien: {fileID: 7635512465832564758, guid: a0ff7f3da6dbe4043b8fdf99469bfb61, type: 3}
+    count: 7
+    spawnDelay: 2
+    afterSpawnDelay: 0
+    modifiers:
+      shielded: 1
+      berserk: 0
+      invisible: 0
+      regenerating: 0
+  frontLineComponents:
+  - alien: {fileID: 7635512465832564758, guid: d9301f1c364a1654f8e35215e28a2ed0, type: 3}
+    count: 5
+    spawnDelay: 0.2
+    afterSpawnDelay: 0
+    modifiers:
+      shielded: 0
+      berserk: 0
+      invisible: 0
+      regenerating: 0
+  - alien: {fileID: 7635512465832564758, guid: 30bae92fe97645f419afc7cb6d46494d, type: 3}
+    count: 5
+    spawnDelay: 0.5
+    afterSpawnDelay: 0
+    modifiers:
+      shielded: 0
+      berserk: 0
+      invisible: 0
+      regenerating: 0
+  - alien: {fileID: 7635512465832564758, guid: 550e9313609b101469536c6c0eb53956, type: 3}
+    count: 5
+    spawnDelay: 0.5
+    afterSpawnDelay: 0
+    modifiers:
+      shielded: 0
+      berserk: 0
+      invisible: 0
+      regenerating: 0
+  - alien: {fileID: 7635512465832564758, guid: 8ad7c81aa2ca68a48bacca04896c7ea0, type: 3}
+    count: 5
+    spawnDelay: 1
+    afterSpawnDelay: 0
+    modifiers:
+      shielded: 0
+      berserk: 0
+      invisible: 0
+      regenerating: 0
+  - alien: {fileID: 7635512465832564758, guid: 8ad7c81aa2ca68a48bacca04896c7ea0, type: 3}
+    count: 5
+    spawnDelay: 1
+    afterSpawnDelay: 0
+    modifiers:
+      shielded: 0
+      berserk: 0
+      invisible: 0
+      regenerating: 0

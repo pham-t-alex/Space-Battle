@@ -11,12 +11,12 @@ GameObject:
   - component: {fileID: 4730679132266678894}
   - component: {fileID: 1613342779223146631}
   - component: {fileID: 7391524278960759876}
+  - component: {fileID: 8303253321381310243}
   - component: {fileID: 836493417313232323}
   - component: {fileID: -8613255899306199221}
   - component: {fileID: 8435097052606953781}
-  - component: {fileID: 9192920324333941796}
   m_Layer: 7
-  m_Name: HellRain
+  m_Name: Gen10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -82,7 +82,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6155611, g: 0.1802243, b: 0.8490566, a: 1}
+  m_Color: {r: 0.08170167, g: 0.6415094, b: 0.18302433, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -104,7 +104,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2389731776
+  GlobalObjectIdHash: 4194201052
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -117,6 +117,26 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!114 &8303253321381310243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7635512465832564758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b808587d7d06654d9202f0ade1e6c24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  alienName: Gen X
+  maxHealth: 30
+  projectilePrefab: {fileID: 512490187501336247, guid: cc917896f2e2c491da717cc8b6e7c617, type: 3}
+  reloadTimeLeft: 0
+  reloadTime: 5
+  moveSpeed: 3.2
+  armor: 0
 --- !u!114 &836493417313232323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,24 +246,3 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &9192920324333941796
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7635512465832564758}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4ef9baaed8194e2f88e733b28bbc67a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1
-  alienName: Skyfall
-  maxHealth: 10
-  projectilePrefab: {fileID: 512490187501336247, guid: 3b59e9e578c4b4d71ae6c300f722e5ab, type: 3}
-  reloadTimeLeft: 0
-  reloadTime: 1
-  moveSpeed: 4
-  armor: 0
-  arc: 40

@@ -170,4 +170,4 @@ MonoBehaviour:
   - {fileID: 8288123959235700045, guid: 266b92f54c1c5524eb3088ded1cfa881, type: 3}
   value: 0
   moneyGain: 100
-  moneyDelay: 30
+  moneyDelay: 26

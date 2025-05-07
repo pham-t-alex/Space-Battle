@@ -165,7 +165,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   structureName: Commercial Center
-  cost: 1300
+  cost: 1600
   upgradePrefabs:
   - {fileID: 8288123959235700045, guid: d2f78ef9e6cce4d468be04ccf82a7801, type: 3}
   value: 0

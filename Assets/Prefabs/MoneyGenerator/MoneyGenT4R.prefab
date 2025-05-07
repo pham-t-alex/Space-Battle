@@ -165,7 +165,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   structureName: Market
-  cost: 1700
+  cost: 1900
   upgradePrefabs: []
   value: 0
   moneyGain: 350

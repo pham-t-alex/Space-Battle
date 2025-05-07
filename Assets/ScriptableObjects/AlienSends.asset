@@ -97,31 +97,66 @@ MonoBehaviour:
     incomeChange: 7
     delayBeforeSend: 0.05
     delayBetweenSends: 0.05
-  - unlockWave: 12
-    cost: 100
+  - unlockWave: 13
+    cost: 200
     alien: {fileID: 7635512465832564758, guid: e603991dc270f6c4a8fb93e0794e9836, type: 3}
     count: 1
     incomeChange: 2
-    delayBeforeSend: 0.5
-    delayBetweenSends: 0.5
-  - unlockWave: 12
+    delayBeforeSend: 1
+    delayBetweenSends: 1
+  - unlockWave: 13
     cost: 300
     alien: {fileID: 7635512465832564758, guid: 88a21f6f8665970438a69a1825a21f14, type: 3}
-    count: 3
+    count: 2
     incomeChange: 2
+    delayBeforeSend: 0.5
+    delayBetweenSends: 0.5
+  - unlockWave: 14
+    cost: 200
+    alien: {fileID: 7635512465832564758, guid: 064d17c03d7ad460bacf5e96042dcc89, type: 3}
+    count: 5
+    incomeChange: 5
+    delayBeforeSend: 0.25
+    delayBetweenSends: 0.25
+  - unlockWave: 14
+    cost: 400
+    alien: {fileID: 7635512465832564758, guid: 09c13dcc7db3640f9a18d3ae044c4e64, type: 3}
+    count: 5
+    incomeChange: 5
     delayBeforeSend: 0.2
     delayBetweenSends: 0.2
-  - unlockWave: 12
+  - unlockWave: 15
     cost: 400
     alien: {fileID: 7635512465832564758, guid: d118ce0798f194731a560249958075c9, type: 3}
     count: 5
-    incomeChange: 2
+    incomeChange: 5
     delayBeforeSend: 0.2
     delayBetweenSends: 0.2
-  - unlockWave: 20
+  - unlockWave: 16
+    cost: 150
+    alien: {fileID: 7635512465832564758, guid: fd833ece120284fbbb9b6981527367c3, type: 3}
+    count: 1
+    incomeChange: 3
+    delayBeforeSend: 0.2
+    delayBetweenSends: 0.2
+  - unlockWave: 18
     cost: 1000
+    alien: {fileID: 7635512465832564758, guid: c521fb5353ff84c3c800f9ead5ed5e87, type: 3}
+    count: 4
+    incomeChange: -50
+    delayBeforeSend: 1
+    delayBetweenSends: 1
+  - unlockWave: 20
+    cost: 2000
     alien: {fileID: 7635512465832564758, guid: 9da13702c16974e6f9b370fdd66e3734, type: 3}
     count: 1
-    incomeChange: -50
+    incomeChange: -75
+    delayBeforeSend: 1
+    delayBetweenSends: 1
+  - unlockWave: 20
+    cost: 2000
+    alien: {fileID: 7635512465832564758, guid: 9da13702c16974e6f9b370fdd66e3734, type: 3}
+    count: 1
+    incomeChange: -75
     delayBeforeSend: 1
     delayBetweenSends: 1

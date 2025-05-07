@@ -169,5 +169,5 @@ MonoBehaviour:
   upgradePrefabs:
   - {fileID: 8288123959235700045, guid: a8b25e522c621c54ab773e7d8c8ef08f, type: 3}
   value: 0
-  moneyGain: 200
-  moneyDelay: 30
+  moneyGain: 180
+  moneyDelay: 25
