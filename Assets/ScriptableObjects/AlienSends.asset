@@ -154,9 +154,9 @@ MonoBehaviour:
     delayBeforeSend: 1
     delayBetweenSends: 1
   - unlockWave: 20
-    cost: 2000
-    alien: {fileID: 7635512465832564758, guid: 9da13702c16974e6f9b370fdd66e3734, type: 3}
+    cost: 1000
+    alien: {fileID: 7635512465832564758, guid: ac4c474302cd342839c278b495191c99, type: 3}
     count: 1
-    incomeChange: -75
+    incomeChange: -50
     delayBeforeSend: 1
     delayBetweenSends: 1
