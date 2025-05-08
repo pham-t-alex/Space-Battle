@@ -174,7 +174,7 @@ public class Alien : NetworkBehaviour
         }
     }
 
-    public void Damage(int damage)
+    public void Damage(int damage, int bonus)
     {
         if (!IsServer) return;
         if (statusEffects.ContainsKey(typeof(ShieldStatus)) && statusEffects[typeof(ShieldStatus)].Count > 0)
@@ -184,7 +184,11 @@ public class Alien : NetworkBehaviour
             ShieldClientRpc(ShieldHealth, default);
             return;
         }
-        health.Value = Mathf.Max(health.Value - Mathf.Max(0, damage - armor), 0);
+        if (statusEffects.ContainsKey(typeof(WaveVulnerability)) && statusEffects[typeof(WaveVulnerability)].Count > 0)
+        {
+            bonus++;
+        }
+        health.Value = Mathf.Max(health.Value - Mathf.Max(0, damage + bonus - armor), 0);
         if (health.Value == 0)
         {
             Die();
@@ -290,15 +294,23 @@ public class Alien : NetworkBehaviour
                     return;
                 }
                 break;
-            case BerserkStatus berserk:
-                effects.Add(berserk);
-                break;
             case RegenStatus regen:
                 effects.Add(regen);
                 regen.Heal += () => Heal(1);
                 break;
-            case WaveSlow slow:
-                effects.Add(slow);
+            case WaveVulnerability v:
+                if (effects.Count == 0)
+                {
+                    effects.Add(v);
+                }
+                else
+                {
+                    WaveVulnerability current = (WaveVulnerability)effects[0];
+                    current.SetTimeLeft(Mathf.Max(v.TimeLeft, current.TimeLeft));
+                }
+                break;
+            default:
+                effects.Add(effect);
                 break;
         }
 

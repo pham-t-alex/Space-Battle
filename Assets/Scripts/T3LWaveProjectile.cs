@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class WaveProjectileL : WaveProjectile
+public class T3LWaveProjectile : WaveProjectile
 {
     [SerializeField] private float attackRateMultiplier;
     [SerializeField] private float slowDuration;

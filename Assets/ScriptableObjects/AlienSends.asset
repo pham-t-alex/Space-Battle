@@ -95,8 +95,8 @@ MonoBehaviour:
     alien: {fileID: 7635512465832564758, guid: 1344f268f7af73b43b50b14b58d8f19e, type: 3}
     count: 50
     incomeChange: 7
-    delayBeforeSend: 0.05
-    delayBetweenSends: 0.05
+    delayBeforeSend: 0.02
+    delayBetweenSends: 0.02
   - unlockWave: 13
     cost: 200
     alien: {fileID: 7635512465832564758, guid: e603991dc270f6c4a8fb93e0794e9836, type: 3}
@@ -142,21 +142,21 @@ MonoBehaviour:
   - unlockWave: 18
     cost: 1000
     alien: {fileID: 7635512465832564758, guid: c521fb5353ff84c3c800f9ead5ed5e87, type: 3}
-    count: 4
-    incomeChange: -50
-    delayBeforeSend: 1
-    delayBetweenSends: 1
+    count: 5
+    incomeChange: -5
+    delayBeforeSend: 0.5
+    delayBetweenSends: 0.5
   - unlockWave: 20
     cost: 2000
     alien: {fileID: 7635512465832564758, guid: 9da13702c16974e6f9b370fdd66e3734, type: 3}
     count: 1
-    incomeChange: -75
+    incomeChange: -10
     delayBeforeSend: 1
     delayBetweenSends: 1
   - unlockWave: 20
     cost: 1000
     alien: {fileID: 7635512465832564758, guid: ac4c474302cd342839c278b495191c99, type: 3}
     count: 1
-    incomeChange: -50
-    delayBeforeSend: 1
-    delayBetweenSends: 1
+    incomeChange: -5
+    delayBeforeSend: 0.5
+    delayBetweenSends: 0.5

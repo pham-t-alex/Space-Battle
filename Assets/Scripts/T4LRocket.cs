@@ -16,7 +16,7 @@ public class T4LRocket : ExplosiveProjectile
         {
             Alien a = hit.gameObject.GetComponent<Alien>();
             innerAliens.Add(a);
-            a.Damage(a.Armored ? innerDamageBonus + damage + armoredBonus : innerDamageBonus + damage);
+            a.Damage(damage, a.Armored ? innerDamageBonus + armoredBonus : innerDamageBonus);
         }
 
         hits = Physics2D.OverlapCircleAll(transform.position, radius, LayerMask.GetMask("Alien"));
@@ -25,7 +25,7 @@ public class T4LRocket : ExplosiveProjectile
         {
             Alien a = hit.gameObject.GetComponent<Alien>();
             if (innerAliens.Contains(a)) return;
-            a.Damage(a.Armored ? damage + armoredBonus : damage);
+            a.Damage(damage, a.Armored ? armoredBonus : 0);
         }
 
         CreateClientExplosionRpc(transform.position, radius, default);

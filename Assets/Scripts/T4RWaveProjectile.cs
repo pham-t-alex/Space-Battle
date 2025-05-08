@@ -6,6 +6,6 @@ public class T4RWaveProjectile : WaveProjectile
 
     public override void HitAlien(Alien alien)
     {
-        alien.Damage(damage + (alien.Armored ? 0 : unarmoredBonus));
+        alien.Damage(damage, (alien.Armored ? 0 : unarmoredBonus));
     }
 }

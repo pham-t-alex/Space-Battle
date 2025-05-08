@@ -7,6 +7,6 @@ public class BasicPProjectile : PlayerProjectile
 
     public override void HitAlien(Alien alien)
     {
-        alien.Damage(damage);
+        alien.Damage(damage, 0);
     }
 }

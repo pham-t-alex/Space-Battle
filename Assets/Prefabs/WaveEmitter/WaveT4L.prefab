@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6595750665666491067}
   - component: {fileID: -7487940376133715076}
   - component: {fileID: 511300540457962944}
-  - component: {fileID: 4698944788376557708}
+  - component: {fileID: -4877025343388549653}
   m_Layer: 8
   m_Name: WaveT4L
   m_TagString: Untagged
@@ -226,7 +226,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &4698944788376557708
+--- !u!114 &-4877025343388549653
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -235,7 +235,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 512490187501336247}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20d490548927f46ab8936ac77cd5fe26, type: 3}
+  m_Script: {fileID: 11500000, guid: 4b712338242fcde44ae0787b89dc1d43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
@@ -245,5 +245,6 @@ MonoBehaviour:
   interferable: 0
   damage: 1
   expansionRate: 1
-  attackRateMultiplier: 0.5
+  attackRateMultiplier: 0.6
   slowDuration: 15
+  vulnerabilityDuration: 2

@@ -171,4 +171,4 @@ MonoBehaviour:
   value: 0
   projectilePrefab: {fileID: 512490187501336247, guid: 77bc2d5d81826aa489bb4f5f1419b604, type: 3}
   reloadTimeLeft: 0
-  reloadTime: 1.5
+  reloadTime: 1.2

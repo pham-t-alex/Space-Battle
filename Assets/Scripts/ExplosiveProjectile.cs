@@ -13,7 +13,7 @@ public class ExplosiveProjectile : PlayerProjectile
         foreach (Collider2D hit in hits)
         {
             Alien a = hit.gameObject.GetComponent<Alien>();
-            a.Damage(damage);
+            a.Damage(damage, 0);
         }
         CreateClientExplosionRpc(transform.position, radius, default);
     }
