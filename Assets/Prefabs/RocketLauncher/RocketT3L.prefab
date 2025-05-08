@@ -241,5 +241,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   pierce: 1
   speed: 5.5
+  lifetime: 10
+  interferable: 1
   damage: 5
   radius: 2.2

@@ -23,7 +23,7 @@ public class VoidKingAura : MonoBehaviour
         foreach (Collider2D hit in hits)
         {
             PlayerProjectile p = hit.gameObject.GetComponent<PlayerProjectile>();
-            if (p == null) return;
+            if (p == null || !p.Interferable) return;
 
             Vector2 optimalDirection = transform.position - p.transform.position;
             float directionAngle = Vector2.SignedAngle(Vector2.right, p.GetComponent<Rigidbody2D>().linearVelocity);

@@ -11,6 +11,7 @@ public abstract class PlayerProjectile : NetworkBehaviour
         {
             rb = GetComponent<Rigidbody2D>();
             rb.linearVelocity = Quaternion.Euler(0, 0, rotation) * Vector2.up * speed;
+            timeLeft = lifetime;
         }
         if (!IsServer)
         {
@@ -23,6 +24,13 @@ public abstract class PlayerProjectile : NetworkBehaviour
     [SerializeField] private float speed = 5;
     private float rotation;
 
+    [SerializeField] private float lifetime = 10;
+    private float timeLeft;
+
+    // whether projectile can be interfered with (e.g. void king aura)
+    [SerializeField] private bool interferable = true;
+    public bool Interferable => interferable;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -32,7 +40,20 @@ public abstract class PlayerProjectile : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!IsServer) return;
+        ServerUpdate();
+    }
 
+    protected virtual void ServerUpdate()
+    {
+        if (timeLeft > 0)
+        {
+            timeLeft -= Time.deltaTime;
+            if (timeLeft <= 0)
+            {
+                Destroy(gameObject);
+            }
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

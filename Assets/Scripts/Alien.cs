@@ -18,13 +18,22 @@ public class Alien : NetworkBehaviour
     {
         get
         {
-            if (!statusEffects.ContainsKey(typeof(BerserkStatus)) || statusEffects[typeof(BerserkStatus)].Count == 0) return reloadTime;
             float berserkBuff = 1;
-            foreach (StatusEffect effect in statusEffects[typeof(BerserkStatus)])
-            {
-                berserkBuff += ((BerserkStatus)effect).Buff;
+            if (statusEffects.ContainsKey(typeof(BerserkStatus)) && statusEffects[typeof(BerserkStatus)].Count > 0) {
+                foreach (StatusEffect effect in statusEffects[typeof(BerserkStatus)])
+                {
+                    berserkBuff += ((BerserkStatus)effect).Buff;
+                }
             }
-            return reloadTime / berserkBuff;
+            float waveSlow = 1;
+            if (statusEffects.ContainsKey(typeof(WaveSlow)) && statusEffects[typeof(WaveSlow)].Count > 0)
+            {
+                foreach (StatusEffect effect in statusEffects[typeof(WaveSlow)])
+                {
+                    waveSlow = Mathf.Min(waveSlow, ((WaveSlow)effect).Multiplier);
+                }
+            }
+            return reloadTime / (berserkBuff * waveSlow);
         }
     }
 
@@ -287,6 +296,9 @@ public class Alien : NetworkBehaviour
             case RegenStatus regen:
                 effects.Add(regen);
                 regen.Heal += () => Heal(1);
+                break;
+            case WaveSlow slow:
+                effects.Add(slow);
                 break;
         }
 

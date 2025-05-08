@@ -240,6 +240,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   pierce: 1
+  speed: 4.5
+  lifetime: 10
+  interferable: 1
   damage: 1
   radius: 1
-  speed: 4.5
