@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class GameEndScreen : MonoBehaviour
 {
@@ -47,21 +48,27 @@ public class GameEndScreen : MonoBehaviour
         {
             defeatText.SetActive(true);
         }
-        playAgainButton.SetActive(true);
+        if (NetworkManager.Singleton.IsServer) playAgainButton.SetActive(true);
         yield return null;
     }
 
     public void ToLobby()
     {
+        if (!NetworkManager.Singleton.IsServer) return;
         StartCoroutine(LobbyCoroutine());
     }
 
     IEnumerator LobbyCoroutine()
     {
+        /*
         NetworkManager.Singleton.Shutdown();
-        Destroy(NetworkManager.Singleton.gameObject);
+        Destroy(NetworkManager.Singleton.gameObject);*/
+        HashSet<NetworkObject> spawnedObjects = new HashSet<NetworkObject>(NetworkManager.Singleton.SpawnManager.SpawnedObjectsList);
+        foreach (NetworkObject obj in spawnedObjects)
+        {
+            if (obj.IsSpawned) obj.Despawn();
+        }
         yield return null;
-        // CHANGE LATER TO RETURN TO NORMAL LOBBY
-        SceneManager.LoadScene("DevLobby", LoadSceneMode.Single);
+        NetworkManager.Singleton.SceneManager.LoadScene("StructureSelection", LoadSceneMode.Single);
     }
 }
