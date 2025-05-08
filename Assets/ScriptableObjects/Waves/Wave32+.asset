@@ -23,8 +23,8 @@ MonoBehaviour:
       invisible: 0
       regenerating: 0
   - alien: {fileID: 7635512465832564758, guid: d118ce0798f194731a560249958075c9, type: 3}
-    count: 100
-    spawnDelay: 0.05
+    count: 25
+    spawnDelay: 0.2
     afterSpawnDelay: 0
     modifiers:
       shielded: 0
@@ -32,8 +32,8 @@ MonoBehaviour:
       invisible: 0
       regenerating: 0
   - alien: {fileID: 7635512465832564758, guid: 09c13dcc7db3640f9a18d3ae044c4e64, type: 3}
-    count: 100
-    spawnDelay: 0.05
+    count: 25
+    spawnDelay: 0.2
     afterSpawnDelay: 0
     modifiers:
       shielded: 0
