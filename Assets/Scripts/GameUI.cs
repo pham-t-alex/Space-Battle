@@ -94,6 +94,8 @@ public class GameUI : MonoBehaviour
     [SerializeField] private Button overdriveButton;
     [SerializeField] private Button shieldButton;
 
+    [SerializeField] private TMP_Text waveText;
+
     // Update is called once per frame
     void Update()
     {
@@ -385,6 +387,7 @@ public class GameUI : MonoBehaviour
                 b.MoneyUpdate(money);
             }
         }
+        waveText.text = $"W{wave+1}";
     }
 
     public void UpdateModuleCost(int cost)

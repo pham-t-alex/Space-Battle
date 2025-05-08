@@ -37,8 +37,10 @@ public class GameMessenger : NetworkBehaviour
     // client income multiplier update
     public event Action<float> IncomeMultiplierUpdate;
 
-    // server/client timestamp
-    private int incomeCounter = 0;
+    // client timestamp
+    private int clientIncomeCounter = 0;
+    // server timestamp
+    private int serverIncomeCounter = 0;
 
     public void GameUISetup(ulong client1, ulong client2, int moduleCost, int levelCost, 
         StructureInfo p1First, StructureInfo p1Second, StructureInfo p1Third,
@@ -231,15 +233,15 @@ public class GameMessenger : NetworkBehaviour
 
     public void TriggerIncomeMultiplierUpdate(ulong clientId, float newMultiplier)
     {
-        int incomeTime = ++incomeCounter;
+        int incomeTime = ++clientIncomeCounter;
         IncomeMultiplierRpc(newMultiplier, incomeTime, RpcTarget.Single(clientId, RpcTargetUse.Temp));
     }
 
     [Rpc(SendTo.SpecifiedInParams)]
     public void IncomeMultiplierRpc(float newMultiplier, int timestamp, RpcParams rpcParams)
     {
-        if (timestamp <= incomeCounter) return;
-        incomeCounter = timestamp;
+        if (timestamp <= serverIncomeCounter) return;
+        serverIncomeCounter = timestamp;
         IncomeMultiplierUpdate?.Invoke(newMultiplier);
     }
 

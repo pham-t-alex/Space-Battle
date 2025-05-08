@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 893cd459a1696f5459c0adf58090f7f8, type: 3}
+  m_Name: Wave28
+  m_EditorClassIdentifier: 
+  backLineComponents:
+  - alien: {fileID: 7635512465832564758, guid: fd833ece120284fbbb9b6981527367c3, type: 3}
+    count: 20
+    spawnDelay: 0.3
+    afterSpawnDelay: 0
+    modifiers:
+      shielded: 0
+      berserk: 0
+      invisible: 1
+      regenerating: 0
+  - alien: {fileID: 7635512465832564758, guid: a0ff7f3da6dbe4043b8fdf99469bfb61, type: 3}
+    count: 30
+    spawnDelay: 0.2
+    afterSpawnDelay: 0
+    modifiers:
+      shielded: 0
+      berserk: 0
+      invisible: 1
+      regenerating: 0
+  frontLineComponents:
+  - alien: {fileID: 7635512465832564758, guid: 064d17c03d7ad460bacf5e96042dcc89, type: 3}
+    count: 40
+    spawnDelay: 0.2
+    afterSpawnDelay: 0
+    modifiers:
+      shielded: 0
+      berserk: 0
+      invisible: 1
+      regenerating: 0
+  - alien: {fileID: 7635512465832564758, guid: 1344f268f7af73b43b50b14b58d8f19e, type: 3}
+    count: 200
+    spawnDelay: 0.02
+    afterSpawnDelay: 0
+    modifiers:
+      shielded: 0
+      berserk: 0
+      invisible: 1
+      regenerating: 0

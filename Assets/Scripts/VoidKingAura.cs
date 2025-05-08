@@ -18,7 +18,6 @@ public class VoidKingAura : MonoBehaviour
     private void Update()
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius, LayerMask.GetMask("PlayerAttack"));
-        Debug.Log(hits.Length);
 
         foreach (Collider2D hit in hits)
         {

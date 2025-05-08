@@ -220,13 +220,14 @@ public class GameController : MonoBehaviour
         {
             return;
         }
+        int waveNum = wave;
         if (wave >= waves.Count)
         {
-            return;
+            waveNum = waves.Count - 1;
         }
 
-        StartCoroutine(SpawnWaveCoroutine(waves[wave].backLineComponents, false));
-        StartCoroutine(SpawnWaveCoroutine(waves[wave].frontLineComponents, true));
+        StartCoroutine(SpawnWaveCoroutine(waves[waveNum].backLineComponents, false));
+        StartCoroutine(SpawnWaveCoroutine(waves[waveNum].frontLineComponents, true));
     }
 
     // Only can be called by server
