@@ -23,11 +23,15 @@ public class SessionManager : MonoBehaviour
         }
     }
 
+    private IList<ISessionInfo> sessions;
+    public IList<ISessionInfo> Sessions => sessions;
+
     public string JoinCode => ActiveSession.Code;
     public int PlayerCount => ActiveSession.PlayerCount;
 
     public event Action SignInComplete;
     public event Action PlayerJoined;
+    public event Action SessionsLoaded;
 
     private void Awake()
     {
@@ -82,29 +86,20 @@ public class SessionManager : MonoBehaviour
         Debug.Log($"Joined session {activeSession.Id}");
     }
 
-    async Task KickPlayer(string id)
-    {
-        if (!ActiveSession.IsHost) return;
-        await ActiveSession.AsHost().RemovePlayerAsync(id);
-    }
+    //async Task KickPlayer(string id)
+    //{
+    //    if (!ActiveSession.IsHost) return;
+    //    await ActiveSession.AsHost().RemovePlayerAsync(id);
+    //}
 
-    async Task<IList<ISessionInfo>> QuerySessions()
+    public async Task FetchSessions()
     {
-        QuerySessionsOptions options = new QuerySessionsOptions();
+        QuerySessionsOptions options = new QuerySessionsOptions
+        {
+            Count = 10
+        };
         QuerySessionsResults results = await MultiplayerService.Instance.QuerySessionsAsync(options);
-        return results.Sessions;
-    }
-
-    async Task LeaveSession()
-    {
-        if (ActiveSession == null) return;
-        try
-        {
-            await ActiveSession.LeaveAsync();
-        }
-        finally
-        {
-            ActiveSession = null;
-        }
+        sessions = results.Sessions;
+        SessionsLoaded?.Invoke();
     }
 }
