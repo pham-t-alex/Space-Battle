@@ -6,8 +6,6 @@ public class LobbySelectionBox : MonoBehaviour
 {
     [SerializeField] private TMP_Text lobbyNameText;
     public TMP_Text LobbyNameText => lobbyNameText;
-    [SerializeField] private TMP_Text hostText;
-    public TMP_Text HostText => hostText;
     [SerializeField] private Button joinButton;
     public Button JoinButton => joinButton;
 
