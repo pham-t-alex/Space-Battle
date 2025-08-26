@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class StructureSelectionMenu : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class StructureSelectionMenu : MonoBehaviour
     public static StructureSelectionMenu Instance => instance;
 
     [SerializeField] private GameObject ready;
+    [SerializeField] private TMP_Text p1Text;
+    [SerializeField] private TMP_Text p2Text;
+    [SerializeField] private Image p1Ready;
+    [SerializeField] private Image p2Ready;
 
     private void Awake()
     {
