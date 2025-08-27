@@ -15,8 +15,8 @@ public class StructureSelectionMenu : MonoBehaviour
     [SerializeField] private GameObject ready;
     [SerializeField] private TMP_Text p1Text;
     [SerializeField] private TMP_Text p2Text;
-    [SerializeField] private Image p1Ready;
-    [SerializeField] private Image p2Ready;
+    [SerializeField] private GameObject p1Ready;
+    [SerializeField] private GameObject p2Ready;
 
     private void Awake()
     {
@@ -46,5 +46,13 @@ public class StructureSelectionMenu : MonoBehaviour
         {
             b.GetComponent<Button>().interactable = false;
         }
+    }
+
+    public void UpdatePlayers(string p1Name, string p2Name, bool p1Ready, bool p2Ready)
+    {
+        if (p1Name != null) p1Text.text = p1Name;
+        if (p2Name != null) p2Text.text = p2Name;
+        this.p1Ready.SetActive(p1Ready);
+        this.p2Ready.SetActive(p2Ready);
     }
 }

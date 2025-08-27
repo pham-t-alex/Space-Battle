@@ -14,6 +14,7 @@ public class LobbySelectionUI : MonoBehaviour
     void Start()
     {
         SessionManager.Instance.SessionsLoaded += UpdateLobbies;
+        userText.text = $"User: {SessionManager.Username}";
     }
 
     // Update is called once per frame

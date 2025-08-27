@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 
 public class SessionManager : MonoBehaviour
 {
-    private static string username = "Guest";
+    public static string Username = "Guest";
 
     private static SessionManager _instance;
     public static SessionManager Instance => _instance;
@@ -31,6 +31,9 @@ public class SessionManager : MonoBehaviour
 
     public string JoinCode => ActiveSession.Code;
     public int PlayerCount => ActiveSession.PlayerCount;
+
+    private Dictionary<ulong, string> players = new Dictionary<ulong, string>();
+    public Dictionary<ulong, string> Players => players;
 
     public event Action SignInComplete;
     public event Action PlayerJoined;
@@ -75,16 +78,10 @@ public class SessionManager : MonoBehaviour
             Name = sessionName,
             MaxPlayers = 2,
             IsLocked = false,
-            IsPrivate = false,
-            SessionProperties = new Dictionary<string, SessionProperty>
-            {
-                { "hostName", new SessionProperty(username) },
-            }
+            IsPrivate = false
         }.WithRelayNetwork();
 
         ActiveSession = await MultiplayerService.Instance.CreateSessionAsync(options);
-        ActiveSession.CurrentPlayer.SetProperty("username", new PlayerProperty(username));
-        ActiveSession.CurrentPlayer.SetProperty("clientId", new PlayerProperty(NetworkManager.Singleton.LocalClientId.ToString()));
 
         ActiveSession.PlayerJoined += (val) => PlayerJoined?.Invoke();
         Debug.Log($"Session {ActiveSession.Id} created! Join code: {ActiveSession.Code}");
@@ -95,8 +92,6 @@ public class SessionManager : MonoBehaviour
     public async Task JoinSessionById(string id)
     {
         ActiveSession = await MultiplayerService.Instance.JoinSessionByIdAsync(id);
-        ActiveSession.CurrentPlayer.SetProperty("username", new PlayerProperty(username));
-        ActiveSession.CurrentPlayer.SetProperty("clientId", new PlayerProperty(NetworkManager.Singleton.LocalClientId.ToString()));
 
         Debug.Log($"Joined session {activeSession.Id}");
     }
@@ -104,8 +99,6 @@ public class SessionManager : MonoBehaviour
     public async Task JoinSessionByCode(string code)
     {
         activeSession = await MultiplayerService.Instance.JoinSessionByCodeAsync(code);
-        ActiveSession.CurrentPlayer.SetProperty("username", new PlayerProperty(username));
-        ActiveSession.CurrentPlayer.SetProperty("clientId", new PlayerProperty(NetworkManager.Singleton.LocalClientId.ToString()));
 
         Debug.Log($"Joined session {activeSession.Id}");
     }

@@ -95,6 +95,8 @@ public class GameUI : MonoBehaviour
     [SerializeField] private Button shieldButton;
 
     [SerializeField] private TMP_Text waveText;
+    [SerializeField] private TMP_Text p1Name;
+    [SerializeField] private TMP_Text p2Name;
 
     // Update is called once per frame
     void Update()
@@ -103,7 +105,7 @@ public class GameUI : MonoBehaviour
     }
 
     // Client side setup
-    public void Setup(int player, int moduleCost, int levelCost, StructureInfo first, StructureInfo second, StructureInfo third)
+    public void Setup(string p1Name, string p2Name, int player, int moduleCost, int levelCost, StructureInfo first, StructureInfo second, StructureInfo third)
     {
         SetupControls();
         GenerateSendUI(player);
@@ -114,6 +116,8 @@ public class GameUI : MonoBehaviour
         structure1Button.InitializeCost(first.Cost);
         structure2Button.InitializeCost(second.Cost);
         structure3Button.InitializeCost(third.Cost);
+        this.p1Name.text = p1Name;
+        this.p2Name.text = p2Name;
         structure1Text.text = first.Name;
         structure2Text.text = second.Name;
         structure3Text.text = third.Name;

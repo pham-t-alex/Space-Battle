@@ -282,7 +282,10 @@ public class GameController : MonoBehaviour
 
         // Money setup
         MoneyController.Instance.Setup();
-        GameMessenger.Instance.GameUISetup(p1ID, p2ID, moduleCosts[0], levelCosts[0],
+        if (NetworkManager.Singleton.ConnectedClientsIds.Count < 2) return;
+        string p1Name = SessionManager.Instance.Players[NetworkManager.Singleton.ConnectedClientsIds[0]];
+        string p2Name = SessionManager.Instance.Players[NetworkManager.Singleton.ConnectedClientsIds[1]];
+        GameMessenger.Instance.GameUISetup(p1ID, p2ID, p1Name, p2Name, moduleCosts[0], levelCosts[0],
             structures[p1Structures[0]].GetComponent<Structure>().Info,
             structures[p1Structures[1]].GetComponent<Structure>().Info,
             structures[p1Structures[2]].GetComponent<Structure>().Info,
