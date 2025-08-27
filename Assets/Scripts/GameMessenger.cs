@@ -42,20 +42,20 @@ public class GameMessenger : NetworkBehaviour
     // server timestamp
     private int serverIncomeCounter = 0;
 
-    public void GameUISetup(ulong client1, ulong client2, int moduleCost, int levelCost, 
+    public void GameUISetup(ulong client1, ulong client2, string p1Name, string p2Name, int moduleCost, int levelCost, 
         StructureInfo p1First, StructureInfo p1Second, StructureInfo p1Third,
         StructureInfo p2First, StructureInfo p2Second, StructureInfo p2Third)
     {
         if (!IsServer) return;
-        GameUISetupRpc(1, moduleCost, levelCost, p1First, p1Second, p1Third, RpcTarget.Single(client1, RpcTargetUse.Temp));
-        GameUISetupRpc(2, moduleCost, levelCost, p2First, p2Second, p2Third, RpcTarget.Single(client2, RpcTargetUse.Temp));
+        GameUISetupRpc(p1Name, p2Name, 1, moduleCost, levelCost, p1First, p1Second, p1Third, RpcTarget.Single(client1, RpcTargetUse.Temp));
+        GameUISetupRpc(p1Name, p2Name, 2, moduleCost, levelCost, p2First, p2Second, p2Third, RpcTarget.Single(client2, RpcTargetUse.Temp));
     }
 
     [Rpc(SendTo.SpecifiedInParams)]
-    public void GameUISetupRpc(int player, int moduleCost, int levelCost, 
+    public void GameUISetupRpc(string p1Name, string p2Name, int player, int moduleCost, int levelCost, 
         StructureInfo first, StructureInfo second, StructureInfo third, RpcParams rpcParams)
     {
-        GameUI.Instance.Setup(player, moduleCost, levelCost, first, second, third);
+        GameUI.Instance.Setup(p1Name, p2Name, player, moduleCost, levelCost, first, second, third);
     }
 
     public void SendAliens(int sendIndex, bool front, Modifiers modifiers)

@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
-using Unity.Services.Lobbies;
 using Unity.Services.Multiplayer;
 using System.Threading.Tasks;
+using Unity.Netcode;
+using UnityEngine.SceneManagement;
 
 public class SessionManager : MonoBehaviour
 {
+    public static string Username = "Guest";
+
     private static SessionManager _instance;
     public static SessionManager Instance => _instance;
 
@@ -23,11 +26,18 @@ public class SessionManager : MonoBehaviour
         }
     }
 
+    private List<ISessionInfo> sessions;
+    public List<ISessionInfo> Sessions => sessions;
+
     public string JoinCode => ActiveSession.Code;
     public int PlayerCount => ActiveSession.PlayerCount;
 
+    private Dictionary<ulong, string> players = new Dictionary<ulong, string>();
+    public Dictionary<ulong, string> Players => players;
+
     public event Action SignInComplete;
     public event Action PlayerJoined;
+    public event Action SessionsLoaded;
 
     private void Awake()
     {
@@ -49,6 +59,7 @@ public class SessionManager : MonoBehaviour
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
             Debug.Log("Signed In: " + AuthenticationService.Instance.PlayerId);
             SignInComplete?.Invoke();
+            FetchSessions();
         }
         catch (Exception ex)
         {
@@ -56,55 +67,54 @@ public class SessionManager : MonoBehaviour
         }
     }
 
-    public async Task StartSessionAsHost()
+    public async Task StartSessionAsHost(string sessionName = "")
     {
+        if (sessionName == "")
+        {
+            sessionName = "Unnamed Lobby";
+        }
         SessionOptions options = new SessionOptions
         {
+            Name = sessionName,
             MaxPlayers = 2,
             IsLocked = false,
-            IsPrivate = false,
+            IsPrivate = false
         }.WithRelayNetwork();
 
         ActiveSession = await MultiplayerService.Instance.CreateSessionAsync(options);
+
         ActiveSession.PlayerJoined += (val) => PlayerJoined?.Invoke();
         Debug.Log($"Session {ActiveSession.Id} created! Join code: {ActiveSession.Code}");
+
+        NetworkManager.Singleton.SceneManager.LoadScene("StructureSelection", LoadSceneMode.Single);
     }
 
-    async Task JoinSessionById(string id)
+    public async Task JoinSessionById(string id)
     {
         ActiveSession = await MultiplayerService.Instance.JoinSessionByIdAsync(id);
+
         Debug.Log($"Joined session {activeSession.Id}");
     }
 
     public async Task JoinSessionByCode(string code)
     {
         activeSession = await MultiplayerService.Instance.JoinSessionByCodeAsync(code);
+
         Debug.Log($"Joined session {activeSession.Id}");
     }
 
-    async Task KickPlayer(string id)
-    {
-        if (!ActiveSession.IsHost) return;
-        await ActiveSession.AsHost().RemovePlayerAsync(id);
-    }
-
-    async Task<IList<ISessionInfo>> QuerySessions()
+    public async Task FetchSessions()
     {
         QuerySessionsOptions options = new QuerySessionsOptions();
         QuerySessionsResults results = await MultiplayerService.Instance.QuerySessionsAsync(options);
-        return results.Sessions;
-    }
-
-    async Task LeaveSession()
-    {
-        if (ActiveSession == null) return;
-        try
+        sessions = new List<ISessionInfo>();
+        foreach (ISessionInfo session in results.Sessions)
         {
-            await ActiveSession.LeaveAsync();
+            if (session.AvailableSlots > 0 && !session.IsLocked)
+            {
+                sessions.Add(session);
+            }
         }
-        finally
-        {
-            ActiveSession = null;
-        }
+        SessionsLoaded?.Invoke();
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -7,10 +8,10 @@ public class StructureSelectionController : MonoBehaviour
     private static StructureSelectionController instance;
     public static StructureSelectionController Instance => instance;
 
-    [SerializeField] private GameObject start;
-
     private bool p1Ready = false;
+    public bool P1Ready => p1Ready;
     private bool p2Ready = false;
+    public bool P2Ready => p2Ready;
 
     private void Awake()
     {
@@ -114,6 +115,14 @@ public class StructureSelectionController : MonoBehaviour
             p2Ready = true;
             StructureSelectionMessenger.Instance.ReadyLock(clientId);
         }
-        if (p1Ready && p2Ready) start.SetActive(true);
+        StructureSelectionMessenger.Instance.ClientLobbyUpdate();
+        if (p1Ready && p2Ready) StartCoroutine(StartGameCoroutine());
+    }
+
+    IEnumerator StartGameCoroutine()
+    {
+        yield return new WaitForSeconds(3);
+        TryStart();
+        yield return null;
     }
 }
